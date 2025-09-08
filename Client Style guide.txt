@@ -1,0 +1,19 @@
+Colors:
+Primary: var(--clr-primary-500)
+Secondary: var(--clr-secondary-500)
+Tertiary: var(--clr-tertiary)
+Dark: var(--clr-dark)
+White: var(--clr-white)
+
+
+Containers: Wrap all children in a container and then wrap container in an outer parent with w-screen or auto for width
+Example:
+<OuterParent>
+  <Container>
+    Children...
+  </Container>
+</OuterParent>
+
+
+TODO: Eventually store only the id of notes in the store rather than the whole notes
+TODO: Only extract user from isAuthenticated endpoint and store it in the auth context 

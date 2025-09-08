@@ -1,0 +1,28 @@
+@import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap');
+@import "tailwindcss";
+
+@theme{
+  --color-primary-600: #08550aff;
+  --color-primary-500: #0b700dff;
+  --color-primary-400: #0e902eff;
+  --color-secondary-500:#64f757ff;
+  --color-secondary-400:#50c848ff;
+  --color-neutral:#909090;
+  --color-tertiary:#f15025ff;
+  --color-danger:#ff4d4dff;
+  --color-dark:#191919ff;
+  --color-white:#ffffffff;
+}
+
+
+body{
+  font-family: 'Figtree', sans-serif;
+}
+
+.wrapper{
+  @apply w-full max-w-5xl mx-auto py-4 px-6 lg:px-2
+}
+
+.bg-gradient-primary{
+  @apply bg-gradient-to-br from-primary-500 to-primary-600 hover:from-primary-400 hover:to-primary-500 transition-colors duration-300
+}
