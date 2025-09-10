@@ -28,7 +28,7 @@ export function Button({
   type = "button",
 }: ButtonProps) {
   const baseStyles =
-    "inline-flex items-center justify-center font-medium rounded-lg transition-colors duration-300 outline-none focus:outline-none cursor-pointer";
+    "inline-flex items-center rounded-lg justify-center font-medium transition-colors duration-300 outline-none focus:outline-none cursor-pointer";
 
   const variantStyles = {
     primary:

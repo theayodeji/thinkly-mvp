@@ -5,7 +5,7 @@ type Props = {};
 
 const SourcesAside = (props: Props) => {
   return (
-    <aside className="hidden lg:block">
+    <aside className="lg:block">
       <div className="flex justify-between items-center mb-4">
         <h3 className=" text-lg font-semibold text-gray-800">Sources</h3>
         <button className="text-sm text-gray-600">

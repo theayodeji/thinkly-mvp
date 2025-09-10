@@ -13,6 +13,22 @@ export const getNotes = async (req: Request, res: Response) => {
     }
 };
 
+export const getNote = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const userId = req.userId as Types.ObjectId;
+
+    if (!Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ message: "Invalid note ID" });
+    }
+    try {
+        const note = await NoteModel.findById(id).populate("sources");
+        res.status(200).json({ note });
+    } catch (error: any) {
+        console.error("Get note error:", error);
+        res.status(500).json({ message: "Failed to get note" });
+    }
+}
+
 export const createNote = async (req: Request, res: Response) => {
     const userId = req.userId as Types.ObjectId;
     try {
@@ -61,4 +77,6 @@ export const updateNote = async (req: Request, res: Response) => {
         res.status(500).json({ message: "Failed to update note" });
     }
 };
+
+
 

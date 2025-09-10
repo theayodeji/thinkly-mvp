@@ -23,6 +23,7 @@ export interface INote extends Document {
 
 export interface ISource extends Document {
   type: "pdf" | "url" | "text" | "image";
+  name?: string;
   file_url?: string;
   text?: string;
   noteId: Types.ObjectId;

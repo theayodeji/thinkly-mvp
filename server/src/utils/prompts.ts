@@ -35,7 +35,7 @@ Respond with a JSON object containing a single 'title' field.
 Do not add any identifiers like "json" or "JSON" to the response. DONT!!!!!!!!!!!!
 Example: {"title": "..."}
 
-Here is the note text:
+Here is the note/source text:
   `,
 
   quiz: `Create 10-15 multiple choice questions based on the following text. Respond with a valid JSON array where each question has:

@@ -27,6 +27,9 @@ export const addSource = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Source text is required" });
     }
 
+    const { title } = await geminiService.generateTitle(source.text || "");
+    source.name = title;
+
     // Find the note and lock it for update
     const note = (await NoteModel.findById(source.noteId).session(
       session
@@ -49,7 +52,6 @@ export const addSource = async (req: Request, res: Response) => {
 
     // Generate title if this is the first source
     if (note.sources.length === 1) {
-      const { title } = await geminiService.generateTitle(note.content || "");
       note.title = title;
     }
     await note.save({ session });

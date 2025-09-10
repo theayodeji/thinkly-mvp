@@ -1,8 +1,10 @@
+import { Source } from "./source";
+
 export type Note = {
   _id: string;
   title: string;
   content: string;
-  sources: string[];
+  sources: Source[];
   userId: string;
   summary: string;
   createdAt: Date;

@@ -1,4 +1,3 @@
-import { Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import NoteMenu from "./NoteMenu";
 import { useNoteStore } from "../../store/noteStore";
@@ -15,15 +14,21 @@ const NotesGrid = () => {
 
   if (isNotesLoading)
     return (
-      <div className="flex items-center justify-center">
-        <Loader2 className="animate-spin rounded-full h-32 w-32 text-primary-500" />
+      <div className="flex w-full items-center justify-center">
+        <div className="grid w-full grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 grid-rows-3 gap-4">
+          {[...Array(9)].map((_, index) => (
+            <div key={index} className="relative rounded-md shadow-lg drop-shadow-xl animate-pulse">
+              <div className="h-[140px] w-full bg-neutral/20 rounded-md"></div>
+            </div>
+          ))}
+        </div>
       </div>
     );
-  if (notesError) return <p>{notesError.response?.data?.message}</p>;
+  if (notesError || !notes) return <p>{notesError?.message}</p>;
 
   return (
     <div className="">
-      <div className=" grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 grid-rows-3 gap-4">
+      <div className=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 grid-rows-3 gap-4">
         <NewNoteButton />
         {notes.map((note: Note) => (
           <div key={note._id} className="relative rounded-md bg-white border border-neutral/40 p-4 shadow-lg drop-shadow-xl hover:bg-neutral/50 transition-colors duration-300 ">

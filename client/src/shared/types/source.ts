@@ -1,7 +1,8 @@
 export interface Source {
     _id: string;
-    type: "pdf" | "url" | "text" | "image";
+    type: "pdf" | "website" | "text" | "image";
     file_url?: string;
+    name?: string;
     text?: string;
     noteId: string;
     status: "parsing" | "parsed" | "error";
