@@ -44,11 +44,9 @@ export const useNoteStore = create<NoteStore>((set, get) => ({
 
   // Note List Actions
   getNotes: async () => {
-    console.log("Fetching notes...");
     set({ isNotesLoading: true, notesError: null });
     try {
       const { notes } = await noteService.getNotes();
-      console.log("Notes fetched successfully:", notes);
       set({ notes, isNotesLoading: false });
     } catch (error) {
       console.error("Error fetching notes:", error);
@@ -131,7 +129,6 @@ export const useNoteStore = create<NoteStore>((set, get) => ({
       const newSource = await noteService.addSource(id, source);
 
       await get().getNote(id);
-      console.log(get().currentNote);
       return newSource; // Return the new source for potential chaining
     } catch (error) {
       const err = error as Error;

@@ -47,7 +47,7 @@ const Navbar = (props: Props) => {
             <Transition enter="transition ease-out duration-100" leave="transition ease-in duration-75" enterFrom="opacity-0 scale-95" enterTo="opacity-100 scale-100" leaveFrom="opacity-100 scale-100" leaveTo="opacity-0 scale-95">
               <PopoverPanel
                 className="w-48 absolute z-10 bg-white/60 backdrop-blur-sm shadow-xl drop-shadow-lg rounded-md"
-                anchor={"bottom"}
+                anchor={"bottom end"}
               >
                 <div className="flex flex-col items-stretch justify-stretch cursor-pointer">
                   <Link
