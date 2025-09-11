@@ -22,18 +22,23 @@ export interface TitleResponse {
 export const PROMPT_TEMPLATES: PromptTemplates = {
   summary: `Create a concise summary that captures the key points and main ideas from the following text. Focus on the most important information while maintaining accuracy and clarity. Keep it brief but comprehensive.
 
-Respond with a JSON object containing a single 'summary' field.
+Respond ONLY with a valid JSON object containing a single 'summary' field.
 Do not add any identifiers like "json" or "JSON" to the response. DONT!!!!!!!!!!!!
 Example: {"summary": "..."}
+
+Anything including \`\`\`json\`\`\` or \`\`\`JSON\`\`\` should not be included.
 
 Here is the note text:
   `,
 
   title: `Generate a clear, concise title (3-7 words, maximum 40 carachters, only up to 50 if absolutely necessary) that accurately represents the main topic or theme of the following text. The title should be specific, engaging, and suitable for quick reference.
 
-Respond with a JSON object containing a single 'title' field.
+Respond ONLY with a valid JSON object containing a single 'title' field.
 Do not add any identifiers like "json" or "JSON" to the response. DONT!!!!!!!!!!!!
 Example: {"title": "..."}
+
+Anything including \`\`\`json\`\`\` or \`\`\`JSON\`\`\` should not be included.
+
 
 Here is the note/source text:
   `,
@@ -53,7 +58,10 @@ Example format:
   }
 ]
 
-do not add any identifiers like "json" or "JSON" to the response. DONT!!!!!!!!!!!!
+Respond ONLY with a valid JSON array.
+Do not add any identifiers like "json" or "JSON" to the response. DONT!!!!!!!!!!!!
+Anything including \`\`\`json\`\`\` or \`\`\`JSON\`\`\` should not be included.
+
 Here is the note text:
 `
 };

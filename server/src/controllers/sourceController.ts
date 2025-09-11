@@ -28,7 +28,8 @@ export const addSource = async (req: Request, res: Response) => {
     }
 
     const { title } = await geminiService.generateTitle(source.text || "");
-    source.name = title;
+    const { summary } = await geminiService.generateSummary(source.text || "");
+    source.name = source.name || title;
 
     // Find the note and lock it for update
     const note = (await NoteModel.findById(source.noteId).session(
@@ -53,6 +54,7 @@ export const addSource = async (req: Request, res: Response) => {
     // Generate title if this is the first source
     if (note.sources.length === 1) {
       note.title = title;
+      note.summary = summary;
     }
     await note.save({ session });
     await session.commitTransaction();

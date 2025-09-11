@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import clsx from "clsx";
 import NotePageHeader from "../../components/note/NotePageHeader";
@@ -6,16 +6,14 @@ import SourcesAside from "../../components/note/SourcesAside";
 import ChatInterface from "../../components/note/ChatInterface";
 import TabSelect from "../../components/TabSelect";
 import { useNoteStore } from "../../store/noteStore";
-// import AddSourceModal from "../../components/note/AddSourceModal";
 
 const NoteDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [activeTab, setActiveTab] = useState<"sources" | "chat">("chat");
-  const [isSourceModalOpen, setIsSourceModalOpen] = useState(true)
 
   const { getNote }  = useNoteStore();
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (id) getNote(id);
   }, [id, getNote]);
 
@@ -43,7 +41,6 @@ const NoteDetail: React.FC = () => {
           <ChatInterface />
         </div>
       </div>
-      {/* <AddSourceModal noteId={id || ""} isOpen={isSourceModalOpen} onClose={() => setIsSourceModalOpen(false)} /> */}
     </div>
   );
 };

@@ -32,7 +32,7 @@ export function Button({
 
   const variantStyles = {
     primary:
-      `text-white hover:from-primary-400 hover:to-primary-500 focus:ring-primary-500 ${loading ? 'bg-neutral-400' : 'bg-gradient-to-br from-primary-500 to-primary-400 disabled:bg-neutral-400 disabled:cursor-not-allowed'} `,
+      `text-white hover:from-primary-400 hover:to-primary-500 focus:ring-primary-500 ${loading || disabled ? 'bg-neutral-400 disabled:cursor-not-allowed' : 'bg-gradient-to-br from-primary-500 to-primary-400'} `,
     neutral:
       `bg-neutral-300 text-dark hover:bg-neutral-400 ${loading ? 'bg-neutral-300' : ''} disabled:bg-neutral-500`,
     ghost:

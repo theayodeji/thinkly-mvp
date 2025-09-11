@@ -40,10 +40,12 @@ class GeminiService {
   ): Promise<T> {
     try {
       const prompt = this.constructPrompt(promptType, content);
-      const response = await this.generateContent(prompt);
+      let response = await this.generateContent(prompt);
       
       if (parseJson) {
         try {
+          // Remove markdown code blocks if present
+          response = response.replace(/^```(?:json)?\n|\n```$/g, '').trim();
           return JSON.parse(response) as T;
         } catch (e) {
           console.error("Failed to parse JSON response:", response);

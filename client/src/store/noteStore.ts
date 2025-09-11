@@ -25,7 +25,7 @@ interface NoteStore {
   
   // Single Note Actions
   getNote: (id: string) => Promise<void>;
-  addSource: (id: string, source: Partial<Source>) => Promise<void>,
+  addSource: (id: string, source: Partial<Source>) => Promise<Source>;
   updateNote: (id: string, updates: Partial<Note>) => Promise<Note>;
   chatWithNote: (id: string, message: string) => Promise<void>;
   addChatMessage: (content: string, role: 'user' | 'assistant') => void;
@@ -66,6 +66,7 @@ export const useNoteStore = create<NoteStore>((set, get) => ({
         notes: [newNote, ...state.notes],
         isActionLoading: false
       }));
+
       return newNote;
     } catch (error) {
       const err = error as Error;
@@ -126,10 +127,15 @@ export const useNoteStore = create<NoteStore>((set, get) => ({
   addSource: async (id: string, source: Partial<Source>) => {
     set({ isActionLoading: true });
     try {
-      await noteService.addSource(id, source);
+      const newSource = await noteService.addSource(id, source);
+
+      await get().getNote(id);
+      console.log(get().currentNote);
+      return newSource; // Return the new source for potential chaining
     } catch (error) {
       const err = error as Error;
       toast.error(err.message || 'Failed to add source');
+      throw error; // Re-throw to allow error handling in components
     } finally {
       set({ isActionLoading: false });
     }

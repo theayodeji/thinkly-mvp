@@ -2,6 +2,7 @@ import { api } from './api';
 import { Note } from '../types/note';
 import { Source } from '../types/source';
 import { AxiosError } from 'axios';
+import toast from 'react-hot-toast';
 
 interface ApiErrorResponse {
   message: string;
@@ -32,7 +33,7 @@ export const noteService = {
 
   createNote: async (): Promise<Note> => {
     try {
-      const response = await api.post<{ note: Note }>('/notes');
+      const response = await api.post<{ note: Note }>('/notes/create');
       return response.data.note;
     } catch (error) {
       const err = error as AxiosApiError;
@@ -42,11 +43,12 @@ export const noteService = {
 
   addSource: async (id: string, source: Partial<Source>): Promise<Source> => {
     try {
-      const response = await api.post<ApiResponse<{ source: Source }>>(
-        `/notes/${id}/sources`, 
-        source
+      const response = await api.post<{ source: Source }>(
+        `/sources/add`, 
+        { noteId: id, ...source }
       );
-      return response.data.data.source;
+      toast.success('Source added successfully')
+      return response.data.source;
     } catch (error) {
       const err = error as AxiosApiError;
       throw new Error(err.response?.data?.message || err.response?.data?.error || 'Failed to add source');
@@ -55,7 +57,7 @@ export const noteService = {
 
   deleteNote: async (id: string): Promise<void> => {
     try {
-      await api.delete<ApiResponse<void>>(`/notes/${id}`);
+      await api.delete(`/notes/${id}`);
     } catch (error) {
       const err = error as AxiosApiError;
       throw new Error(err.response?.data?.message || err.response?.data?.error || 'Failed to delete note');

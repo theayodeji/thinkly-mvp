@@ -3,8 +3,17 @@ import { Button } from "../ui/Button";
 import { useNoteStore } from "../../store/noteStore";
 
 const SummaryBlock = () => {
-  const { currentNote } = useNoteStore();
-
+  const { currentNote, isActionLoading } = useNoteStore();
+  if (isActionLoading)
+    return (
+      <div className="bg-white rounded-md p-2">
+        <div className="animate-pulse flex space-x-4">
+          <div className="flex-1 h-16 bg-gray-200 rounded w-3/4"></div>
+          <div className="h-4 w-16 bg-gray-200 rounded"></div>
+        </div>
+      </div>
+    );
+  
   return (
     <div className="bg-white rounded-md p-2">
       <h3 className="font-medium text-gray-800 text-wrap md:text-lg">
@@ -21,7 +30,7 @@ const SummaryBlock = () => {
         Based on {currentNote?.sources?.length || 0}{" "}
         {currentNote?.sources?.length === 1 ? "source" : "sources"}
       </p>
-      <p className="text-sm text-gray-800 mt-2 line-clamp-3">
+      <p className="text-sm text-gray-800 mt-2">
         {currentNote?.summary || "Summary will appear here"}
         <Copy className="inline ml-1 cursor-pointer text-gray-500 w-4 h-4" />
       </p>
