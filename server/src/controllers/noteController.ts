@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import NoteModel from "../models/Note.js";
 import { Types } from "mongoose";
+import geminiService from "../utils/genai.js";
 
 export const getNotes = async (req: Request, res: Response) => {
     const userId = req.userId as Types.ObjectId;
@@ -77,6 +78,29 @@ export const updateNote = async (req: Request, res: Response) => {
         res.status(500).json({ message: "Failed to update note" });
     }
 };
+
+export const chat = async(req: Request, res: Response) => {
+    const { history, noteId } = req.body;
+    const userId = req.userId as Types.ObjectId;
+
+    if (!Types.ObjectId.isValid(noteId)) {
+        return res.status(400).json({ message: "Invalid note ID" });
+    }
+    try {
+        const note = await NoteModel.findById(noteId);
+        if (!note) {
+            return res.status(404).json({ message: "Note not found" });
+        }
+        const result = await geminiService.generateChat("Content: " + note.content + "\n\n" + "History: " + JSON.stringify(history));
+
+        console.log(result);
+        res.status(200).json(JSON.parse(result));
+        
+    } catch (error: any) {
+        console.error("Chat error:", error);
+        res.status(500).json({ message: "Failed to chat" });
+    }
+}
 
 
 

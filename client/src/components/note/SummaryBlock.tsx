@@ -1,6 +1,12 @@
 import { Copy, WandSparkles } from "lucide-react";
 import { Button } from "../ui/Button";
 import { useNoteStore } from "../../store/noteStore";
+import toast from "react-hot-toast";
+
+const copySummary = (summary: string) => {
+  navigator.clipboard.writeText(summary);
+  toast.success("Summary copied to clipboard");
+};
 
 const SummaryBlock = () => {
   const { currentNote, isActionLoading } = useNoteStore();
@@ -13,7 +19,7 @@ const SummaryBlock = () => {
         </div>
       </div>
     );
-  
+
   return (
     <div className="bg-white rounded-md p-2">
       <h3 className="font-medium text-gray-800 text-wrap md:text-lg">
@@ -32,7 +38,10 @@ const SummaryBlock = () => {
       </p>
       <p className="text-sm text-gray-800 mt-2">
         {currentNote?.summary || "Summary will appear here"}
-        <Copy className="inline ml-1 cursor-pointer text-gray-500 w-4 h-4" />
+        <Copy
+          className="inline ml-1 cursor-pointer text-gray-500 w-4 h-4"
+          onClick={() => copySummary(currentNote?.summary || "")}
+        />
       </p>
     </div>
   );

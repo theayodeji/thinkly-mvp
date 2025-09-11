@@ -23,11 +23,11 @@ const UploadDropzone = () => {
   });
 
   return (
-    <div className="space-y-4 flex flex-col">
+    <div className="flex flex-col">
       <div
         {...getRootProps()}
         className={clsx(
-          "border-2 border-dashed border-neutral rounded-md px-4 py-6 w-full flex flex-col items-center justify-center transition-colors duration-300 cursor-pointer",
+          "border-2 border-dashed border-neutral rounded-md text-center px-4 py-6 w-full flex flex-col items-center justify-center transition-colors duration-300 cursor-pointer",
           isDragActive ? "bg-neutral/20" : ""
         )}
       >
@@ -62,7 +62,7 @@ const UploadDropzone = () => {
           <p className="text-xs text-red-500 mt-4">Invalid file type</p>
         ) : null}
       </div>
-      <Button disabled={acceptedFiles?.length === 0} className="mt-4 self-end">
+      <Button disabled={acceptedFiles?.length === 0} className="mt-3 self-end">
         Upload
       </Button>
     </div>

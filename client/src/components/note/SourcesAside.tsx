@@ -18,7 +18,6 @@ const SourcesHeader = ({ onAddClick }: { onAddClick: () => void }) => (
 
 const SourcesAside = () => {
   const [isSourceModalOpen, setIsSourceModalOpen] = useState(false);
-  console.log('render')
   
   return (
     <aside className="lg:block">

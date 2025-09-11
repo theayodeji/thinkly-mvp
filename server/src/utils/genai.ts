@@ -66,6 +66,10 @@ class GeminiService {
   }
 
   // Convenience methods for specific prompt types
+  public async generateChat(content: string): Promise<string> {
+    return this.processPrompt<string>("chat", content);
+  }
+
   public async generateSummary(content: string): Promise<SummaryResponse> {
     return this.processPrompt<SummaryResponse>("summary", content, true);
   }

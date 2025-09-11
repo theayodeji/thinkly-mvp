@@ -15,16 +15,25 @@
 }
 
 
-body{
+body, pre{
   font-family: 'Figtree', sans-serif;
 }
 
+body,html {
+  /* overflow: hidden; */
+}
+
+
 .wrapper{
-  @apply w-full max-w-7xl mx-auto py-4 px-6 lg:px-4
+  @apply w-full max-w-7xl mx-auto py-4 px-6 lg:px-4 
 }
 
 .bg-gradient-primary{
   @apply bg-gradient-to-br from-primary-500 to-primary-600 hover:from-primary-400 hover:to-primary-500 transition-colors duration-300
+}
+
+.color-transition{
+  @apply transition-colors duration-300
 }
 
 /* Target the entire scrollbar */

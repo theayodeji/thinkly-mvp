@@ -15,7 +15,7 @@ const NotesGrid = () => {
   if (isNotesLoading)
     return (
       <div className="flex w-full items-center justify-center">
-        <div className="grid w-full grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 grid-rows-3 gap-4">
+        <div className="grid w-full grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 grid-rows-[1fr_1fr_1fr] gap-4">
           {[...Array(9)].map((_, index) => (
             <div key={index} className="relative rounded-md shadow-lg drop-shadow-xl animate-pulse">
               <div className="h-[140px] w-full bg-neutral/20 rounded-md"></div>
@@ -28,7 +28,7 @@ const NotesGrid = () => {
 
   return (
     <div className="">
-      <div className=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 grid-rows-3 gap-4">
+      <div className=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 auto-rows-fr gap-4">
         <NewNoteButton />
         {notes.map((note: Note) => (
           <div key={note._id} className="relative rounded-md bg-white border border-neutral/40 p-4 shadow-lg drop-shadow-xl hover:bg-neutral/50 transition-colors duration-300 ">

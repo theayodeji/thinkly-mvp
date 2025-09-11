@@ -11,34 +11,35 @@ const NoteDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [activeTab, setActiveTab] = useState<"sources" | "chat">("chat");
 
-  const { getNote }  = useNoteStore();
+  const { getNote } = useNoteStore();
 
   useEffect(() => {
     if (id) getNote(id);
   }, [id, getNote]);
 
   return (
-    <div className="grid lg:grid-rows-[auto_76vh] grid-rows-[auto_auto_70dvh]">
+    <div className="grid grid-cols-1 lg:grid-rows-[auto_76vh] grid-rows-[auto_auto_72dvh] ">
       <NotePageHeader />
       <TabSelect activeTab={activeTab} onTabChange={setActiveTab} />
+      <div className="">
+        <div className="flex wrapper pt-4 gap-4 h-full overflow-hidden max-w-screen">
+          <div
+            className={clsx(
+              "lg:flex-[1.1] rounded-md h-full overflow-y-auto",
+              activeTab === "sources" ? "block w-full" : "hidden lg:block"
+            )}
+          >
+            <SourcesAside />
+          </div>
 
-      <div className="flex wrapper pt-4 gap-4 h-full overflow-hidden">
-        <div
-          className={clsx(
-            "lg:flex-[1.1] p-4 rounded-md h-full overflow-y-auto",
-            activeTab === "sources" ? "block w-full" : "hidden lg:block"
-          )}
-        >
-          <SourcesAside />
-        </div>
-
-        <div
-          className={clsx(
-            "lg:flex-2 bg-neutral-200 rounded-md h-full overflow-y-auto",
-            activeTab === "chat" ? "block w-full" : "hidden lg:block"
-          )}
-        >
-          <ChatInterface />
+          <div
+            className={clsx(
+              "lg:flex-2 bg-neutral-200 rounded-md h-full overflow-y-auto",
+              activeTab === "chat" ? "block w-full" : "hidden lg:block"
+            )}
+          >
+            <ChatInterface />
+          </div>
         </div>
       </div>
     </div>

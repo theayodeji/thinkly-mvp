@@ -22,7 +22,9 @@ const PasteTextArea = () => {
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     if (!currentNote?._id) return;
-    addSource(currentNote._id, { name, text, type: 'text' }).then(() => close());
+    addSource(currentNote._id, { name, text, type: "text" }).then(() =>
+      close()
+    );
   };
 
   return (
@@ -39,7 +41,7 @@ const PasteTextArea = () => {
       <label>
         <span>Text:</span>
         <textarea
-          className="block w-full p-4 rounded-md border border-neutral-300 focus:shadow-md focus:shadow-primary outline-none"
+          className="block w-full p-4 rounded-md border border-neutral-300 focus:shadow-md focus:shadow-primary outline-none resize-none"
           value={text}
           onChange={handleTextChange}
           rows={4}

@@ -88,12 +88,13 @@ export const noteService = {
     }
   },
 
-  chatWithNote: async (noteId: string, message: string): Promise<{ response: string }> => {
+  chatWithNote: async (noteId: string, message: string, history: { role: 'user' | 'assistant'; content: string }[]): Promise<{ response: string }> => {
     try {
       const response = await api.post<{ response: string }>(
-        `/notes/${noteId}/chat`, 
-        { message }
+        `/notes/chat`, 
+        { noteId, message, history }
       );
+      console.log(response.data)
       return response.data;
     } catch (error) {
       const err = error as AxiosApiError;

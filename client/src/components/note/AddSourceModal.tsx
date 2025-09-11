@@ -36,7 +36,7 @@ export default function AddSourceModal({
           className="fixed inset-0 bg-black/30"
           onClick={() => setIsOpen(false)}
         />
-        <div className=" bg-white p-4 rounded-md shadow-lg drop-shadow-xl w-5/6 max-w-[500px]">
+        <div className=" bg-white p-4 rounded-md shadow-lg drop-shadow-xl w-[95%] max-w-[500px]">
           <h2 className="text-xl lg:text-2xl font-semibold mb-4">Add Source</h2>
           <TabGroup>
             <TabList className="flex gap-2 mb-4">
@@ -44,7 +44,7 @@ export default function AddSourceModal({
                 <Tab
                   key={tab.value}
                   className={clsx(
-                    "px-3 py-1 rounded-md bg-neutral-100 cursor-pointer",
+                    "px-3 py-1 text-sm md:text-base rounded-md bg-neutral-100 cursor-pointer",
                     "data-selected:bg-primary-500 data-selected:text-white"
                   )}
                 >
@@ -54,15 +54,11 @@ export default function AddSourceModal({
             </TabList>
 
             <TabPanels>
-              <TabPanel>
-                <UploadDropzone />
-              </TabPanel>
-
+              
+              <TabPanel><UploadDropzone /></TabPanel>
               <TabPanel>Web Page</TabPanel>
+              <TabPanel><PasteTextArea /></TabPanel>
 
-              <TabPanel>
-                <PasteTextArea />
-              </TabPanel>
             </TabPanels>
           </TabGroup>
         </div>
