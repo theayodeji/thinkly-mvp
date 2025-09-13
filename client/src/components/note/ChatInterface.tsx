@@ -1,12 +1,13 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "../ui/Button";
 import { SendIcon } from "lucide-react";
 import SummaryBlock from "./SummaryBlock";
 import { useNoteStore } from "../../store/noteStore";
+import ReactMarkdown from "react-markdown";
 
 export default function Chat() {
-
-  const { currentNote,isChatLoading, chatWithNote, chatHistory } = useNoteStore();
+  const { currentNote, isChatLoading, chatWithNote, chatHistory, clearChat } =
+    useNoteStore();
   const [input, setInput] = useState("");
   const chatBoxRef = useRef<HTMLDivElement>(null);
 
@@ -14,12 +15,12 @@ export default function Chat() {
     if (!input.trim()) return;
     const message = input.trim();
     setInput("");
-    
+
     chatBoxRef.current?.scrollTo({
       top: chatBoxRef.current.scrollHeight,
       behavior: "smooth",
     });
-    
+
     chatWithNote(currentNote?._id as string, message).then(() => {
       setTimeout(() => {
         chatBoxRef.current?.scrollTo({
@@ -30,24 +31,31 @@ export default function Chat() {
     });
   };
 
+  useEffect(() => {
+    return () => clearChat();
+  }, [currentNote]);
+
   return (
     <div className="flex flex-col h-full">
       {/* <div className="p-4"></div> */}
 
       {/* Messages */}
-      <div ref={chatBoxRef} className="flex-1 flex flex-col overflow-y-auto p-4 space-y-3">
+      <div
+        ref={chatBoxRef}
+        className="flex-1 flex flex-col overflow-y-auto p-4 space-y-3"
+      >
         <SummaryBlock />
         {chatHistory.map((msg) => (
-          <pre
+          <div
             key={msg.content}
-            className={`max-w-[90%] px-3 py-2 rounded-lg text-sm text-wrap ${
+            className={` prose prose-neutral max-w-[85%] px-3 py-2 rounded-lg text-sm text-wrap ${
               msg.role === "user"
                 ? "bg-primary-500 text-white self-end"
                 : "bg-white text-gray-800 self-start"
             }`}
           >
-            {msg.content}
-          </pre>
+            <ReactMarkdown>{msg.content}</ReactMarkdown>
+          </div>
         ))}
         {isChatLoading && (
           <div className="max-w-[80%] px-3 py-2 rounded-lg text-sm text-wrap bg-white text-gray-800 self-start">

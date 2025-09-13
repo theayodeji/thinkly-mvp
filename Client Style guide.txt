@@ -16,4 +16,4 @@ Example:
 
 
 TODO: Eventually store only the id of notes in the store rather than the whole notes
-TODO: Only extract user from isAuthenticated endpoint and store it in the auth context 
+TODO: Add a feature where the user can select from 3 different tones of replies 

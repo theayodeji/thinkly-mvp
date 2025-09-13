@@ -11,6 +11,8 @@ import {
 import clsx from "clsx";
 import UploadDropzone from "./UploadDropzone";
 import PasteTextArea from "./PasteTextArea";
+import { useEffect } from "react";
+import { useNoteStore } from "../../store/noteStore";
 
 export default function AddSourceModal({
   isOpen,
@@ -24,6 +26,14 @@ export default function AddSourceModal({
     { label: "Web Page", value: "web" },
     { label: "Pasted Text", value: "text" },
   ];
+
+  const {currentNote} = useNoteStore();
+
+  useEffect(() => {
+    if (currentNote && currentNote.sources?.length === 0) {
+      setIsOpen(true);
+    }
+  }, [currentNote]);
 
   return (
     <Dialog
@@ -55,7 +65,7 @@ export default function AddSourceModal({
 
             <TabPanels>
               
-              <TabPanel><UploadDropzone /></TabPanel>
+              <TabPanel><UploadDropzone setIsOpen={setIsOpen}/></TabPanel>
               <TabPanel>Web Page</TabPanel>
               <TabPanel><PasteTextArea /></TabPanel>
 

@@ -5,12 +5,12 @@ import {
   Transition,
 } from "@headlessui/react";
 import { Bell, Flame, LogOut, Trophy } from "lucide-react";
-import React from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
 
-type Props = {};
+const Navbar = () => {
+  const { logout } = useAuth();
 
-const Navbar = (props: Props) => {
   return (
     <header className="sticky top-0 z-10 border-b-2 border-neutral-100 bg-white/80 backdrop-blur-sm">
       <div className="wrapper sm:px-6 lg:px-0 flex items-center justify-between">
@@ -44,7 +44,14 @@ const Navbar = (props: Props) => {
                 }}
               ></div>
             </PopoverButton>
-            <Transition enter="transition ease-out duration-100" leave="transition ease-in duration-75" enterFrom="opacity-0 scale-95" enterTo="opacity-100 scale-100" leaveFrom="opacity-100 scale-100" leaveTo="opacity-0 scale-95">
+            <Transition
+              enter="transition ease-out duration-100"
+              leave="transition ease-in duration-75"
+              enterFrom="opacity-0 scale-95"
+              enterTo="opacity-100 scale-100"
+              leaveFrom="opacity-100 scale-100"
+              leaveTo="opacity-0 scale-95"
+            >
               <PopoverPanel
                 className="w-48 absolute z-10 bg-white/60 backdrop-blur-sm shadow-xl drop-shadow-lg rounded-md"
                 anchor={"bottom end"}
@@ -68,7 +75,10 @@ const Navbar = (props: Props) => {
                   >
                     Account Settings
                   </Link>
-                  <button className="text-red-800 p-3 hover:bg-red-500/30 flex items-center gap-2 text-red cursor-pointer color-transition">
+                  <button
+                    className="text-red-800 p-3 hover:bg-red-500/30 flex items-center gap-2 text-red cursor-pointer color-transition"
+                    onClick={() => logout()}
+                  >
                     <LogOut className="inline h-4" strokeWidth={1} />
                     <span>Logout</span>
                   </button>

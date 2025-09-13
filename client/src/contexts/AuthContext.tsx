@@ -2,6 +2,7 @@ import React, { createContext, useState, useEffect, useCallback } from "react";
 import { toast } from "react-hot-toast";
 import { api, AxiosErrorWithResponse } from "../shared/services/api";
 import type { User, AuthContextType } from "../shared/types/auth";
+import { useNavigate } from "react-router-dom";
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -9,7 +10,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
-
+  const navigate = useNavigate();
   // Load user from localStorage on mount
   useEffect(() => {
     const fetchUser = async () => {
@@ -32,6 +33,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const { data: { user } } = await api.post("/auth/register", { email, password, name });
       setUser(user);
       toast.success("Registered successfully");
+      navigate("/");
     } catch (error: unknown) {
       const axiosError = error as AxiosErrorWithResponse;
       toast.error(axiosError.response?.data.message || "Registration failed");
@@ -46,6 +48,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const { data: { user} } = await api.post("/auth/login", { email, password });
       setUser(user);
       toast.success("Logged in successfully");
+      navigate("/");
     } catch (error: unknown) {
       const axiosError = error as AxiosErrorWithResponse;
       toast.error(axiosError.response?.data.message || "Login failed");
@@ -58,6 +61,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     await api.post("/auth/logout");
     toast.success("Logged out successfully");
     setUser(null);
+    navigate("/auth/login");
   }, []);
 
   return (

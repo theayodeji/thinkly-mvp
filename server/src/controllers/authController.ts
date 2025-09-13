@@ -149,11 +149,9 @@ export const refreshToken = async (req: Request, res: Response) => {
 
 export const logout = (req: Request, res: Response) => {
   // Clear tokens from cookies in production
-  if (process.env.NODE_ENV === "production") {
+
     res.clearCookie("accessToken");
     res.clearCookie("refreshToken");
-  }
-
   res.json({ message: "Logged out successfully" });
 };
 

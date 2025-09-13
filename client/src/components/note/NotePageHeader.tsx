@@ -2,7 +2,7 @@ import { Edit, LucideShare2 } from "lucide-react";
 import { Button } from "../ui/Button";
 import { useNoteStore } from "../../store/noteStore";
 
-type Props = {};
+
 
 const NotePageHeader = () => {
   const { currentNote } = useNoteStore();

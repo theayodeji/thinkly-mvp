@@ -92,8 +92,6 @@ export const chat = async(req: Request, res: Response) => {
             return res.status(404).json({ message: "Note not found" });
         }
         const result = await geminiService.generateChat("Content: " + note.content + "\n\n" + "History: " + JSON.stringify(history));
-
-        console.log(result);
         res.status(200).json(JSON.parse(result));
         
     } catch (error: any) {

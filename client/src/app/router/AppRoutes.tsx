@@ -10,7 +10,7 @@ const AppRouter = () => {
   const wrapRoutes = (routes: RouteConfig[]): RouteConfig[] =>
     routes.map((r) => {
       if (r.children) {
-        return {  
+        return {
           ...r,
           children: wrapRoutes(r.children),
         };
@@ -36,5 +36,5 @@ export function AppRoutes() {
   //   );
   // }
 
-  return (!loading && <AppRouter />);
+  return !loading && <AppRouter />;
 }

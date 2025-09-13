@@ -10,13 +10,13 @@ const copySummary = (summary: string) => {
 
 const SummaryBlock = () => {
   const { currentNote, isActionLoading } = useNoteStore();
+
   if (isActionLoading)
     return (
-      <div className="bg-white rounded-md p-2">
-        <div className="animate-pulse flex space-x-4">
-          <div className="flex-1 h-16 bg-gray-200 rounded w-3/4"></div>
-          <div className="h-4 w-16 bg-gray-200 rounded"></div>
-        </div>
+      <div className="flex flex-col bg-white rounded-md p-2 w-full gap-3">
+        <div className="animate-pulse h-6 bg-gray-200 rounded w-full"></div>
+        <div className="animate-pulse h-4 bg-gray-200 rounded w-24"></div>
+        <div className="animate-pulse h-16 bg-gray-200 rounded w-full"></div>
       </div>
     );
 

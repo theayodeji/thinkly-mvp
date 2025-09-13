@@ -11,9 +11,9 @@ import {
   Trash2Icon,
 } from "lucide-react";
 
-type Props = {};
 
-const NoteMenu = (props: Props) => {
+
+const NoteMenu = () => {
 
   return (
     <Popover

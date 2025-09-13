@@ -3,7 +3,7 @@ import React from "react";
 import { useNoteStore } from "../../store/noteStore";
 import { useNavigate } from "react-router-dom";
 
-type Props = {};
+
 
 function NewNoteButton({}: Props) {
 
