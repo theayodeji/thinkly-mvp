@@ -5,7 +5,7 @@ const AuthLayout = () => {
   const { user } = useAuth();
 
   if (user) {
-    return <Navigate to="/" />;
+    return <Navigate to="/notes" />;
   }
   return (
     <div>

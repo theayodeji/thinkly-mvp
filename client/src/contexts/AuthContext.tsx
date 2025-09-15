@@ -32,8 +32,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const { data: { user } } = await api.post("/auth/register", { email, password, name });
       setUser(user);
+      navigate("/notes");
       toast.success("Registered successfully");
-      navigate("/");
     } catch (error: unknown) {
       const axiosError = error as AxiosErrorWithResponse;
       toast.error(axiosError.response?.data.message || "Registration failed");
@@ -47,8 +47,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const { data: { user} } = await api.post("/auth/login", { email, password });
       setUser(user);
+      navigate("/notes");
       toast.success("Logged in successfully");
-      navigate("/");
     } catch (error: unknown) {
       const axiosError = error as AxiosErrorWithResponse;
       toast.error(axiosError.response?.data.message || "Login failed");

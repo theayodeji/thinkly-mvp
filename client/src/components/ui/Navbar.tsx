@@ -3,6 +3,7 @@ import {
   PopoverButton,
   PopoverPanel,
   Transition,
+  useClose,
 } from "@headlessui/react";
 import { Bell, Flame, LogOut, Trophy } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -10,6 +11,7 @@ import { useAuth } from "../../hooks/useAuth";
 
 const Navbar = () => {
   const { logout } = useAuth();
+  const close = useClose();
 
   return (
     <header className="sticky top-0 z-10 border-b-2 border-neutral-100 bg-white/80 backdrop-blur-sm">
@@ -56,33 +58,45 @@ const Navbar = () => {
                 className="w-48 absolute z-10 bg-white/60 backdrop-blur-sm shadow-xl drop-shadow-lg rounded-md"
                 anchor={"bottom end"}
               >
-                <div className="flex flex-col items-stretch justify-stretch cursor-pointer">
-                  <Link
-                    to="/notes"
-                    className="p-3 hover:bg-neutral/50 color-transition"
-                  >
-                    Notes
-                  </Link>
-                  <Link
-                    to="/preferences"
-                    className="p-3 hover:bg-neutral/50 color-transition"
-                  >
-                    Preferences
-                  </Link>
-                  <Link
-                    to="/account-settings"
-                    className="p-3 hover:bg-neutral/50 color-transition"
-                  >
-                    Account Settings
-                  </Link>
-                  <button
-                    className="text-red-800 p-3 hover:bg-red-500/30 flex items-center gap-2 text-red cursor-pointer color-transition"
-                    onClick={() => logout()}
-                  >
-                    <LogOut className="inline h-4" strokeWidth={1} />
-                    <span>Logout</span>
-                  </button>
-                </div>
+                {({ close }) => (
+                  <div className="flex flex-col items-stretch justify-stretch cursor-pointer">
+                    <Link
+                      to="/dashboard"
+                      className="p-3 hover:bg-neutral/50 color-transition"
+                      onClick={() => close()}
+                    >
+                      Dashboard
+                    </Link>
+                    <Link
+                      to="/notes"
+                      className="p-3 hover:bg-neutral/50 color-transition"
+                      onClick={() => close()}
+                    >
+                      Notes
+                    </Link>
+                    <Link
+                      to="/preferences"
+                      className="p-3 hover:bg-neutral/50 color-transition"
+                      onClick={() => close()}
+                    >
+                      Preferences
+                    </Link>
+                    <Link
+                      to="/profile"
+                      className="p-3 hover:bg-neutral/50 color-transition"
+                      onClick={() => close()}
+                    >
+                      Profile
+                    </Link>
+                    <button
+                      className="text-red-800 p-3 hover:bg-red-500/30 flex items-center gap-2 text-red cursor-pointer color-transition"
+                      onClick={() => logout()}
+                    >
+                      <LogOut className="inline h-4" strokeWidth={1} />
+                      <span>Logout</span>
+                    </button>
+                  </div>
+                )}
               </PopoverPanel>
             </Transition>
           </Popover>

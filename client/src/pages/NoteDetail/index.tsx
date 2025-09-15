@@ -4,7 +4,7 @@ import clsx from "clsx";
 import NotePageHeader from "../../components/note/NotePageHeader";
 import SourcesAside from "../../components/note/SourcesAside";
 import ChatInterface from "../../components/note/ChatInterface";
-import TabSelect from "../../components/TabSelect";
+import TabSelect from "../../components/note/TabSelect";
 import { useNoteStore } from "../../store/noteStore";
 
 const NoteDetail: React.FC = () => {

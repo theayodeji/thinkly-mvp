@@ -54,7 +54,18 @@ export default function Chat() {
                 : "bg-white text-gray-800 self-start"
             }`}
           >
-            <ReactMarkdown>{msg.content}</ReactMarkdown>
+            <ReactMarkdown
+              components={{
+                strong: ({ node, ...props }) => (
+                  <strong className="font-semibold text-primary" {...props} />
+                ),
+                li: ({ node, ...props }) => (
+                  <li className="list-disc ml-6" {...props} />
+                ),
+              }}
+            >
+              {msg.content}
+            </ReactMarkdown>
           </div>
         ))}
         {isChatLoading && (

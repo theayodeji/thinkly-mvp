@@ -47,7 +47,7 @@ export default function AddSourceModal({
           onClick={() => setIsOpen(false)}
         />
         <div className=" bg-white p-4 rounded-md shadow-lg drop-shadow-xl w-[95%] max-w-[500px]">
-          <h2 className="text-xl lg:text-2xl font-semibold mb-4">Add Source</h2>
+          <h2 className="text-xl lg:text-2xl font-semibold mb-4">Add a Source</h2>
           <TabGroup>
             <TabList className="flex gap-2 mb-4">
               {tabs.map((tab) => (
