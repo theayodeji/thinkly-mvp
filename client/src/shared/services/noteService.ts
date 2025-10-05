@@ -1,104 +1,66 @@
-import { api } from './api';
-import { Note } from '../types/note';
-import { Source } from '../types/source';
-import { AxiosError } from 'axios';
-import toast from 'react-hot-toast';
-
-interface ApiErrorResponse {
-  message: string;
-  error?: string;
-  statusCode?: number;
-  [key: string]: unknown;
-}
-
-interface ApiResponse<T> {
-  data: T;
-  message?: string;
-  success: boolean;
-}
-
-type AxiosApiError = AxiosError<ApiErrorResponse>;
+import { api } from "./api";
+import { Note } from "../types/note";
+import { Source } from "../types/source";
+import toast from "react-hot-toast";
+import { Quiz } from "../types/quiz";
 
 export const noteService = {
   // Note collection operations
-  getNotes: async (): Promise<{ notes: Note[]}> => {
-    try {
-      const response = await api.get<{ notes: Note[] }>('/notes');
-      return response.data;
-    } catch (error) {
-      const err = error as AxiosApiError;
-      throw new Error(err.response?.data?.message || err.response?.data?.error || 'Failed to fetch notes');
-    }
+  getNotes: async (): Promise<{ notes: Note[] }> => {
+    const response = await api.get<{ notes: Note[] }>("/notes");
+    return response.data;
   },
 
   createNote: async (): Promise<Note> => {
-    try {
-      const response = await api.post<{ note: Note }>('/notes/create');
-      return response.data.note;
-    } catch (error) {
-      const err = error as AxiosApiError;
-      throw new Error(err.response?.data?.message || err.response?.data?.error || 'Failed to create note');
-    }
+    const response = await api.post<{ note: Note }>("/notes/create");
+    return response.data.note;
   },
 
   addSource: async (id: string, source: Partial<Source>): Promise<Source> => {
-    try {
-      const response = await api.post<{ source: Source }>(
-        `/sources/add`, 
-        { noteId: id, ...source }
-      );
-      toast.success('Source added successfully')
-      return response.data.source;
-    } catch (error) {
-      const err = error as AxiosApiError;
-      throw new Error(err.response?.data?.message || err.response?.data?.error || 'Failed to add source');
-    }
+    const response = await api.post<{ source: Source }>(`/sources/add`, {
+      noteId: id,
+      ...source,
+    });
+    toast.success("Source added successfully");
+    return response.data.source;
+  },
+
+  deleteSource: async (id: string): Promise<void> => {
+    await api.delete(`/sources/${id}`);
   },
 
   deleteNote: async (id: string): Promise<void> => {
-    try {
-      await api.delete(`/notes/${id}`);
-    } catch (error) {
-      const err = error as AxiosApiError;
-      throw new Error(err.response?.data?.message || err.response?.data?.error || 'Failed to delete note');
-    }
+    await api.delete(`/notes/delete/${id}`);
   },
 
   // Single note operations
   getNote: async (id: string): Promise<Note> => {
-    try {
-      const response = await api.get<{ note: Note }>(`/notes/${id}`);
-      return response.data.note;
-    } catch (error) {
-      const err = error as AxiosApiError;
-      throw new Error(err.response?.data?.message || err.response?.data?.error || 'Failed to fetch note');
-    }
+    const response = await api.get<{ note: Note }>(`/notes/${id}`);
+    return response.data.note;
   },
 
   updateNote: async (id: string, updates: Partial<Note>): Promise<Note> => {
-    try {
-      const response = await api.patch<{ note: Note }>(
-        `/notes/${id}`, 
-        updates
-      );
-      return response.data.note;
-    } catch (error) {
-      const err = error as AxiosApiError;
-      throw new Error(err.response?.data?.message || err.response?.data?.error || 'Failed to update note');
-    }
+    const response = await api.patch<{ note: Note }>(`/notes/${id}`, updates);
+    return response.data.note;
   },
 
-  chatWithNote: async (noteId: string, message: string, history: { role: 'user' | 'assistant'; content: string }[]): Promise<{ response: string }> => {
-    try {
-      const response = await api.post<{ response: string }>(
-        `/notes/chat`, 
-        { noteId, message, history }
-      );
-      console.log(response.data)
-      return response.data;
-    } catch (error) {
-      const err = error as AxiosApiError;
-      throw new Error(err.response?.data?.message || err.response?.data?.error || 'Failed to get chat response');
-    }
+  chatWithNote: async (
+    noteId: string,
+    message: string,
+    history: { role: "user" | "assistant"; content: string }[]
+  ): Promise<{ response: string }> => {
+    const response = await api.post<{ response: string }>(`/notes/chat`, {
+      noteId,
+      message,
+      history,
+    });
+    console.log(response.data);
+    return response.data;
+  },
+
+  generateQuiz: async (noteId: string): Promise<{ quiz: Quiz }> => {
+    const response = await api.get<{ quiz: Quiz }>(`/quiz/${noteId}/generate`);
+    console.log(response.data);
+    return response.data;
   },
 };

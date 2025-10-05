@@ -2,7 +2,7 @@ import React from "react";
 import NotesGrid from "../../components/notes/NotesGrid";
 import { useAuth } from "../../hooks/useAuth";
 
-const NotesList: React.FC = () => {
+const NotesList = () => {
   const { user, loading } = useAuth();
 
   return (
@@ -14,7 +14,7 @@ const NotesList: React.FC = () => {
         </div>
       ) : (
         <h1 className="text-3xl font-bold mb-6">
-          <span className="text-primary-500">{user?.name?.split(" ")[0]}</span>'s Notes
+          <span className="text-primary-400">{user?.name?.split(" ")[0]}</span>'s Notes
         </h1>
       )}
       <NotesGrid />

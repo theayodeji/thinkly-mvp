@@ -24,7 +24,7 @@ const LoginForm = () => {
   return (
     <div className="md:w-2/3 w-full flex flex-col justify-center items-center">
       <h1 className="text-2xl font-bold">Welcome back Scholar!</h1>
-      <p className="text-sm text-neutral-500 mb-4">
+      <p className="text-sm text-text-secondary mb-4">
         Login to your account to continue
       </p>
       <form
@@ -62,13 +62,13 @@ const LoginForm = () => {
         <div className="w-full flex flex-col items-start mt-2">
           <Link
             to="/auth/forgot-password"
-            className="underline text-primary-500 self-end text-sm mb-2"
+            className="underline text-primary-500 dark:text-primary-400 self-end text-sm mb-2"
           >
             Forgot Password
           </Link>
           <p className="text-sm">
             Don't have an account?{" "}
-            <Link to="/auth/register" className="underline text-primary-500">
+            <Link to="/auth/register" className="underline text-primary-500 dark:text-primary-400">
               Register
             </Link>
           </p>

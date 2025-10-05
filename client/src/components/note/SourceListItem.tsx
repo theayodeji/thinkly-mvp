@@ -15,10 +15,10 @@ const SourceListItem = ({ source }: { source: Source }): JSX.Element => {
         {source.type === "image" && <Image />}
       </div>
       <div className="w-3/4">
-        <p className="font-medium text-gray-800 max-w-[80%] truncate">
+        <p className="font-medium text-text max-w-[80%] truncate">
           {source.name || source.file_url || "Untitled Source"}
         </p>
-        <p className="text-sm text-dark">
+        <p className="text-sm text-text-secondary">
           {source.type[0].toUpperCase() + source.type.slice(1)}
         </p>
       </div>

@@ -16,9 +16,10 @@ export interface INote extends Document {
   sources: Types.ObjectId[];
   userId: Types.ObjectId;
   summary: string;
+  quiz?: Types.ObjectId;
+  chatSuggestions?: string[];
   createdAt: Date;
   updatedAt: Date;
-  quizzes?: Types.ObjectId[];
 }
 
 export interface ISource extends Document {
@@ -28,6 +29,21 @@ export interface ISource extends Document {
   text?: string;
   noteId: Types.ObjectId;
   status: "parsing" | "parsed" | "error";
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface IQuizQuestion {
+  question: string;
+  options: string[];
+  correctAnswer: number;
+  explanation: string;
+}
+
+export interface IQuiz extends Document {
+  userId: Types.ObjectId;
+  noteId: Types.ObjectId;
+  questions: IQuizQuestion[];
   createdAt: Date;
   updatedAt: Date;
 }

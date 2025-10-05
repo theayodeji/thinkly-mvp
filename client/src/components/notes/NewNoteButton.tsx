@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 
 
-function NewNoteButton({}: Props) {
+function NewNoteButton() {
 
   const navigate = useNavigate();
   const { createNote } = useNoteStore();

@@ -29,6 +29,7 @@ export const PomodoroProvider: React.FC<{ children: ReactNode }> = ({ children }
 
   // Timer effect
   useEffect(() => {
+    // @ts-expect-error NodeJS namespace will be found by tsc
     let interval: NodeJS.Timeout | null = null;
 
     if (isActive && timeLeft > 0) {
@@ -103,6 +104,7 @@ export const PomodoroProvider: React.FC<{ children: ReactNode }> = ({ children }
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const usePomodoro = (): PomodoroContextType => {
   const context = useContext(PomodoroContext);
   if (context === undefined) {
@@ -110,3 +112,5 @@ export const usePomodoro = (): PomodoroContextType => {
   }
   return context;
 };
+
+

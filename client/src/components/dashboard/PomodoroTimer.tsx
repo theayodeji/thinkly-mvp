@@ -28,7 +28,7 @@ const PomodoroTimer: React.FC = () => {
   return (
     <div>
       <h3 className="text-xl font-bold mb-4">Pomodoro Timer</h3>
-      <div className="card p-6 text-center bg-primary-500/5 dark:bg-primary-500/10 rounded-md">
+      <div className="card p-6 text-center bg-bg/60 dark:bg-bg/60 rounded-md">
         <div className="relative w-40 h-40 mx-auto mb-6">
           <svg className="w-full h-full" viewBox="0 0 100 100">
             <circle

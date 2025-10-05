@@ -8,6 +8,7 @@ import connectDB from './config/db.js';
 import noteRoutes from './routes/noteRoutes.js';
 import sourceRoutes from './routes/sourceRoutes.js';
 import cookieParser from 'cookie-parser';
+import quizRoutes from './routes/quizRoutes.js';
 
 // dotenv.config();
 const app = express();
@@ -32,6 +33,7 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/notes', noteRoutes);
 app.use('/api/sources', sourceRoutes);
+app.use('/api/quiz', quizRoutes);
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   console.error(err.stack);

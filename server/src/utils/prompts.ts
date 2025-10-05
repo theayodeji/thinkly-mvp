@@ -10,6 +10,7 @@ export interface PromptTemplates {
   title: string;
   quiz: string;
   chat: string;
+  chatSuggestions: string;
 }
 
 export interface SummaryResponse {
@@ -18,6 +19,10 @@ export interface SummaryResponse {
 
 export interface TitleResponse {
   title: string;
+}
+
+export interface ChatSuggestionsResponse {
+  questions: string[];
 }
 
 export const PROMPT_TEMPLATES: PromptTemplates = {
@@ -44,17 +49,17 @@ Anything including \`\`\`json\`\`\` or \`\`\`JSON\`\`\` should not be included.
 Here is the note/source text:
   `,
 
-  quiz: `Create 10-15 multiple choice questions based on the following text. Respond with a valid JSON array where each question has:
+  quiz: `Create 15 multiple choice questions based on the following text. Respond with a valid JSON array where each question has:
   - 'question': The question text
   - 'options': Array of 4 answer choices
-  - 'correctIndex': Index of the correct answer (0-3)
+  - 'correctAnswer': Index of the correct answer (0-3)
   - 'explanation': Brief explanation of the correct answer
 Example format:
 [
   {
     "question": "...",
     "options": ["...", "...", "...", "..."],
-    "correctIndex": 0,
+    "correctAnswer": 0,
     "explanation": "..."
   }
 ]
@@ -91,6 +96,27 @@ Example of valid response:
 Before sending the response, make sure it is valid JSON that will return a valid output using Javascript's JSON.parse() and make sure only '' is used when using quotes.
 
 Here is the note text and message history in json format:
+`,
+
+chatSuggestions: `Generate 3 questions that the user can ask about his note text.
+
+1. **Output format.** Your response MUST be a valid JSON object with a single key "response". The value should be your message as a string. Do not include any markdown formatting or code blocks. NEVER EVER USE \` OR " FOR QUOTES, USE ONLY '.
+2. Questions must be 6 words or less.
+
+IMPORTANT: The entire response must be valid JSON that will return a valid output using Javascript's JSON.parse(). Do not include any other text outside the JSON object. Do not use backticks or markdown code blocks.
+
+Example of valid response:
+{
+  "questions": [
+    "Question 1",
+    "Question 2",
+    "Question 3"
+  ]
+}
+
+Before sending the response, make sure it is valid JSON that will return a valid output using Javascript's JSON.parse() and make sure only '' is used when using quotes.
+
+Here is the note text:
 `,
 
 };

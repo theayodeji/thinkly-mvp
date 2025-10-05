@@ -11,9 +11,9 @@ const NoSource = ({setIsSourceModalOpen} : Props) => {
       <LucideBookX className="w-18 h-18 text-neutral-400" strokeWidth={1} />
       <p className="text-neutral-400">No sources added yet</p>
       <Button
-        variant="primary"
-        className="rounded-full border-2"
-        icon={<Plus />}
+        variant="ghost"
+        className="border-2 outline "
+        icon={<Plus className="h-4 w-4"/>}
         onClick={() => setIsSourceModalOpen(true)}
       >
         Add

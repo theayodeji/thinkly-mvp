@@ -25,7 +25,7 @@ const RegisterForm = () => {
     <div className="md:w-2/3 w-full flex flex-col justify-center items-center">
       {/* <img src="/thinkly-black.png" alt="Thinkly" className="w-64" /> */}
       <h1 className="text-2xl font-bold">Hello <span className="text-primary-500">Scholar</span>!</h1>
-      <p className="text-sm text-neutral-500 mb-4">
+      <p className="text-sm text-text-secondary mb-4">
         Register to create an account
       </p>
       <form

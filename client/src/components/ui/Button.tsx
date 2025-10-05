@@ -1,6 +1,6 @@
 import React from "react";
-import clsx from "clsx";
 import { LoaderCircle } from "lucide-react";
+import { cn } from "../../shared/utils/cn";
 
 type ButtonProps = {
   children: React.ReactNode;
@@ -53,7 +53,7 @@ export function Button({
       type={type}
       onClick={onClick}
       disabled={disabled || loading}
-      className={clsx(
+      className={cn(
         baseStyles,
         variantStyles[variant],
         sizeStyles[size],

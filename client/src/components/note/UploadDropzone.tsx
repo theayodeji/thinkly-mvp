@@ -9,8 +9,8 @@ import toast from "react-hot-toast";
 
 const UploadDropzone = ({setIsOpen}: {setIsOpen: (isOpen: boolean) => void}) => {
   const [acceptedFiles, setAcceptedFiles] = useState<File[]>([]);
-  const { extractFromFile, text, loading, error } = usePdfTextExtractor();
-  const { addSource,currentNote, isActionLoading, } = useNoteStore();
+  const { extractFromFile, loading, error } = usePdfTextExtractor();
+  const { addSource,currentNote } = useNoteStore();
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     setAcceptedFiles(acceptedFiles);

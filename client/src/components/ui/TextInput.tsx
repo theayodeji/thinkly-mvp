@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import clsx from "clsx";
 import { Eye, EyeOff } from "lucide-react";
+import { cn } from "../../shared/utils/cn";
 
 type TextInputProps = React.InputHTMLAttributes<HTMLInputElement> & {
   label?: string;
@@ -25,13 +26,13 @@ export const TextInput = React.forwardRef<HTMLInputElement, TextInputProps>(
             ref={ref}
             type={inputType}
             {...props}
-            className={clsx(
-              "w-full px-2 py-1 rounded-lg border border-neutral-300 bg-bg placeholder:text-neutral-400",
+            className={cn(clsx(
+              "w-full px-2 py-2 rounded-lg border-2 border-border/80 bg-bg placeholder:text-neutral-400",
               "focus:outline-none focus:shadow-lg focus:shadow-primary-500/10 transition-[box-shadow,border-color] duration-300",
               error && "border-danger focus:ring-danger",
               isPassword && "pr-9", // make space for the icon
               className
-            )}
+            ))}
           />
 
           {isPassword && (

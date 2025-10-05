@@ -29,6 +29,7 @@ export const addSource = async (req: Request, res: Response) => {
 
     const { title } = await geminiService.generateTitle(source.text || "");
     const { summary } = await geminiService.generateSummary(source.text || "");
+    const { questions } = await geminiService.generateChatSuggestions(source.text || "");
     source.name = source.name || title;
 
     // Find the note and lock it for update
@@ -50,6 +51,8 @@ export const addSource = async (req: Request, res: Response) => {
     // Update the note with the new source
     note.sources.push(newSource._id as Types.ObjectId);
     note.content = (note.content || "") + "\n" + source.text;
+    console.log(questions)
+    note.chatSuggestions = [...(note.chatSuggestions || []), ...questions];
 
     // Generate title if this is the first source
     if (note.sources.length === 1) {

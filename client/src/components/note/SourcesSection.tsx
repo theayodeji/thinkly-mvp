@@ -2,17 +2,20 @@ import { Plus } from "lucide-react";
 import SourceList from "./SourceList";
 import AddSourceModal from "./AddSourceModal";
 import { useState, memo } from "react";
+import { Button } from "../ui/Button";
 
 const SourcesHeader = ({ onAddClick }: { onAddClick: () => void }) => (
   <div className="flex justify-between items-center mb-4">
-    <h3 className="text-lg font-semibold text-gray-800">Sources</h3>
-    <button 
+    <h3 className="text-lg font-semibold text-text">Sources</h3>
+    <Button 
       onClick={onAddClick}
-      className="text-sm text-gray-600"
+      className=""
       aria-label="Add source"
+      variant="primary"
+      icon={<Plus className="h-4 w-4"/>}
     >
-      <Plus className="text-white bg-gradient-primary cursor-pointer p-1 rounded-full"/>
-    </button>
+      Add
+    </Button>
   </div>
 );
 

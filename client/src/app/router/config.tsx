@@ -18,7 +18,7 @@ export const routeConfig: RouteConfig[] = [
     element: <MainLayout />,
     children: [
       { path: routes.home, element: <Home />, protected: false },
-      { path: routes.dashboard, element: <Dashboard />, protected: true },
+      { path: routes.dashboard, element: <Dashboard />, protected: true, },
       { path: routes.notes.root, element: <NotesList />, protected: true },
       {
         path: routes.notes.note(":id"),

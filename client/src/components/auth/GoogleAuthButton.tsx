@@ -12,7 +12,7 @@ const GoogleAuthButton = () => {
     <Button
       onClick={handleGoogleAuth}
       variant="ghost"
-      className="w-full max-w-md mt-2 border-1 border-neutral"
+      className="text-text w-full max-w-md mt-2 border-2 border-border"
     >
       <img src="/google.webp" alt="Google" className="mr-2 h-4 w-4 inline" />
       Login with Google

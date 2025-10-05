@@ -11,8 +11,8 @@ type NoteListItemProps = {
 
 const NoteListItem: React.FC<NoteListItemProps> = ({ id, title, sourceCount, updatedAt }) => {
   return (
-    <Link to={`/notes/${id}`} className="card px-4 py-6 rounded-md bg-white flex items-center gap-4 hover:shadow-md transition-shadow">
-      <div className="w-16 h-16 rounded-lg bg-primary-50 dark:bg-primary-900/30 flex items-center justify-center flex-shrink-0">
+    <Link to={`/notes/${id}`} className="card px-4 py-6 rounded-md bg-bg dark:hover:bg-neutral/30 duration-300 flex items-center gap-4 hover:shadow-md transition-[background-color, shadow]">
+      <div className="md:w-16 md:h-16 w-8 h-8 rounded-lg bg-primary-50 dark:bg-primary-900/30 flex items-center justify-center flex-shrink-0">
         <FileText className="w-6 h-6 text-primary-600 dark:text-primary-400" />
       </div>
       <div className="flex-1 min-w-0">

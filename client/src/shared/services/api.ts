@@ -1,4 +1,5 @@
 import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from "axios";
+import toast from "react-hot-toast";
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? "http://localhost:4000/api",
@@ -31,7 +32,14 @@ api.interceptors.response.use(
         console.error("Token refresh failed:", refreshError);
       }
     }
-
+    // if (error.code === "ERR_NETWORK") {
+    //   toast.error("Network error, please try again");
+    // }
+    if (error.code === "ERR_BAD_RESPONSE") {
+      toast.error("Something's wrong but its not your fault");
+    }
+    
     return Promise.reject(error);
   }
 );
+

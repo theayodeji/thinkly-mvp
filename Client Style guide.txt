@@ -17,3 +17,5 @@ Example:
 
 TODO: Eventually store only the id of notes in the store rather than the whole notes
 TODO: Add a feature where the user can select from 3 different tones of replies 
+TODO: Remove padding from wrapper utility class
+TODO: Study goals feature

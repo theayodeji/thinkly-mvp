@@ -13,7 +13,7 @@ const SummaryBlock = () => {
 
   if (isActionLoading)
     return (
-      <div className="flex flex-col bg-white rounded-md p-2 w-full gap-3">
+      <div className="flex flex-col bg-white dark:bg-neutral-600 rounded-md p-2 w-full gap-3">
         <div className="animate-pulse h-6 bg-gray-200 rounded w-full"></div>
         <div className="animate-pulse h-4 bg-gray-200 rounded w-24"></div>
         <div className="animate-pulse h-16 bg-gray-200 rounded w-full"></div>
@@ -21,22 +21,22 @@ const SummaryBlock = () => {
     );
 
   return (
-    <div className="bg-white rounded-md p-2">
-      <h3 className="font-medium text-gray-800 text-wrap md:text-lg">
+    <div className="bg-bg rounded-md p-2 mb-8">
+      <h3 className="font-medium text-text text-wrap md:text-lg">
         {currentNote?.title || "Untitled Note"}
         <Button
           variant="primary"
           size="icon"
-          className="ml-2 rounded-[100%] scale-80 sm:scale-100"
+          className="ml-2 scale-80 sm:scale-100"
         >
           <WandSparkles className="inline h-5" />
         </Button>
       </h3>
-      <p className="text-xs text-gray-400 italic">
+      <p className="text-xs text-text-secondary italic">
         Based on {currentNote?.sources?.length || 0}{" "}
         {currentNote?.sources?.length === 1 ? "source" : "sources"}
       </p>
-      <p className="text-sm text-gray-800 mt-2">
+      <p className="text-sm text-text mt-2">
         {currentNote?.summary || "Summary will appear here"}
         <Copy
           className="inline ml-1 cursor-pointer text-gray-500 w-4 h-4"

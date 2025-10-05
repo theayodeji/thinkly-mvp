@@ -9,7 +9,8 @@ export type Note = {
   summary: string;
   createdAt: Date;
   updatedAt: Date;
-  quizzes?: string[];
+  quiz?: string;
+  chatSuggestions?: string[];
 };
 
 export type NotePreview = Pick<Note, "_id" | "title" | "sources" | "createdAt">;

@@ -1,6 +1,13 @@
 //routes to create, delete, rename, and toggle include/exclude flags on notes
 import express from "express";
-import { getNotes, createNote, deleteNote, updateNote, getNote, chat } from "../controllers/noteController.js";
+import {
+  getNotes,
+  getNote,
+  createNote,
+  deleteNote,
+  updateNote,
+  chat,
+} from "../controllers/noteController.js";
 import { authenticateJWT } from "../middleware/auth.js";
 const router = express.Router();
 

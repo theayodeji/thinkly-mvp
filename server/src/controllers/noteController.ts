@@ -1,7 +1,9 @@
 import type { Request, Response } from "express";
 import NoteModel from "../models/Note.js";
-import { Types } from "mongoose";
+import mongoose, { Types } from "mongoose";
 import geminiService from "../utils/genai.js";
+import SourceModel from "../models/Source.js";
+import Quiz from "../models/Quiz.js";
 
 export const getNotes = async (req: Request, res: Response) => {
     const userId = req.userId as Types.ObjectId;
@@ -52,7 +54,11 @@ export const deleteNote = async (req: Request, res: Response) => {
         return res.status(400).json({ message: "Invalid note ID" });
     }
     try {
+        const session = await mongoose.startSession();
+        await session.startTransaction();
         await NoteModel.findByIdAndDelete(id, { userId });
+        await SourceModel.deleteMany({ noteId: id });
+        await session.commitTransaction();
         res.status(200).json({ message: "Note deleted" });
     } catch (error: any) {
         console.error("Delete note error:", error);
@@ -99,6 +105,3 @@ export const chat = async(req: Request, res: Response) => {
         res.status(500).json({ message: "Failed to chat" });
     }
 }
-
-
-

@@ -52,6 +52,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } catch (error: unknown) {
       const axiosError = error as AxiosErrorWithResponse;
       toast.error(axiosError.response?.data.message || "Login failed");
+      console.error(axiosError.response?.data.message || "Login failed");
     } finally {
       setIsLoggingIn(false);
     }

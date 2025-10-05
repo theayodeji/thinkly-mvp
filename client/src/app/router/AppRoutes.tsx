@@ -2,7 +2,6 @@ import { useRoutes, Navigate } from "react-router-dom";
 import { routeConfig } from "./config";
 import type { RouteConfig } from "../../shared/types/route";
 import { useAuth } from "../../hooks/useAuth";
-import { Loader } from "lucide-react";
 
 const AppRouter = () => {
   const { user } = useAuth();
@@ -27,14 +26,6 @@ const AppRouter = () => {
 
 export function AppRoutes() {
   const { loading } = useAuth();
-
-  // if (loading) {
-  //   return (
-  //     <div className="flex justify-center items-center h-screen">
-  //       <Loader className="animate-spin text-primary-500" size={24} />
-  //     </div>
-  //   );
-  // }
 
   return !loading && <AppRouter />;
 }

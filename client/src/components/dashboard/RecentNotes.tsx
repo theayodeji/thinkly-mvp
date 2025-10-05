@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 import { ArrowUpRight } from "lucide-react";
 
 const RecentNotes = () => {
-  const { notes, isNotesLoading, getNotes } = useNoteStore();
+  const { notes, isNotesLoading, getNotes } = useNoteStore((state) => state);
 
   useEffect(() => {
     getNotes();
@@ -28,10 +28,7 @@ const RecentNotes = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-4">
         <div className="lg:col-span-2 space-y-4">
           {[1, 2, 3].map((i) => (
-            <div
-              key={i}
-              className="h-24 bg-muted/20 animate-pulse rounded-lg"
-            ></div>
+            <div key={i} className="h-24 bg-bg animate-pulse rounded-lg"></div>
           ))}
         </div>
       </div>
@@ -41,10 +38,14 @@ const RecentNotes = () => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-4">
       <div className="lg:col-span-2 space-y-8">
+        <LearningProgress />
         <div>
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center mb-3">
             <h3 className="text-xl font-bold">Recent Notes</h3>
-            <Link to={"/notes"} className="flex items-center group hover:underline">
+            <Link
+              to={"/notes"}
+              className="flex items-center group hover:underline"
+            >
               <span>See all</span>
               <ArrowUpRight className="text-primary-500 inline h-5 w-5 group-hover:-translate-y-0.5 duration-200 transition-transform" />
             </Link>
@@ -63,14 +64,12 @@ const RecentNotes = () => {
                 />
               ))
             ) : (
-              <p className="text-muted-foreground">
+              <p className="text-text-secondary">
                 No notes yet. Create your first note to get started!
               </p>
             )}
           </div>
         </div>
-
-        <LearningProgress />
       </div>
 
       <div className="space-y-8">

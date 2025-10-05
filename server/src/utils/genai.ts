@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI, type GenerateContentResult } from "@google/generative-ai";
 import type { 
+  ChatSuggestionsResponse,
   PromptType, 
   QuizQuestion, 
   SummaryResponse, 
@@ -80,6 +81,9 @@ class GeminiService {
 
   public async generateQuiz(content: string): Promise<QuizQuestion[]> {
     return this.processPrompt<QuizQuestion[]>("quiz", content, true);
+  }
+  public async generateChatSuggestions(content: string): Promise<ChatSuggestionsResponse> {
+    return this.processPrompt<ChatSuggestionsResponse>("chatSuggestions", content, true);
   }
 }
 
