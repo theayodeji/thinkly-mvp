@@ -45,7 +45,7 @@ const ChatSuggestions = ({
               <motion.div
                 key={question}
                 className="h-8 bg-gradient-primary border border-neutral-300 rounded-md text-white cursor-pointer flex items-center justify-start px-2 whitespace-nowrap snap-center hover:opacity-90 transition-all"
-                onClick={() => chatWithNote(id, question)}
+                onClick={() => chatWithNote(question, id)}
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: -20, opacity: 0 }}

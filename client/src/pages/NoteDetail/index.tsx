@@ -14,7 +14,8 @@ const NoteDetail: React.FC = () => {
     "chat"
   );
 
-  const { getNote } = useNoteStore();
+  const getNote = useNoteStore(s => s.getNote);
+  console.log("rerender");
 
   useEffect(() => {
     if (id) getNote(id);

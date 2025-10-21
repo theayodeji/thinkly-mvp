@@ -1,4 +1,5 @@
 import React from 'react';
+import { useAuth } from '../../hooks/useAuth';
 
 type ProgressItem = {
   id: string;
@@ -8,10 +9,13 @@ type ProgressItem = {
 };
 
 const LearningProgress: React.FC = () => {
+
+  const { user } = useAuth();
+
   const progressItems: ProgressItem[] = [
-    { id: 'streak', icon: '🔥', value: '5 days', label: 'Streak' },
-    { id: 'achievements', icon: '🏆', value: '12', label: 'Achievements' },
-    { id: 'medals', icon: '🏅', value: '3', label: 'Medals' },
+    { id: 'streak', icon: '🔥', value: user?.streaks?.current || 0, label: 'Streak' },
+    { id: 'achievements', icon: '🏆', value: user?.badges?.length || 0, label: 'Achievements' },
+    { id: 'medals', icon: '🏅', value: user?.badges?.length || 0, label: 'Medals' },
   ];
 
   return (
@@ -21,7 +25,7 @@ const LearningProgress: React.FC = () => {
         {progressItems.map((item) => (
           <div key={item.id} className="card p-4 text-center rounded-xl bg-bg/70">
             <p className="text-sm md:text-3xl font-bold">{item.icon}</p>
-            <p className="font-semibold">{item.value}</p>
+            <p className="font-semibold">{item.value + (item.id ==='streak' ? item.value === 1 ? ' day' : ' days' : '')}</p>
             <p className="text-xs md:text-sm text-muted-foreground">{item.label}</p>
           </div>
         ))}

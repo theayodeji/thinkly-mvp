@@ -26,6 +26,17 @@ const userSchema = new Schema<IUser, IUserModel>(
       unique: true, 
       sparse: true // Allows null values for non-Google users
     },
+    streaks: {
+      current: Number,
+      longest: Number,
+      lastActive: Date,
+    },
+    badges: [{
+      id: String, // e.g. "gold_streak_badge"
+      title: String,
+      level: String, // bronze, silver, gold, platinum
+      earnedAt: Date,
+    }],
   },
   { 
     timestamps: true

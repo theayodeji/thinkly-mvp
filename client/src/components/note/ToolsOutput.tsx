@@ -4,7 +4,9 @@ import QuizDrawer from "./QuizDrawer";
 import QuizContainer from "./QuizContainer";
 
 const ToolsOutput = () => {
-  const { currentNote, isQuizLoading } = useNoteStore();
+  const isQuizLoading = useNoteStore((state) => state.isQuizLoading);
+  const currentNote = useNoteStore((state) => state.currentNote);
+
 
   if (!currentNote) return null;
   return (

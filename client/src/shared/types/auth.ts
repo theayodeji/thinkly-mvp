@@ -3,6 +3,25 @@ export interface User {
     name: string;
     email: string;
     avatar?: string;
+    streaks: {
+        current: number;
+        longest: number;
+        lastActive: Date;
+    };
+    achievements: [{
+        id: String, // unique identifier, e.g. "first_quiz_completed"
+        title: String,
+        description: String,
+        icon: String,
+        earnedAt: Date,
+      }],
+
+      badges: [{
+        id: String, // e.g. "gold_streak_badge"
+        title: String,
+        level: String, // bronze, silver, gold, platinum
+        earnedAt: Date,
+      }],
   }
   
   export interface AuthContextType {

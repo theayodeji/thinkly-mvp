@@ -6,6 +6,25 @@ export interface IUser extends Document {
   email: string;
   password?: string;  // Optional for OAuth users
   googleId?: string;  // Google OAuth ID
+  streaks: {
+    current: number;
+    longest: number;
+    lastActive: Date;
+  };
+  achievements: [{
+    id: String, // unique identifier, e.g. "first_quiz_completed"
+    title: String,
+    description: String,
+    icon: String,
+    earnedAt: Date,
+  }],
+
+  badges: [{
+    id: String, // e.g. "gold_streak_badge"
+    title: String,
+    level: String, // bronze, silver, gold, platinum
+    earnedAt: Date,
+  }],
   createdAt: Date;
   updatedAt: Date;
 }
@@ -46,4 +65,14 @@ export interface IQuiz extends Document {
   questions: IQuizQuestion[];
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface Event {
+  type: "login_streak_incremented" | "quiz_completed" | "quiz_perfect_score" | "note_added" | "question_asked" | "study_session_completed";
+  userId: Types.ObjectId;
+  metadata?: Record<string, any>;
+}
+
+export interface IEvent extends Document, Event {
+  createdAt: Date;
 }

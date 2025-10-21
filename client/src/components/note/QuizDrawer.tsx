@@ -8,17 +8,16 @@ import {
   DialogTrigger,
 } from "@radix-ui/react-dialog";
 import { BadgeQuestionMark, X } from "lucide-react";
-import { useClose } from "@headlessui/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { CloseButtonWithWarning } from "./CloseButtonWithWarning";
 import { useQuizStore } from "../../store/quizStore";
+import QuizContainer from "./QuizContainer";
 
 interface QuizDrawerProps {
   children?: React.ReactNode;
 }
 
 const QuizDrawer = ({ children }: QuizDrawerProps) => {
-  const close = useClose();
   const [open, setIsOpen] = useState(false);
   const status = useQuizStore((s) => s.status);
 
@@ -54,13 +53,25 @@ const QuizDrawer = ({ children }: QuizDrawerProps) => {
                     </CloseButtonWithWarning>
                   ) : (
                     <DialogClose asChild>
-                      <X className="rounded-full p-2 bg-bg-secondary hover:bg-bg-secondary/80 text-text-secondary w-10 h-10 cursor-pointer z-100" />
+                      <button
+                        onClick={() => setIsOpen(false)}
+                        className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
                     </DialogClose>
                   )}
                 </div>
-
-                <div className="flex-1 flex flex-col items-center justify-center overflow-y-auto">
-                  {children}
+                <div className="flex-1 overflow-y-auto flex items-center justify-center">
+                  {React.Children.map(children, (child) => {
+                    if (React.isValidElement<{ onClose?: () => void }>(child) && child.type === QuizContainer) {
+                      return React.cloneElement(child, { 
+                        ...child.props, 
+                        onClose: () => setIsOpen(false) 
+                      });
+                    }
+                    return child;
+                  })}
                 </div>
               </motion.div>
             </DialogContent>

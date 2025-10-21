@@ -1,16 +1,33 @@
-import { useEffect, useRef, useState } from "react";
-import { Button } from "../ui/Button";
-import { SendIcon } from "lucide-react";
+import { useCallback, useEffect, useRef, memo } from "react";
+import ChatInput from "./ChatInput";
 import SummaryBlock from "./SummaryBlock";
 import { useNoteStore } from "../../store/noteStore";
 import { useStreaming } from "../../hooks/useStreaming";
-import ChatSuggestions from "./ChatSuggestions";
 import ChatMessage from "./ChatMessage";
 
-export default function Chat() {
-  const { currentNote, isChatLoading, chatWithNote, chatHistory, clearChat, isActionLoading } =
-    useNoteStore();
-  const [input, setInput] = useState("");
+// Memoize the loading indicator to prevent unnecessary re-renders
+const LoadingIndicator = memo(() => (
+  <div className="max-w-[80%] px-3 py-2 rounded-lg text-sm text-wrap bg-bg text-text self-start">
+    <div className="flex space-x-2">
+      <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce"></div>
+      <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce delay-100"></div>
+      <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce delay-200"></div>
+    </div>
+  </div>
+));
+
+LoadingIndicator.displayName = 'LoadingIndicator';
+
+function ChatInterface() {
+  const { 
+    currentNote, 
+    isChatLoading, 
+    chatHistory, 
+    clearChat, 
+    isActionLoading,
+    chatWithNote 
+  } = useNoteStore();
+  
   const chatBoxRef = useRef<HTMLDivElement>(null);
 
   // Streaming of the latest assistant message
@@ -20,32 +37,40 @@ export default function Chat() {
     autoScrollRef: chatBoxRef,
   });
 
-  const handleSend = () => {
-    if (!input.trim()) return;
-    const message = input.trim();
-    setInput("");
-
-    chatWithNote(currentNote?._id as string, message).then(() => {
-      // Scroll again after the response is received
-      requestAnimationFrame(() => {
-        chatBoxRef.current?.scrollTo({
-          top: chatBoxRef.current.scrollHeight,
-          behavior: "smooth",
-        });
-      });
-    });
-    
+  const scrollToBottom = useCallback(() => {
     requestAnimationFrame(() => {
       chatBoxRef.current?.scrollTo({
         top: chatBoxRef.current.scrollHeight,
         behavior: "smooth",
       });
     });
-  };
+  }, []);
 
+  const handleSend = useCallback((message: string) => {
+    if (!message.trim() || !currentNote?._id) return;
+    
+    // Initial scroll
+    scrollToBottom();
+    // chatWithNote(currentNote._id, message);
+    // The actual chat operation is now handled in ChatInput
+  }, [currentNote?._id, scrollToBottom, chatWithNote]);
+
+  // Clean up on unmount
   useEffect(() => {
     return () => clearChat();
   }, [clearChat]);
+
+  // Memoize the chat messages to prevent re-renders when only the input changes
+  const renderedMessages = useCallback(() => {
+    return chatHistory.map((msg, i) => (
+      <ChatMessage
+        key={`${msg.role}-${i}`}
+        message={msg}
+        isStreaming={streamingIndex === i && msg.role === "assistant"}
+        streamedText={streamedText}
+      />
+    ));
+  }, [chatHistory, streamingIndex, streamedText]);
 
   return (
     <div className="flex flex-col h-full">
@@ -54,59 +79,18 @@ export default function Chat() {
         className="flex-1 flex flex-col overflow-y-auto p-4 space-y-3 pb-10"
       >
         <SummaryBlock />
-        {/* Messages */}
-        {chatHistory.map((msg, i) => (
-          <ChatMessage
-            key={`${msg.role}-${i}`}
-            message={msg}
-            isStreaming={streamingIndex === i && msg.role === "assistant"}
-            streamedText={streamedText}
-          />
-        ))}
-        {isChatLoading && (
-          <div className="max-w-[80%] px-3 py-2 rounded-lg text-sm text-wrap bg-bg text-text self-start">
-            {/* three circle bounce animation with delay*/}
-            <div className="flex space-x-2">
-              <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce"></div>
-              <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce delay-100"></div>
-              <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce delay-200"></div>
-            </div>
-          </div>
-        )}
+        {renderedMessages()}
+        {isChatLoading && <LoadingIndicator />}
       </div>
 
-      {/* Input */}
-      <div className="rounded-b-lg border-1 border-neutral-300 dark:border-neutral-700 sm:px-4 sm:py-4 px-2 py-2 flex items-end gap-2 relative">
-        <textarea
-          className="bg-bg flex-1 rounded-lg border border-neutral-300 dark:border-neutral-800 px-3 py-2 text-sm focus:outline-none focus:ring-none focus:bg-bg/50 resize-none min-h-[36px] max-h-[150px] leading-tight transition-all duration-200"
-          placeholder="Ask anything..."
-          value={input}
-          onChange={(e) => {
-            setInput(e.target.value);
-            e.target.style.height = "auto";
-            e.target.style.height = `${Math.min(e.target.scrollHeight, 150)}px`;
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              handleSend();
-            }
-          }}
-          rows={1}
-        />
-        <Button
-          variant="primary"
-          size="sm"
-          icon={<SendIcon />}
-          onClick={handleSend}
-          disabled={currentNote?.sources?.length === 0}
-        >
-          Send
-        </Button>
-        {chatHistory.length == 0 && !isActionLoading && (
-          <ChatSuggestions chatWithNote={chatWithNote} />
-        )}
-      </div>
+      <ChatInput 
+        onSend={handleSend}
+        isActionLoading={isActionLoading}
+        chatHistory={chatHistory}
+        currentNoteId={currentNote?._id}
+      />
     </div>
   );
 }
+
+export default memo(ChatInterface);

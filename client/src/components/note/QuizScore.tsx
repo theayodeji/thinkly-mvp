@@ -1,18 +1,19 @@
 import React from "react";
 import { useQuizStore } from "../../store/quizStore";
-import { useClose } from "@headlessui/react";
 import { Button } from "../ui/Button";
 
-type Props = { score: number };
+type Props = { 
+  score: number | undefined | null;
+  onClose?: () => void;
+};
 
-const QuizScore = ({ score }: Props) => {
-  const close = useClose();
-
+const QuizScore = ({ score, onClose }: Props) => {
   const quiz = useQuizStore((s) => s.quiz);
 
-  if (!score) return <h2>Something went wrong</h2>;
+  if (!score && score !== 0) return <h2>Something went wrong</h2>;
 
-  if (score < 8) {
+
+  if (score < 8 && score > 0) {
     return (
       <div className="flex flex-col items-center justify-center">
         <img
@@ -26,12 +27,12 @@ const QuizScore = ({ score }: Props) => {
         <p className="text-xl mb-3">
           You scored {score} out of {quiz?.questions.length}
         </p>
-        <Button onClick={close}>Close</Button>
+        <Button onClick={onClose}>Close</Button>
       </div>
     );
   }
 
-  if (score >= 8)
+  if (score >= 8 && score < 15)
     return (
       <div className="flex flex-col items-center justify-center">
         <img
@@ -45,7 +46,7 @@ const QuizScore = ({ score }: Props) => {
         <p className="text-xl mb-3">
           You scored {score} out of {quiz?.questions.length}
         </p>
-        <Button onClick={close}>Close</Button>
+        <Button onClick={onClose}>Close</Button>
       </div>
     );
   if (score == 15)
@@ -62,9 +63,28 @@ const QuizScore = ({ score }: Props) => {
         <p className="text-xl mb-3">
           You scored {score} out of {quiz?.questions.length}
         </p>
-        <Button onClick={close}>Close</Button>
+        <Button onClick={onClose}>Close</Button>
       </div>
     );
+
+    else 
+      return (
+        <div className="flex flex-col items-center justify-center">
+          <img
+            src="/crash-fail.gif"
+            alt=""
+            className="rounded-md shadow-md mb-4"
+          />
+          <h2 className="text-5xl font-bold mb-3">
+            You can do <span className="text-primary-500">better</span>😢
+          </h2>
+          <p className="text-xl mb-3">
+            You scored {score} out of {quiz?.questions.length}
+          </p>
+          <Button onClick={onClose}>Close</Button>
+        </div>
+      );
+
 };
 
 export default QuizScore;

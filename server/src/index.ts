@@ -1,7 +1,6 @@
-
+import 'dotenv/config'; 
 import express from 'express';
 import type { Request, Response, NextFunction } from 'express';
-// import dotenv from 'dotenv';
 import cors from 'cors';
 import authRoutes from './routes/authRoutes.js';
 import connectDB from './config/db.js';
@@ -10,7 +9,6 @@ import sourceRoutes from './routes/sourceRoutes.js';
 import cookieParser from 'cookie-parser';
 import quizRoutes from './routes/quizRoutes.js';
 
-// dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 // Configure CORS based on environment
