@@ -1,12 +1,19 @@
 import React, { Suspense, lazy } from "react";
-import { Button } from "../../components/ui/Button";
 
 // Lazy load all section components
 const HeroSection = lazy(() => import("../../components/home/HeroSection"));
-const FeaturesSection = lazy(() => import("../../components/home/FeaturesSection"));
-const HowItWorksSection = lazy(() => import("../../components/home/HowItWorksSection"));
-const GamificationSection = lazy(() => import("../../components/home/GamificationSection"));
-const TestimonialsSection = lazy(() => import("../../components/home/TestimonialsSection"));
+const FeaturesSection = lazy(
+  () => import("../../components/home/FeaturesSection")
+);
+const HowItWorksSection = lazy(
+  () => import("../../components/home/HowItWorksSection")
+);
+const GamificationSection = lazy(
+  () => import("../../components/home/GamificationSection")
+);
+const TestimonialsSection = lazy(
+  () => import("../../components/home/TestimonialsSection")
+);
 const CTASection = lazy(() => import("../../components/home/CTASection"));
 const Footer = lazy(() => import("../../components/home/Footer"));
 
@@ -40,4 +47,3 @@ const Home = () => {
 };
 
 export default Home;
-  

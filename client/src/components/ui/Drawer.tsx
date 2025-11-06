@@ -7,30 +7,28 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@radix-ui/react-dialog";
-import { BadgeQuestionMark, X } from "lucide-react";
+import { X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
-import { CloseButtonWithWarning } from "../ui/CloseButtonWithWarning";
-import { useQuizStore } from "../../store/quizStore";
-import QuizContainer from "./QuizContainer";
+import { CloseButtonWithWarning } from "./CloseButtonWithWarning";
 
 interface QuizDrawerProps {
   children?: React.ReactNode;
+  closeType?: "warning" | "normal";
+  trigger: React.ReactNode;
+  title?: string;
 }
 
-const QuizDrawer = ({ children }: QuizDrawerProps) => {
+const QuizDrawer = ({
+  children,
+  closeType,
+  trigger,
+  title,
+}: QuizDrawerProps) => {
   const [open, setIsOpen] = useState(false);
-  const status = useQuizStore((s) => s.status);
 
   return (
     <Dialog open={open} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <div className="flex flex-col gap-3 px-3 py-4 border-2 border-secondary-500/30 dark:border-secondary-500/10 rounded-md cursor-pointer hover:bg-secondary-400/10">
-          <div className="flex gap-2 w-full">
-            <BadgeQuestionMark className="w-6 h-6" />
-            <p>Take Quiz</p>
-          </div>
-        </div>
-      </DialogTrigger>
+      <DialogTrigger asChild>{trigger}</DialogTrigger>
 
       <DialogPortal forceMount>
         <AnimatePresence>
@@ -45,9 +43,9 @@ const QuizDrawer = ({ children }: QuizDrawerProps) => {
               >
                 <div className="flex justify-between items-center mb-6">
                   <DialogTitle className="text-xl font-semibold">
-                    Quiz
+                    {title || "Thinkly Drawer"}
                   </DialogTitle>
-                  {status === "started" ? (
+                  {closeType === "warning" ? (
                     <CloseButtonWithWarning onConfirm={() => setIsOpen(false)}>
                       <X className="rounded-full p-2 bg-bg-secondary hover:bg-bg-secondary/80  text-text-secondary w-10 h-10 cursor-pointer z-100" />
                     </CloseButtonWithWarning>
@@ -63,15 +61,7 @@ const QuizDrawer = ({ children }: QuizDrawerProps) => {
                   )}
                 </div>
                 <div className="flex-1 overflow-y-auto flex items-center justify-center">
-                  {React.Children.map(children, (child) => {
-                    if (React.isValidElement<{ onClose?: () => void }>(child) && child.type === QuizContainer) {
-                      return React.cloneElement(child, { 
-                        ...child.props, 
-                        onClose: () => setIsOpen(false) 
-                      });
-                    }
-                    return child;
-                  })}
+                  {children}
                 </div>
               </motion.div>
             </DialogContent>
