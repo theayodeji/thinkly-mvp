@@ -11,6 +11,7 @@ export interface PromptTemplates {
   quiz: string;
   chat: string;
   chatSuggestions: string;
+  flashcards: string;
 }
 
 export interface SummaryResponse {
@@ -71,7 +72,7 @@ Anything including \`\`\`json\`\`\` or \`\`\`JSON\`\`\` should not be included.
 Here is the note text:
 `,
 
-  chat: `You are a helpful and engaging assistant designed to support students and researchers by answering questions about their study or class notes.
+chat: `You are a helpful and engaging assistant designed to support students and researchers by answering questions about their study or class notes.
 
 Your core task is to act as a conversational expert on the provided text.
 YOUR GOAL IS TO HELP THE USER UNDERSTAND SEEMINGLY DIFFICULT NOTES, CONCEPTS OR TOPICS
@@ -98,7 +99,7 @@ Before sending the response, make sure it is valid JSON that will return a valid
 Here is the note text and message history in json format:
 `,
 
-chatSuggestions: `Generate 3 questions that the user can ask about his note text.
+  chatSuggestions: `Generate 3 questions that the user can ask about his note text.
 
 1. **Output format.** Your response MUST be a valid JSON object with a single key "response". The value should be your message as a string. Do not include any markdown formatting or code blocks. NEVER EVER USE \` OR " FOR QUOTES, USE ONLY '.
 2. Questions must be 6 words or less.
@@ -118,7 +119,7 @@ Before sending the response, make sure it is valid JSON that will return a valid
 
 Here is the note text:
 `,
-
+  flashcards: "Generate a set of flashcards in JSON format as an array of objects like this: [{\"question\": \"\", \"answer\": \"\"}, ...]. The response must be valid JSON that can be directly parsed by JavaScript using JSON.parse(), meaning it should have properly escaped characters, no markdown formatting, and no extra text outside the JSON. Line breaks (\\n) are allowed if they do not break JSON validity. Generate between 10 and 15 flashcards based on the user's notes provided at the end of this prompt. The language of the flashcards should be English.\n\nUser notes:\n"
 };
 
 export type PromptType = keyof PromptTemplates;

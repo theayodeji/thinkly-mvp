@@ -67,6 +67,15 @@ export interface IQuiz extends Document {
   updatedAt: Date;
 }
 
+export interface IFlashcard extends Document {
+  question: string;
+  answer: string;
+  noteId: Types.ObjectId;
+  userId: Types.ObjectId;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export interface Event {
   type: "login_streak_incremented" | "quiz_completed" | "quiz_perfect_score" | "note_added" | "question_asked" | "study_session_completed";
   userId: Types.ObjectId;

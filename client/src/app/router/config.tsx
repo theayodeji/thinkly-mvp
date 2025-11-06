@@ -12,12 +12,14 @@ import Dashboard from "../../pages/Dashboard";
 import NotesList from "../../pages/NotesList";
 import NoteDetail from "../../pages/NoteDetail";
 import Home from "../../pages/Home";
+import InDevelopment from "../../pages/InDevelopment";
 
 export const routeConfig: RouteConfig[] = [
   {
     element: <MainLayout />,
     children: [
       { path: routes.home, element: <Home />, protected: false },
+      { path: routes.inDevelopment, element: <InDevelopment />, protected: false },
       { path: routes.dashboard, element: <Dashboard />, protected: true, },
       { path: routes.notes.root, element: <NotesList />, protected: true },
       {

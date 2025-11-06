@@ -9,4 +9,5 @@ export const routes = {
     root: "/notes",
     note: (id: string) => `/notes/${id}`,
   },
+  inDevelopment: "/in-development",
 } as const;

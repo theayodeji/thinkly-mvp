@@ -85,6 +85,9 @@ class GeminiService {
   public async generateChatSuggestions(content: string): Promise<ChatSuggestionsResponse> {
     return this.processPrompt<ChatSuggestionsResponse>("chatSuggestions", content, true);
   }
+  public async generateFlashcards(content: string): Promise<Array<{ question: string; answer: string }>> {
+    return this.processPrompt<Array<{ question: string; answer: string }>>("flashcards", content, true);
+  }
 }
 
 // Initialize with environment variable

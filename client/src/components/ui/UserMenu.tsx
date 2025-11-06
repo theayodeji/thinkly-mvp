@@ -51,14 +51,14 @@ export const UserMenu = ({ onLogout }: UserMenuProps) => {
                 Notes
               </Link>
               <Link
-                to="/preferences"
+                to="/in-development"
                 className="p-3 hover:bg-neutral/70 color-transition dark:text-white text-black"
                 onClick={() => close()}
               >
                 Preferences
               </Link>
               <Link
-                to="/profile"
+                to="/in-development"
                 className="p-3 hover:bg-neutral/70 color-transition dark:text-white text-black"
                 onClick={() => close()}
               >
