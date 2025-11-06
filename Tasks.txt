@@ -1,0 +1,8 @@
+> Make drawer reusable 
+> Implement flashcards
+> Learning Paths
+> Add file and text size limits
+> create inline event management
+> Optimize auth checks to stop unnecessary requests and re-renders
+> Add a technical dictionary where users can easily lookup words, either via an api or ai prompt
+> Optimize page load times

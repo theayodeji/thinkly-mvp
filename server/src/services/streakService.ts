@@ -4,15 +4,17 @@ import { IUser } from "../types/entities.js";
 import eventBus from "../lib/events/eventBus.js";
 
 export class StreakService {
-  static async handleUpdateStreak(user: IUser, isLogin: boolean) {
+  static async handleUpdateStreak(user: IUser, isExplicitLogin: boolean) {
     try {
       const now = new Date();
       const lastActive = user.streaks?.lastActive;
       const streaks = user.streaks || { current: 0, longest: 0, lastActive: null };
 
+      // Always check for streak updates on any user activity (login or token refresh)
       if (lastActive) {
         if (isSameDay(now, lastActive)) {
-          // Same day, no change to streak
+          // Same day, just update lastActive
+          streaks.lastActive = now;
           return user;
         } else if (isYesterday(lastActive)) {
           // Consecutive day, increment streak
@@ -28,7 +30,8 @@ export class StreakService {
         streaks.longest = 1;
       }
 
-      if (isLogin) streaks.lastActive = now;
+      // Always update lastActive when we see the user
+      streaks.lastActive = now;
       user.streaks = streaks;
 
       // 🏅 Check milestone
