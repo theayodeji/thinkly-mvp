@@ -21,3 +21,6 @@ app.post("/auth/register", async (req, res) => {
     console.log("Register endpoint hit");
     return
 });
+
+
+export default app;

@@ -46,3 +46,5 @@ connectDB().then(() => {
   console.error("❌ Server failed to start:", err);
   process.exit(1);
 });
+
+export default app;
