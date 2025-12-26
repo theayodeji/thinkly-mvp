@@ -37,6 +37,7 @@ export interface INote extends Document {
   summary: string;
   quiz?: Types.ObjectId;
   chatSuggestions?: string[];
+  flashcards: Types.ObjectId[];
   createdAt: Date;
   updatedAt: Date;
 }

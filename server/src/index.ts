@@ -8,6 +8,7 @@ import noteRoutes from './routes/noteRoutes.js';
 import sourceRoutes from './routes/sourceRoutes.js';
 import cookieParser from 'cookie-parser';
 import quizRoutes from './routes/quizRoutes.js';
+import flashcardRoutes from './routes/flashcardRoutes.js';
 import initKeepAlive from './utils/keepAlive.js';
 
 const app = express();
@@ -33,6 +34,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/notes', noteRoutes);
 app.use('/api/sources', sourceRoutes);
 app.use('/api/quiz', quizRoutes);
+app.use('/api/flashcards', flashcardRoutes);
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   console.error(err.stack);

@@ -41,7 +41,7 @@ const QuizDrawer = ({ children }: QuizDrawerProps) => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 420 }}
                 transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="fixed bottom-0 right-0 h-full w-full bg-bg shadow-lg p-6 flex flex-col z-50"
+                className="overflow-y-auto fixed bottom-0 right-0 h-full w-full bg-bg shadow-lg p-6 flex flex-col z-50"
               >
                 <div className="flex justify-between items-center mb-6">
                   <DialogTitle className="text-xl font-semibold">
@@ -62,12 +62,15 @@ const QuizDrawer = ({ children }: QuizDrawerProps) => {
                     </DialogClose>
                   )}
                 </div>
-                <div className="flex-1 overflow-y-auto flex items-center justify-center">
+                <div className="flex-1 flex items-center justify-center">
                   {React.Children.map(children, (child) => {
-                    if (React.isValidElement<{ onClose?: () => void }>(child) && child.type === QuizContainer) {
-                      return React.cloneElement(child, { 
-                        ...child.props, 
-                        onClose: () => setIsOpen(false) 
+                    if (
+                      React.isValidElement<{ onClose?: () => void }>(child) &&
+                      child.type === QuizContainer
+                    ) {
+                      return React.cloneElement(child, {
+                        ...child.props,
+                        onClose: () => setIsOpen(false),
                       });
                     }
                     return child;

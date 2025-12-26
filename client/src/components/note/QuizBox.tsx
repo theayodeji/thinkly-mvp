@@ -19,12 +19,12 @@ const QuizBox = () => {
     tick,
   } = useQuizStore();
 
-    // Timer effect
-    useEffect(() => {
-      if (status !== "started") return;
-      const interval = setInterval(() => tick(), 1000);
-      return () => clearInterval(interval);
-    }, [status, tick]);
+  // Timer effect
+  useEffect(() => {
+    if (status !== "started") return;
+    const interval = setInterval(() => tick(), 1000);
+    return () => clearInterval(interval);
+  }, [status, tick]);
 
   if (isLoading || !quiz) {
     return (
@@ -49,7 +49,7 @@ const QuizBox = () => {
   };
 
   return (
-    <div className="w-4/5 max-w-md">
+    <div className="px-2 max-w-md">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">
           Question {currentQuestion + 1} of {quiz.questions.length}
@@ -107,29 +107,32 @@ const QuizBox = () => {
         >
           Previous
         </button>
-        {currentQuestion < quiz.questions.length - 1 && <button
-          onClick={nextQuestion}
-          disabled={selectedAnswer === null}
-          className={`px-4 py-2 rounded-lg ${
-            selectedAnswer === null 
-              ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-              : "bg-primary-500 text-white hover:bg-primary-600"
-          }`}
-        >
-          Next
-        </button>}
-        {currentQuestion === quiz.questions.length - 1 && <button
-          onClick={submitQuiz}
-          disabled={selectedAnswer === null}
-          className={`px-4 py-2 rounded-lg ${
-            selectedAnswer === null
-              ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-              : "bg-gradient-primary text-white"
-          }`}
-        >
-          Submit
-        </button>}
-
+        {currentQuestion < quiz.questions.length - 1 && (
+          <button
+            onClick={nextQuestion}
+            disabled={selectedAnswer === null}
+            className={`px-4 py-2 rounded-lg ${
+              selectedAnswer === null
+                ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                : "bg-primary-500 text-white hover:bg-primary-600"
+            }`}
+          >
+            Next
+          </button>
+        )}
+        {currentQuestion === quiz.questions.length - 1 && (
+          <button
+            onClick={submitQuiz}
+            disabled={selectedAnswer === null}
+            className={`px-4 py-2 rounded-lg ${
+              selectedAnswer === null
+                ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                : "bg-gradient-primary text-white"
+            }`}
+          >
+            Submit
+          </button>
+        )}
       </div>
     </div>
   );

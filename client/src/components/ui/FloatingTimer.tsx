@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Play, Pause, RefreshCw } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { Play, Pause, StopCircle, Square } from "lucide-react";
 import { usePomodoro } from "../../hooks/usePomodoro";
 import type { TimerMode } from "../../contexts/PomodoroContext";
 import clsx from "clsx";
@@ -16,35 +16,65 @@ const FloatingTimer = () => {
   const handleMouseDown = () => {
     if (!timerRef.current) return;
     setIsDragging(true);
-    document.body.style.userSelect = 'none';
+    document.body.style.userSelect = "none";
+  };
+
+  const handleTouchStart = () => {
+    if (!timerRef.current) return;
+    setIsDragging(true);
+    document.body.style.userSelect = "none";
   };
 
   const handleMouseUp = () => {
     setIsDragging(false);
-    document.body.style.userSelect = '';
+    document.body.style.userSelect = "";
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+    document.body.style.userSelect = "";
   };
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!isDragging) return;
-  
+
       setPosition({
         x: e.clientX - 60,
         y: e.clientY - 60,
       });
-    }; 
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!isDragging) return;
+      e.preventDefault(); // Prevent scrolling while dragging
+
+      const touch = e.touches[0];
+      setPosition({
+        x: touch.clientX - 60,
+        y: touch.clientY - 60,
+      });
+    };
 
     if (isDragging) {
       document.addEventListener("mousemove", handleMouseMove);
       document.addEventListener("mouseup", handleMouseUp);
+      document.addEventListener("touchmove", handleTouchMove, {
+        passive: false,
+      });
+      document.addEventListener("touchend", handleTouchEnd);
     } else {
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
+      document.removeEventListener("touchmove", handleTouchMove);
+      document.removeEventListener("touchend", handleTouchEnd);
     }
 
     return () => {
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
+      document.removeEventListener("touchmove", handleTouchMove);
+      document.removeEventListener("touchend", handleTouchEnd);
     };
   }, [isDragging]);
 
@@ -63,7 +93,7 @@ const FloatingTimer = () => {
         initial={{ opacity: 0, scale: 0 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0 }}
-        transition={{ duration: 0.2 , ease: "easeInOut"}}
+        transition={{ duration: 0.2, ease: "easeInOut" }}
         ref={timerRef}
         className={clsx(
           "w-48 h-48 fixed z-50 rounded-full shadow-lg transition-all duration-300 overflow-hidden transform origin-center",
@@ -76,6 +106,7 @@ const FloatingTimer = () => {
           cursor: isDragging ? "grabbing" : "grab",
         }}
         onMouseDown={handleMouseDown}
+        onTouchStart={handleTouchStart}
         onClick={() => !isDragging && setIsExpanded(!isExpanded)}
       >
         {isExpanded ? (
@@ -105,16 +136,17 @@ const FloatingTimer = () => {
                 className="p-2 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
                 aria-label="Reset"
               >
-                <RefreshCw size={16} />
+                <Square fill="white" size={16} />
               </button>
             </div>
           </div>
         ) : (
           <div className="flex items-center justify-center h-full">
-            <div className="text-white text-5xl font-bold">{formatTime(timeLeft)}</div>
+            <div className="text-white text-5xl font-bold">
+              {formatTime(timeLeft)}
+            </div>
           </div>
         )}
-        {!isExpanded && <p className="absolute bottom-2 left-2 text-dark text-sm">Drag to move</p> }
       </motion.div>
     </AnimatePresence>
   );

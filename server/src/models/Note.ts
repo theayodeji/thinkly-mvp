@@ -23,6 +23,10 @@ const NoteSchema = new mongoose.Schema<INote>(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Quiz'
     },
+    flashcards: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Flashcard'
+    }],
     chatSuggestions: [{ type: String }],
     userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   },

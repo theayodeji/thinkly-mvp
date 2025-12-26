@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
-import { usePomodoro } from '../../contexts/PomodoroContext';
-import toast from 'react-hot-toast';
+import React, { useEffect } from "react";
+import { usePomodoro } from "../../contexts/PomodoroContext";
+import toast from "react-hot-toast";
 
 const PomodoroTimer: React.FC = () => {
   const {
@@ -58,7 +58,7 @@ const PomodoroTimer: React.FC = () => {
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <div className="text-3xl font-bold">{formatTime(timeLeft)}</div>
             <div className="text-sm text-muted-foreground mt-1">
-              {mode === 'work' ? 'Focus Time' : 'Break Time'}
+              {mode === "work" ? "Focus Time" : "Break Time"}
             </div>
           </div>
         </div>
@@ -67,7 +67,7 @@ const PomodoroTimer: React.FC = () => {
             onClick={toggleTimer}
             className="px-6 py-2 bg-gradient-primary text-white font-bold rounded-lg hover:bg-primary/90 transition-colors cursor-pointer"
           >
-            {isActive ? 'Pause' : 'Start'}
+            {isActive ? "Pause" : "Start"}
           </button>
           <button
             onClick={resetTimer}
