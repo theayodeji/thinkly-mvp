@@ -1,18 +1,19 @@
 import { create } from "zustand";
-import { Quiz } from "../shared/types/quiz";
+import { Quiz, QuizQuestion } from "../shared/types/quiz";
 import { api } from "../shared/services/api";
 import toast from "react-hot-toast";
 
-type QuizStatus = "idle" | "started" | "completed";
+type QuizStatus = "idle" | "started" | "completed" | "review";
 
 interface QuizState {
   quiz: Quiz | null;
   currentQuestion: number;
-  answers: (number | null)[];   // null = unanswered
+  answers: (number | null)[]; // null = unanswered
   timeLeft: number;
   status: QuizStatus;
   isLoading: boolean;
   score: number | null;
+  quizAnswers: (QuizQuestion | null)[];
 
   getQuiz: (id: string) => Promise<void>;
   startQuiz: () => void;
@@ -20,6 +21,7 @@ interface QuizState {
   nextQuestion: () => void;
   prevQuestion: () => void;
   submitQuiz: () => Promise<void>;
+  reviewAnswers: () => void;
   resetQuiz: () => void;
   tick: () => void;
 }
@@ -32,6 +34,7 @@ export const useQuizStore = create<QuizState>((set, get) => ({
   status: "idle",
   isLoading: false,
   score: null,
+  quizAnswers: [],
 
   /** Fetch quiz from backend */
   getQuiz: async (id: string) => {
@@ -58,7 +61,6 @@ export const useQuizStore = create<QuizState>((set, get) => ({
       answers: new Array(quiz.questions.length).fill(null), // pre-fill with nulls
       score: null,
     });
-
   },
 
   /** Record answer for current question */
@@ -94,7 +96,11 @@ export const useQuizStore = create<QuizState>((set, get) => ({
     set({ isLoading: true });
     try {
       const response = await api.post(`/quiz/${quiz._id}/submit`, { answers });
-      set({ score: response.data.score, status: "completed" });
+      set({
+        score: response.data.score,
+        quizAnswers: response.data.answers,
+        status: "completed",
+      });
     } catch (error) {
       toast.error("Failed to submit quiz");
       console.error(error);
@@ -102,6 +108,11 @@ export const useQuizStore = create<QuizState>((set, get) => ({
     } finally {
       set({ isLoading: false });
     }
+  },
+
+  /** Review answers */
+  reviewAnswers: () => {
+    set({ status: "review" });
   },
 
   /** Reset quiz state */

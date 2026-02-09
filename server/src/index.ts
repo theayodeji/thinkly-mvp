@@ -8,6 +8,8 @@ import noteRoutes from './routes/noteRoutes.js';
 import sourceRoutes from './routes/sourceRoutes.js';
 import cookieParser from 'cookie-parser';
 import quizRoutes from './routes/quizRoutes.js';
+import flashcardRoutes from './routes/flashcardRoutes.js';
+import initKeepAlive from './utils/keepAlive.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -32,6 +34,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/notes', noteRoutes);
 app.use('/api/sources', sourceRoutes);
 app.use('/api/quiz', quizRoutes);
+app.use('/api/flashcards', flashcardRoutes);
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   console.error(err.stack);
@@ -40,7 +43,11 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 
 connectDB().then(() => {
   app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+    console.log(`Server running on port ${PORT}`);
+    // Initialize keep-alive service in production
+    if (process.env.NODE_ENV === 'production') {
+      initKeepAlive();
+    }
   });
 }).catch((err) => {
   console.error("❌ Server failed to start:", err);

@@ -2,16 +2,16 @@ import React from "react";
 import { useQuizStore } from "../../store/quizStore";
 import { Button } from "../ui/Button";
 
-type Props = { 
+type Props = {
   score: number | undefined | null;
   onClose?: () => void;
 };
 
 const QuizScore = ({ score, onClose }: Props) => {
   const quiz = useQuizStore((s) => s.quiz);
+  const reviewAnswers = useQuizStore((s) => s.reviewAnswers);
 
   if (!score && score !== 0) return <h2>Something went wrong</h2>;
-
 
   if (score < 8 && score > 0) {
     return (
@@ -21,13 +21,18 @@ const QuizScore = ({ score, onClose }: Props) => {
           alt=""
           className="rounded-md shadow-md mb-4"
         />
-        <h2 className="text-5xl font-bold mb-3">
+        <h2 className="text-5xl font-bold mb-3 text-center">
           You can do <span className="text-primary-500">better</span>😢
         </h2>
         <p className="text-xl mb-3">
           You scored {score} out of {quiz?.questions.length}
         </p>
-        <Button onClick={onClose}>Close</Button>
+        <div className="flex gap-3">
+          <Button onClick={reviewAnswers} variant="dark">
+            Review Answers
+          </Button>
+          <Button onClick={onClose}>Close</Button>
+        </div>
       </div>
     );
   }
@@ -40,13 +45,18 @@ const QuizScore = ({ score, onClose }: Props) => {
           alt=""
           className="rounded-md shadow-md mb-4"
         />
-        <h2 className="text-5xl font-bold mb-3">
+        <h2 className="text-5xl font-bold mb-3 text-center">
           You did <span className="text-primary-500">great!</span>🎉
         </h2>
         <p className="text-xl mb-3">
           You scored {score} out of {quiz?.questions.length}
         </p>
-        <Button onClick={onClose}>Close</Button>
+        <div className="flex gap-3">
+          <Button onClick={reviewAnswers} variant="dark">
+            Review Answers
+          </Button>
+          <Button onClick={onClose}>Close</Button>
+        </div>
       </div>
     );
   if (score == 15)
@@ -57,34 +67,42 @@ const QuizScore = ({ score, onClose }: Props) => {
           alt=""
           className="rounded-md shadow-md mb-4"
         />
-        <h2 className="text-5xl font-bold mb-3">
+        <h2 className="text-5xl font-bold mb-3 text-center">
           You got a <span className="text-primary-500">PERFECT SCORE!!!</span>💯
         </h2>
         <p className="text-xl mb-3">
           You scored {score} out of {quiz?.questions.length}
         </p>
-        <Button onClick={onClose}>Close</Button>
-      </div>
-    );
-
-    else 
-      return (
-        <div className="flex flex-col items-center justify-center">
-          <img
-            src="/crash-fail.gif"
-            alt=""
-            className="rounded-md shadow-md mb-4"
-          />
-          <h2 className="text-5xl font-bold mb-3">
-            You can do <span className="text-primary-500">better</span>😢
-          </h2>
-          <p className="text-xl mb-3">
-            You scored {score} out of {quiz?.questions.length}
-          </p>
+        <div className="flex gap-3">
+          <Button onClick={reviewAnswers} variant="ghost">
+            Review Answers
+          </Button>
           <Button onClick={onClose}>Close</Button>
         </div>
-      );
-
+      </div>
+    );
+  else
+    return (
+      <div className="flex flex-col items-center justify-center">
+        <img
+          src="/crash-fail.gif"
+          alt=""
+          className="rounded-md shadow-md mb-4"
+        />
+        <h2 className="text-5xl font-bold mb-3 text-center">
+          You can do <span className="text-primary-500">better</span>😢
+        </h2>
+        <p className="text-xl mb-3">
+          You scored {score} out of {quiz?.questions.length}
+        </p>
+        <div className="flex gap-3">
+          <Button onClick={reviewAnswers} variant="dark">
+            Review Answers
+          </Button>
+          <Button onClick={onClose}>Close</Button>
+        </div>
+      </div>
+    );
 };
 
 export default QuizScore;

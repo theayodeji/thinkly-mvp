@@ -54,13 +54,26 @@ export const noteService = {
       message,
       history,
     });
-    console.log(response.data);
     return response.data;
   },
 
   generateQuiz: async (noteId: string): Promise<{ quiz: Quiz }> => {
     const response = await api.get<{ quiz: Quiz }>(`/quiz/${noteId}/generate`);
-    console.log(response.data);
     return response.data;
+  },
+
+  // Flashcard operations
+  generateFlashcards: async (noteId: string) => {
+    const response = await api.post(`/flashcards/${noteId}/generate`);
+    return response.data;
+  },
+
+  getFlashcards: async (noteId: string) => {
+    const response = await api.get(`/flashcards/${noteId}`);
+    return response.data;
+  },
+
+  deleteFlashcards: async (noteId: string) => {
+    await api.delete(`/flashcards/${noteId}`);
   },
 };

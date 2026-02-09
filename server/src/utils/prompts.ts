@@ -119,7 +119,35 @@ Before sending the response, make sure it is valid JSON that will return a valid
 
 Here is the note text:
 `,
-  flashcards: "Generate a set of flashcards in JSON format as an array of objects like this: [{\"question\": \"\", \"answer\": \"\"}, ...]. The response must be valid JSON that can be directly parsed by JavaScript using JSON.parse(), meaning it should have properly escaped characters, no markdown formatting, and no extra text outside the JSON. Line breaks (\\n) are allowed if they do not break JSON validity. Generate between 10 and 15 flashcards based on the user's notes provided at the end of this prompt. The language of the flashcards should be English.\n\nUser notes:\n"
+  flashcards: `Create 10 high-quality flashcards based on the following notes. Each flashcard should be clear, concise, and focus on a single key concept or fact.
+
+**Guidelines:**
+1. Questions should be direct and test specific knowledge
+2. Answers should be brief but comprehensive (1-2 sentences max)
+3. Cover all major topics from the notes
+4. Include both factual recall and conceptual understanding
+5. Use simple, clear language
+6. Avoid opinion-based questions
+7. Ensure questions and answers are self-contained
+
+**Format Requirements:**
+- Respond ONLY with a valid JSON array of objects
+- Each object must have exactly two properties: 'question' and 'answer'
+- Both properties must be strings
+- Escape special characters properly for JSON
+- No markdown formatting
+- No additional text outside the JSON array
+
+Example of valid response:
+[
+  {"question": "What is the capital of France?", "answer": "Paris"},
+  {"question": "What does HTML stand for?", "answer": "HyperText Markup Language"}
+]
+
+IMPORTANT: The response must be valid JSON that can be directly parsed by JavaScript's JSON.parse() function. Do not include any markdown code blocks or additional text.
+
+Here are the notes to create flashcards from:
+`
 };
 
 export type PromptType = keyof PromptTemplates;

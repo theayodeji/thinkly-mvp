@@ -5,6 +5,7 @@ import { toast } from "react-hot-toast";
 import { noteService } from "../shared/services/noteService";
 import { Source } from "../shared/types/source";
 import { AxiosErrorWithResponse } from "../shared/services/api";
+import { Flashcard } from "../shared/types/flashcard";
 
 export interface NoteStore {
   // Note List State
@@ -34,8 +35,17 @@ export interface NoteStore {
   addChatMessage: (content: string, role: "user" | "assistant") => void;
   clearChat: () => void;
 
-  //Quiz Actions
+  // Quiz Actions
   generateQuiz: (id: string) => Promise<void>;
+
+  // Flashcard State
+  isFlashcardsLoading: boolean;
+  flashcards: Flashcard[];
+
+  // Flashcard Actions
+  generateFlashcards: (noteId: string) => Promise<Flashcard[]>;
+  getFlashcards: (noteId: string) => Promise<Flashcard[]>;
+  deleteFlashcards: (noteId: string) => Promise<void>;
 }
 
 export const useNoteStore = create<NoteStore>()((set, get) => ({
@@ -48,6 +58,8 @@ export const useNoteStore = create<NoteStore>()((set, get) => ({
   currentNote: null,
   chatHistory: [],
   isQuizLoading: false,
+  isFlashcardsLoading: false,
+  flashcards: [],
 
   // Note List Actions
   getNotes: async () => {
@@ -118,14 +130,18 @@ export const useNoteStore = create<NoteStore>()((set, get) => ({
 
   // Single Note Actions
   getNote: async (id: string) => {
-    set({ isActionLoading: true });
+    set({ isActionLoading: true, flashcards: [] }); // Clear flashcards when loading a new note
     try {
       const note = await noteService.getNote(id);
       set({ currentNote: note, isActionLoading: false });
+      // Fetch flashcards for the new note
+      if (note._id) {
+        await get().getFlashcards(note._id);
+      }
     } catch (error) {
       const err = error as AxiosError<AxiosErrorWithResponse>;
       toast.error(err.response?.data.message || "Failed to fetch note");
-      set({ isActionLoading: false });
+      set({ isActionLoading: false, flashcards: [] }); // Clear flashcards on error too
       throw error;
     }
   },
@@ -191,7 +207,9 @@ export const useNoteStore = create<NoteStore>()((set, get) => ({
       get().addChatMessage(aiResponse, "assistant");
     } catch (error) {
       const err = error as AxiosError<AxiosErrorWithResponse>;
-      toast.error(err.response?.data.message || "Failed to send message, try again");
+      toast.error(
+        err.response?.data.message || "Failed to send message, try again"
+      );
       get().addChatMessage(
         "Oops, something went wrong, try asking that again.",
         "assistant"
@@ -214,13 +232,13 @@ export const useNoteStore = create<NoteStore>()((set, get) => ({
 
   generateQuiz: async (id: string) => {
     set({ isQuizLoading: true });
-    toast.loading("Generating quiz...", { duration:3000 });
+    toast.loading("Generating quiz...", { duration: 3000 });
     try {
       const { quiz } = await noteService.generateQuiz(id);
       toast.success("Quiz generated successfully");
       set((state) => {
         if (!state.currentNote) return {}; // Return empty update if no current note
-        
+
         return {
           currentNote: {
             ...state.currentNote,
@@ -234,6 +252,69 @@ export const useNoteStore = create<NoteStore>()((set, get) => ({
       throw error;
     } finally {
       set({ isQuizLoading: false });
+    }
+  },
+
+  // Flashcard Actions
+  generateFlashcards: async (noteId: string) => {
+    set({ isFlashcardsLoading: true });
+    toast.loading("Generating flashcards...", { duration: 2000 });
+    try {
+      const { flashcards } = await noteService.generateFlashcards(noteId);
+      toast.success("Flashcards generated successfully");
+      set((state) => ({
+        currentNote: state.currentNote
+          ? {
+              ...state.currentNote,
+              flashcards: flashcards.map((f: Flashcard) => f._id),
+            }
+          : null,
+        flashcards,
+      }));
+      return flashcards;
+    } catch (error) {
+      const err = error as AxiosError<AxiosErrorWithResponse>;
+      toast.error(
+        err.response?.data?.message || "Failed to generate flashcards"
+      );
+      throw error;
+    } finally {
+      set({ isFlashcardsLoading: false });
+    }
+  },
+
+  getFlashcards: async (noteId: string) => {
+    set({ isFlashcardsLoading: true });
+    try {
+      const { flashcards } = await noteService.getFlashcards(noteId);
+      set({ flashcards });
+      return flashcards as Flashcard[];
+    } catch (error) {
+      console.error("Error fetching flashcards:", error);
+      toast.error("Failed to load flashcards");
+      return [];
+    } finally {
+      set({ isFlashcardsLoading: false });
+    }
+  },
+
+  deleteFlashcards: async (noteId: string) => {
+    set({ isFlashcardsLoading: true });
+    try {
+      await noteService.deleteFlashcards(noteId);
+      set((state) => ({
+        currentNote: state.currentNote
+          ? { ...state.currentNote, flashcards: [] }
+          : null,
+        flashcards: [],
+      }));
+      toast.success("Flashcards deleted successfully");
+    } catch (error) {
+      console.error("Error deleting flashcards:", error);
+      toast.error("Failed to delete flashcards");
+      throw error;
+    } finally {
+      set({ isFlashcardsLoading: false });
     }
   },
 }));
