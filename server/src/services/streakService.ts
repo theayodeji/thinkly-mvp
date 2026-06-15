@@ -1,14 +1,17 @@
 // services/streak.service.ts
 import { differenceInDays, isSameDay, isYesterday } from "date-fns";
 import { IUser } from "../types/entities.js";
-import eventBus from "../lib/events/eventBus.js";
 
 export class StreakService {
   static async handleUpdateStreak(user: IUser, isExplicitLogin: boolean) {
     try {
       const now = new Date();
       const lastActive = user.streaks?.lastActive;
-      const streaks = user.streaks || { current: 0, longest: 0, lastActive: null };
+      const streaks = user.streaks || {
+        current: 0,
+        longest: 0,
+        lastActive: null,
+      };
 
       // Always check for streak updates on any user activity (login or token refresh)
       if (lastActive) {
@@ -38,19 +41,16 @@ export class StreakService {
       const milestones = [3, 7, 14, 30];
       if (milestones.includes(streaks.current)) {
         const badgeId = `streak_${streaks.current}`;
-        if (!user.badges.some(b => b.id === badgeId)) {
+        if (!user.badges.some((b) => b.id === badgeId)) {
           user.badges.push({
             id: badgeId,
             title: `${streaks.current}-Day Streak`,
             level: this.getLevel(streaks.longest || streaks.current),
             earnedAt: now,
           });
-
-          // Emit event (decoupled)
-          eventBus.emit("streak.milestone", user._id, { streak: streaks.current });
         }
       }
-      console.log("Streaked user",user.streaks)
+      console.log("Streaked user", user.streaks);
 
       await user.save().then(() => {
         console.log("User saved successfully");

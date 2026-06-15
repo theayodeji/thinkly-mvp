@@ -1,35 +1,44 @@
 // src/types/User.ts
 import { Document, Types } from "mongoose";
 
-export interface IUser extends Document {
+export interface IUser extends Document<Types.ObjectId> {
   name: string;
   email: string;
-  password?: string;  // Optional for OAuth users
-  googleId?: string;  // Google OAuth ID
+  password?: string; // Optional for OAuth users
+  googleId?: string; // Google OAuth ID
   streaks: {
     current: number;
     longest: number;
     lastActive: Date;
   };
-  achievements: [{
-    id: String, // unique identifier, e.g. "first_quiz_completed"
-    title: String,
-    description: String,
-    icon: String,
-    earnedAt: Date,
-  }],
+  achievements: [
+    {
+      id: string; // unique identifier, e.g. "first_quiz_completed"
+      title: string;
+      description: string;
+      icon: string;
+      earnedAt: Date;
+    },
+  ];
 
-  badges: [{
-    id: String, // e.g. "gold_streak_badge"
-    title: String,
-    level: String, // bronze, silver, gold, platinum
-    earnedAt: Date,
-  }],
+  badges: [
+    {
+      id: string; // e.g. "gold_streak_badge"
+      title: string;
+      level: string; // bronze, silver, gold, platinum
+      earnedAt: Date;
+    },
+  ];
+  pomodoros: {
+    total: number;
+    completed: number;
+    lastCompletedAt: Date;
+  };
   createdAt: Date;
   updatedAt: Date;
 }
 
-export interface INote extends Document {
+export interface INote extends Document<Types.ObjectId> {
   title: string;
   content: string;
   sources: Types.ObjectId[];
@@ -42,7 +51,7 @@ export interface INote extends Document {
   updatedAt: Date;
 }
 
-export interface ISource extends Document {
+export interface ISource extends Document<Types.ObjectId> {
   type: "pdf" | "url" | "text" | "image";
   name?: string;
   file_url?: string;
@@ -55,12 +64,12 @@ export interface ISource extends Document {
 
 export interface IQuizQuestion {
   question: string;
-  options: string[];
+  options: [string, string, string, string];
   correctAnswer: number;
   explanation: string;
 }
 
-export interface IQuiz extends Document {
+export interface IQuiz extends Document<Types.ObjectId> {
   userId: Types.ObjectId;
   noteId: Types.ObjectId;
   questions: IQuizQuestion[];
@@ -68,21 +77,11 @@ export interface IQuiz extends Document {
   updatedAt: Date;
 }
 
-export interface IFlashcard extends Document {
+export interface IFlashcard extends Document<Types.ObjectId> {
   question: string;
   answer: string;
   noteId: Types.ObjectId;
   userId: Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
-}
-
-export interface Event {
-  type: "login_streak_incremented" | "quiz_completed" | "quiz_perfect_score" | "note_added" | "question_asked" | "study_session_completed";
-  userId: Types.ObjectId;
-  metadata?: Record<string, any>;
-}
-
-export interface IEvent extends Document, Event {
-  createdAt: Date;
 }

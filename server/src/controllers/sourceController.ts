@@ -1,48 +1,44 @@
 import type { Request, Response } from "express";
-import mongoose, { Types } from "mongoose";
+import { Types } from "mongoose";
 import type { ISource, INote } from "../types/entities.js";
 import NoteModel from "../models/Note.js";
 import SourceModel from "../models/Source.js";
 import geminiService from "../utils/genai.js";
-
-//All handlers require authentication middleware to run and return userId
+import { withMongoTransaction, isValidObjectId } from "../utils/db.js";
 
 export const addSource = async (req: Request, res: Response) => {
-  const session = await mongoose.startSession();
-  session.startTransaction();
+  const source: ISource = req.body;
+  const userId = req.userId;
 
-  try {
-    const source: ISource = req.body;
+  if (!source.noteId || !isValidObjectId(source.noteId as unknown as string)) {
+    return res.status(400).json({ message: "Valid Note ID is required" });
+  }
+  if (!source.type) {
+    return res.status(400).json({ message: "Source type is required" });
+  }
+  if (source.type === "text" && !source.text) {
+    return res.status(400).json({ message: "Source text is required" });
+  }
 
-    if (!source.noteId) {
-      await session.abortTransaction();
-      return res.status(400).json({ message: "Note ID is required" });
-    }
-    if (!source.type) {
-      await session.abortTransaction();
-      return res.status(400).json({ message: "Source type is required" });
-    }
-    if (source.type === "text" && !source.text) {
-      await session.abortTransaction();
-      return res.status(400).json({ message: "Source text is required" });
-    }
+  const { title } = await geminiService.generateTitle(source.text || "");
+  const { summary } = await geminiService.generateSummary(source.text || "");
+  const { questions } = await geminiService.generateChatSuggestions(source.text || "");
+  source.name = source.name || title;
 
-    const { title } = await geminiService.generateTitle(source.text || "");
-    const { summary } = await geminiService.generateSummary(source.text || "");
-    const { questions } = await geminiService.generateChatSuggestions(source.text || "");
-    source.name = source.name || title;
+  let newSource: any = null;
 
+  await withMongoTransaction(async (session) => {
     // Find the note and lock it for update
-    const note = (await NoteModel.findById(source.noteId).session(
-      session
-    )) as INote;
+    const note = await NoteModel.findOne({ _id: source.noteId, userId }).session(session);
+    
     if (!note) {
-      await session.abortTransaction();
-      return res.status(404).json({ message: "Note not found" });
+      const error: any = new Error("Note not found");
+      error.status = 404;
+      throw error;
     }
 
     // Create the source first
-    const newSource = new SourceModel({
+    newSource = new SourceModel({
       ...source,
       status: source.type === "text" ? "parsed" : "parsing", // Set initial status
     });
@@ -51,7 +47,6 @@ export const addSource = async (req: Request, res: Response) => {
     // Update the note with the new source
     note.sources.push(newSource._id as Types.ObjectId);
     note.content = (note.content || "") + "\n" + source.text;
-    console.log(questions)
     note.chatSuggestions = [...(note.chatSuggestions || []), ...questions];
 
     // Generate title if this is the first source
@@ -59,53 +54,37 @@ export const addSource = async (req: Request, res: Response) => {
       note.title = title;
       note.summary = summary;
     }
-    await note.save({ session });
-    await session.commitTransaction();
+    await note.save({ session }); 
+  });
 
-    res.status(201).json({ source: newSource });
-  } catch (error: any) {
-    await session.abortTransaction();
-    console.error("Add source error:", error);
-    res.status(500).json({
-      message: "Failed to add source",
-      error: error.message,
-    });
-  } finally {
-    await session.endSession();
-  }
+  res.status(201).json({ source: newSource });
 };
 
 export const deleteSource = async (req: Request, res: Response) => {
-  const session = await mongoose.startSession();
-  session.startTransaction();
+  const { id } = req.params;
+  const userId = req.userId;
 
-  try {
-    const { id } = req.params;
-    const userId = req.userId as Types.ObjectId;
+  if (!isValidObjectId(id)) {
+    return res.status(400).json({ message: "Invalid source ID" });
+  }
 
-    if (!Types.ObjectId.isValid(id)) {
-      await session.abortTransaction();
-      return res.status(400).json({ message: "Invalid source ID" });
-    }
-
+  await withMongoTransaction(async (session) => {
     const note = await NoteModel.findOne({
       userId,
-      sources: new Types.ObjectId(id),
+      sources: id,
     }).session(session);
 
     if (!note) {
-      await session.abortTransaction();
-      return res
-        .status(404)
-        .json({ message: "Source not found in your notes" });
+      const error: any = new Error("Source not found in your notes");
+      error.status = 404;
+      throw error;
     }
 
     // Prevent deleting the only source
     if (note.sources.length === 1) {
-      await session.abortTransaction();
-      return res
-        .status(403)
-        .json({ message: "Cannot delete the only source in a note" });
+      const error: any = new Error("Cannot delete the only source in a note");
+      error.status = 403;
+      throw error;
     }
 
     await SourceModel.findByIdAndDelete(id).session(session);
@@ -113,18 +92,7 @@ export const deleteSource = async (req: Request, res: Response) => {
       { _id: note._id },
       { $pull: { sources: id } }
     ).session(session);
+  });
 
-    await session.commitTransaction();
-    res.status(200).json({ message: "Source deleted successfully" });
-  } catch (error: any) {
-    await session.abortTransaction();
-    console.error("Delete source error:", error);
-    res.status(500).json({
-      message: "Failed to delete source",
-      error: error.message,
-    });
-  } finally {
-    await session.endSession();
-  }
+  res.status(200).json({ message: "Source deleted successfully" });
 };
-

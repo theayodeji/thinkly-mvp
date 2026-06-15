@@ -9,16 +9,19 @@ import {
   googleLogin,
   googleCallback,
 } from "../controllers/authController.js";
-import { authenticateJWT, isAuthenticated } from "../middleware/auth.js";
+import { authenticateJWT } from "../middleware/auth.js";
+import { catchAsync } from "../utils/catchAsync.js";
+import { validateRequest } from "../middleware/validate.js";
+import { registerSchema, loginSchema } from "../schemas/index.js";
 
 const router = express.Router();
 
 // Regular email/password auth
-router.post("/register", register);
-router.post("/login", login);
-router.post("/logout", logout);
-router.get("/me", authenticateJWT, checkAuth);
-router.post("/refresh-token", refreshToken);
+router.post("/register", validateRequest(registerSchema), catchAsync(register));
+router.post("/login", validateRequest(loginSchema), catchAsync(login));
+router.post("/logout", catchAsync(logout));
+router.get("/me", authenticateJWT, catchAsync(checkAuth));
+router.post("/refresh-token", catchAsync(refreshToken));
 
 // Google OAuth routes
 router.get(
@@ -40,20 +43,8 @@ router.get(
 
 router.get(
   "/google/callback",
-  (req, res, next) => {
-    passport.authenticate("google", { session: false }, (err: any, user: any, info: any) => {
-      if (err) {
-        return next(err);
-      }
-      if (!user) {
-        const error = new Error('Authentication failed');
-        return next(error);
-      }
-      req.user = user;
-      next();
-    })(req, res, next);
-  },
-  googleCallback
+  passport.authenticate("google", { session: false, failureRedirect: '/login?error=google_auth_failed' }),
+  catchAsync(googleCallback)
 );
 
 export default router;

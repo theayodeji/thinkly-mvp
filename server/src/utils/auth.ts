@@ -1,8 +1,10 @@
 import type { Response } from 'express';
 
+import { config } from "../config/env.js";
+
 export const setAuthTokens = (res: Response, accessToken: string, refreshToken: string) => {
-  const isProduction = process.env.NODE_ENV === 'production';
-  const domain = process.env.COOKIE_DOMAIN || undefined;
+  const isProduction = config.NODE_ENV === 'production';
+  const domain = config.COOKIE_DOMAIN;
   
   if (isProduction) {
     // Production: HTTP-only, secure cookies
@@ -46,4 +48,39 @@ export const setAuthTokens = (res: Response, accessToken: string, refreshToken: 
   
   // In development, return tokens in response for easier testing
   return { accessToken, refreshToken };
+};
+
+export const setAccessTokenCookie = (res: Response, accessToken: string) => {
+  const isProduction = config.NODE_ENV === 'production';
+  const domain = config.COOKIE_DOMAIN;
+
+  res.cookie("accessToken", accessToken, {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
+    domain: isProduction ? domain : undefined,
+    maxAge: 15 * 60 * 1000, // 15 minutes
+    path: '/'
+  });
+};
+
+export const clearAuthCookies = (res: Response) => {
+  const isProduction = config.NODE_ENV === 'production';
+  const domain = config.COOKIE_DOMAIN;
+  
+  res.clearCookie('accessToken', {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? 'none' : 'lax',
+    domain: isProduction ? domain : undefined,
+    path: '/'
+  });
+  
+  res.clearCookie('refreshToken', {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? 'none' : 'lax',
+    domain: isProduction ? domain : undefined,
+    path: '/'
+  });
 };

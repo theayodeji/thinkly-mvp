@@ -1,8 +1,9 @@
 import type { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { Types } from 'mongoose';
+import { config } from "../config/env.js";
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+const JWT_SECRET = config.JWT_SECRET;
 
 /**
  * Middleware to authenticate JWT tokens from Authorization header

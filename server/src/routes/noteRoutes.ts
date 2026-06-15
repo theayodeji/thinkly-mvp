@@ -1,4 +1,3 @@
-//routes to create, delete, rename, and toggle include/exclude flags on notes
 import express from "express";
 import {
   getNotes,
@@ -9,14 +8,17 @@ import {
   chat,
 } from "../controllers/noteController.js";
 import { authenticateJWT } from "../middleware/auth.js";
+import { catchAsync } from "../utils/catchAsync.js";
+import { validateRequest } from "../middleware/validate.js";
+import { updateNoteSchema, chatSchema } from "../schemas/index.js";
+
 const router = express.Router();
 
-router.get("/", authenticateJWT, getNotes);
-router.get("/:id", authenticateJWT, getNote);
-router.post("/create", authenticateJWT, createNote);
-router.post("/chat", authenticateJWT, chat);
-router.delete("/delete/:id", authenticateJWT, deleteNote);
-router.put("/rename/:id", authenticateJWT, updateNote);
-// router.patch("/:id", (req, res) => {});
+router.get("/", authenticateJWT, catchAsync(getNotes));
+router.get("/:id", authenticateJWT, catchAsync(getNote));
+router.post("/create", authenticateJWT, catchAsync(createNote));
+router.post("/chat", authenticateJWT, validateRequest(chatSchema), catchAsync(chat));
+router.delete("/delete/:id", authenticateJWT, catchAsync(deleteNote));
+router.put("/rename/:id", authenticateJWT, validateRequest(updateNoteSchema), catchAsync(updateNote));
 
 export default router;

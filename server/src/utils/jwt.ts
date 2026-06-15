@@ -1,8 +1,10 @@
 import jwt from "jsonwebtoken";
 import { Types } from "mongoose";
 
-const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
-const REFRESH_SECRET = process.env.REFRESH_SECRET || "refresh-secret-key";
+import { config } from "../config/env.js";
+
+const JWT_SECRET = config.JWT_SECRET;
+const REFRESH_SECRET = config.REFRESH_SECRET;
 
 export const generateToken = (
   id: Types.ObjectId | string,
