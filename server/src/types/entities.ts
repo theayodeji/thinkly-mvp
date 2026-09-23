@@ -51,8 +51,14 @@ export interface INote extends Document<Types.ObjectId> {
   updatedAt: Date;
 }
 
+export enum SourceType {
+  TEXT = "text",
+  FILE_PDF = "file_pdf",
+  LINK = "link",
+}
+
 export interface ISource extends Document<Types.ObjectId> {
-  type: "pdf" | "url" | "text" | "image";
+  type: SourceType;
   name?: string;
   file_url?: string;
   text?: string;

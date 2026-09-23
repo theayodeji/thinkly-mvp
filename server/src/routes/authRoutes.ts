@@ -17,11 +17,11 @@ import { registerSchema, loginSchema } from "../schemas/index.js";
 const router = express.Router();
 
 // Regular email/password auth
-router.post("/register", validateRequest(registerSchema), catchAsync(register));
-router.post("/login", validateRequest(loginSchema), catchAsync(login));
-router.post("/logout", catchAsync(logout));
-router.get("/me", authenticateJWT, catchAsync(checkAuth));
-router.post("/refresh-token", catchAsync(refreshToken));
+router.post("/register", validateRequest(registerSchema), register);
+router.post("/login", validateRequest(loginSchema), login);
+router.post("/logout", logout);
+router.get("/me", authenticateJWT, checkAuth);
+router.post("/refresh-token", refreshToken);
 
 // Google OAuth routes
 router.get(

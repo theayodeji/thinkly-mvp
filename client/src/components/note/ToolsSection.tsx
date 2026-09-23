@@ -1,7 +1,9 @@
 import { BadgeQuestionMark, IdCard, Key, MapPinPen } from "lucide-react";
-import { useNoteStore } from "../../store/noteStore";
 import ToolsOutput from "./ToolsOutput";
 import { WorkInProgressDrawer } from "../WorkInProgress";
+import { useParams } from "react-router-dom";
+import { useGenerateQuiz } from "../../hooks/queries/useQuiz";
+import { useGenerateFlashcards } from "../../hooks/queries/useFlashcards";
 
 const tools = [
   {
@@ -21,19 +23,19 @@ const tools = [
 ];
 
 const ToolsSection = () => {
-  const generateQuiz = useNoteStore((state) => state.generateQuiz);
-  const generateFlashcards = useNoteStore((state) => state.generateFlashcards);
-  const currentNote = useNoteStore((state) => state.currentNote);
+  const { id } = useParams<{ id: string }>();
+  const { mutateAsync: generateQuiz, isPending: isQuizLoading } =
+    useGenerateQuiz();
+  const { mutateAsync: generateFlashcards, isPending: isFlashcardsLoading } =
+    useGenerateFlashcards();
 
   function handleToolAction(action: string) {
     switch (action) {
       case "quiz":
-        generateQuiz(currentNote?._id || "");
+        if (id) generateQuiz(id);
         break;
       case "flashcards":
-        if (currentNote?._id) {
-          generateFlashcards(currentNote._id);
-        }
+        if (id) generateFlashcards(id);
         return;
       case "keypoints":
         return;
@@ -61,9 +63,9 @@ const ToolsSection = () => {
             </button>
           ) : (
             <WorkInProgressDrawer
+              key={index}
               trigger={
                 <button
-                  key={index}
                   onClick={() => handleToolAction(tool.action)}
                   className="bg-secondary-500/40 hover:bg-secondary-500/30 rounded-md p-4 cursor-pointer flex flex-col items-center justify-center gap-1"
                 >
@@ -72,10 +74,13 @@ const ToolsSection = () => {
                 </button>
               }
             />
-          )
+          ),
         )}
       </div>
-      <ToolsOutput />
+      <ToolsOutput
+        isQuizLoading={isQuizLoading}
+        isFlashcardsLoading={isFlashcardsLoading}
+      />
     </div>
   );
 };

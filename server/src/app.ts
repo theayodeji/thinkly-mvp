@@ -45,11 +45,8 @@ app.use('/api/sources', sourceRoutes);
 app.use('/api/quiz', quizRoutes);
 app.use('/api/flashcards', flashcardRoutes);
 
-app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-  logger.error(err.stack || err.message || err);
-  const status = err.status || 500;
-  const message = err.message || 'Something went wrong!';
-  res.status(status).json({ error: message });
-});
+import { errorHandler } from './middleware/errorHandler.js';
+
+app.use(errorHandler);
 
 export default app;

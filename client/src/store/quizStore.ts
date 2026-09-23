@@ -1,7 +1,5 @@
 import { create } from "zustand";
 import { Quiz, QuizQuestion } from "../shared/types/quiz";
-import { api } from "../shared/services/api";
-import toast from "react-hot-toast";
 
 type QuizStatus = "idle" | "started" | "completed" | "review";
 
@@ -14,13 +12,12 @@ interface QuizState {
   isLoading: boolean;
   score: number | null;
   quizAnswers: (QuizQuestion | null)[];
-
-  getQuiz: (id: string) => Promise<void>;
+  setQuiz: (quiz: Quiz) => void;
   startQuiz: () => void;
   submitAnswer: (answerIndex: number) => void;
   nextQuestion: () => void;
   prevQuestion: () => void;
-  submitQuiz: () => Promise<void>;
+  setQuizResult: (score: number, answers: (QuizQuestion | null)[]) => void;
   reviewAnswers: () => void;
   resetQuiz: () => void;
   tick: () => void;
@@ -35,18 +32,9 @@ export const useQuizStore = create<QuizState>((set, get) => ({
   isLoading: false,
   score: null,
   quizAnswers: [],
-
-  /** Fetch quiz from backend */
-  getQuiz: async (id: string) => {
-    try {
-      set({ isLoading: true });
-      const response = await api.get(`/quiz/${id}`);
-      set({ quiz: response.data as Quiz, isLoading: false });
-    } catch (error) {
-      toast.error("Failed to fetch quiz");
-      console.error(error);
-      set({ isLoading: false });
-    }
+  /** Load quiz into state */
+  setQuiz: (quiz: Quiz) => {
+    set({ quiz, isLoading: false });
   },
 
   /** Start quiz (reset state, set timer, pre-fill answers) */
@@ -88,26 +76,13 @@ export const useQuizStore = create<QuizState>((set, get) => ({
     set((state) => ({
       currentQuestion: Math.max(state.currentQuestion - 1, 0),
     })),
-
-  /** Submit entire quiz (manual or auto) */
-  submitQuiz: async () => {
-    const { quiz, answers } = get();
-    if (!quiz) return;
-    set({ isLoading: true });
-    try {
-      const response = await api.post(`/quiz/${quiz._id}/submit`, { answers });
-      set({
-        score: response.data.score,
-        quizAnswers: response.data.answers,
-        status: "completed",
-      });
-    } catch (error) {
-      toast.error("Failed to submit quiz");
-      console.error(error);
-      set({ status: "completed" });
-    } finally {
-      set({ isLoading: false });
-    }
+  /** Set results from API submission */
+  setQuizResult: (score, answers) => {
+    set({
+      score,
+      quizAnswers: answers,
+      status: "completed",
+    });
   },
 
   /** Review answers */
@@ -128,12 +103,10 @@ export const useQuizStore = create<QuizState>((set, get) => ({
 
   /** Tick timer every second */
   tick: () => {
-    const { timeLeft, status, submitQuiz } = get();
+    const { timeLeft, status } = get();
     if (status !== "started") return;
 
-    if (timeLeft <= 1) {
-      // Auto submit when time runs out
-      submitQuiz();
+    if (timeLeft <= 0) {
       return;
     }
 

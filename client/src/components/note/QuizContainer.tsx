@@ -1,5 +1,7 @@
 import React, { useEffect } from "react";
-import { useNoteStore } from "../../store/noteStore";
+import { useParams } from "react-router-dom";
+import { useNote } from "../../hooks/queries/useNotes";
+import { useQuiz } from "../../hooks/queries/useQuiz";
 import { useQuizStore } from "../../store/quizStore";
 import { Note } from "../../shared/types/note";
 import toast from "react-hot-toast";
@@ -13,24 +15,30 @@ interface QuizContainerProps {
 }
 
 const QuizContainer = ({ onClose }: QuizContainerProps) => {
-  const getQuiz = useQuizStore((s) => s.getQuiz);
+  const { id } = useParams<{ id: string }>();
+  const { data: currentNote } = useNote(id || "");
+  const { data: quiz, isError } = useQuiz(currentNote?.quiz || "");
+  
+  const setQuiz = useQuizStore((s) => s.setQuiz);
   const resetQuiz = useQuizStore((s) => s.resetQuiz);
   const status = useQuizStore((s) => s.status);
   const score = useQuizStore((s) => s.score);
-  const currentNote = useNoteStore((s) => s.currentNote);
   const quizAnswers = useQuizStore((s) => s.quizAnswers);
 
   useEffect(() => {
-    if (currentNote?.quiz) {
-      const res = getQuiz(currentNote.quiz);
-      if (!res) {
-        toast.error("Failed to fetch quiz");
-      }
+    if (quiz) {
+      setQuiz(quiz);
     }
+    if (isError) {
+      toast.error("Failed to fetch quiz");
+    }
+  }, [quiz, isError, setQuiz]);
+
+  useEffect(() => {
     return () => {
       resetQuiz();
     };
-  }, [currentNote?.quiz, getQuiz, resetQuiz]);
+  }, [resetQuiz]);
 
   return (
     <div className="overflow-y-auto flex flex-col items-center justify-center w-full">

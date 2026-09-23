@@ -4,14 +4,20 @@ import { NotebookText, Sparkles, UploadCloud, X } from "lucide-react";
 import { useDropzone } from "react-dropzone";
 import { Button } from "../ui/Button";
 import { usePdfTextExtractor } from "../../hooks/usePdfExtraction";
-import { useNoteStore } from "../../store/noteStore";
+import { useParams } from "react-router-dom";
+import { useAddSource } from "../../hooks/queries/useNotes";
 import toast from "react-hot-toast";
+import { SourceType } from "../../shared/types/source";
 
-const UploadDropzone = ({setIsOpen}: {setIsOpen: (isOpen: boolean) => void}) => {
+const UploadDropzone = ({
+  setIsOpen,
+}: {
+  setIsOpen: (isOpen: boolean) => void;
+}) => {
   const [acceptedFiles, setAcceptedFiles] = useState<File[]>([]);
   const { extractFromFile, loading, error } = usePdfTextExtractor();
-  const addSource = useNoteStore(s => s.addSource);
-  const currentNote = useNoteStore(s => s.currentNote);
+  const { id } = useParams<{ id: string }>();
+  const { mutateAsync: addSource } = useAddSource();
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     setAcceptedFiles(acceptedFiles);
@@ -31,16 +37,23 @@ const UploadDropzone = ({setIsOpen}: {setIsOpen: (isOpen: boolean) => void}) => 
     if (acceptedFiles.length > 0) {
       try {
         const result = await extractFromFile(acceptedFiles[0]);
-        addSource(currentNote?._id!, {
-          name: acceptedFiles[0].name,
-          text: result,
-          type: "pdf",
+        if (!id) return;
+        await addSource({
+          id,
+          source: {
+            name: acceptedFiles[0].name,
+            text: result,
+            type: SourceType.FILE_PDF,
+          },
         });
         toast.success("Source added successfully");
         setIsOpen(false);
       } catch (error) {
         console.error("Error extracting text:", error);
-        toast.error((error as Error)?.message || "Failed to extract text from PDF. Please ensure it is a valid PDF file.");
+        toast.error(
+          (error as Error)?.message ||
+            "Failed to extract text from PDF. Please ensure it is a valid PDF file.",
+        );
       }
     }
   };
@@ -51,7 +64,7 @@ const UploadDropzone = ({setIsOpen}: {setIsOpen: (isOpen: boolean) => void}) => 
         {...getRootProps()}
         className={clsx(
           "border-2 border-dashed border-neutral rounded-md text-center px-4 py-6 w-full flex flex-col items-center justify-center transition-colors duration-300 cursor-pointer",
-          isDragActive || loading ? "bg-neutral/20" : ""
+          isDragActive || loading ? "bg-neutral/20" : "",
         )}
       >
         <UploadCloud size={64} strokeWidth={1} className="text-neutral mb-4" />
@@ -68,7 +81,7 @@ const UploadDropzone = ({setIsOpen}: {setIsOpen: (isOpen: boolean) => void}) => 
         (acceptedFiles[0].type.startsWith("application/pdf") ||
           acceptedFiles[0].type.startsWith("application/msword") ||
           acceptedFiles[0].type.startsWith(
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
           )) ? (
           <div className="flex items-center gap-2 mt-4 max-w-[300px] rounded-lg bg-secondary-500/50 px-2 py-1">
             <NotebookText strokeWidth={1} className="w-4 h-4" />

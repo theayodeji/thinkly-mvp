@@ -1,16 +1,20 @@
 import { useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useNoteStore } from "../../store/noteStore";
+import { useParams } from "react-router-dom";
+import { useNote } from "../../hooks/queries/useNotes";
 
 const SCROLL_AMOUNT = 200;
 
+interface ChatSuggestionsProps {
+  chatWithNote: (message: string, id: string) => void;
+}
+
 const ChatSuggestions = ({
   chatWithNote,
-}: {
-  chatWithNote: (message: string, id: string) => void;
-}) => {
-  const { currentNote } = useNoteStore();
+}: ChatSuggestionsProps) => {
+  const { id: noteId } = useParams<{ id: string }>();
+  const { data: currentNote } = useNote(noteId || "");
   const id = currentNote?._id as string;
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);

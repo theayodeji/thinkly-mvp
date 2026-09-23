@@ -5,7 +5,7 @@ import { cn } from "../../shared/utils/cn";
 type ButtonProps = {
   children: React.ReactNode;
   onClick?: () => void;
-  variant?: "primary" | "neutral" | "ghost" | "dark";
+  variant?: "primary" | "neutral" | "ghost" | "dark" | "outline";
   size?: "sm" | "md" | "lg" | "icon";
   disabled?: boolean;
   loading?: boolean;
@@ -31,14 +31,11 @@ export function Button({
     "inline-flex items-center rounded-lg justify-center font-medium transition-colors duration-300 outline-none focus:outline-none cursor-pointer";
 
   const variantStyles = {
-    primary:
-      `text-white hover:from-primary-400 hover:to-primary-500 focus:ring-primary-500 ${loading || disabled ? 'bg-neutral-400 disabled:cursor-not-allowed' : 'bg-gradient-to-br from-primary-500 to-primary-400'} `,
-    neutral:
-      `bg-neutral-300 text-dark hover:bg-neutral-400 ${loading ? 'bg-neutral-300' : ''} disabled:bg-neutral-500`,
-    ghost:
-      `bg-transparent text-dark hover:bg-neutral/50 ${loading ? 'bg-neutral-100' : ''} ${disabled ? 'cursor-not-allowed' : ''} disabled:text-dark`,
-    dark:
-      `bg-dark text-white hover:bg-dark/80 focus:ring-border ${loading ? 'bg-neutral-700' : ''} disabled:text-white`,
+    primary: `text-white hover:from-primary-400 hover:to-primary-500 focus:ring-primary-500 ${loading || disabled ? "bg-neutral-400 disabled:cursor-not-allowed" : "bg-gradient-to-br from-primary-500 to-primary-400"} `,
+    neutral: `bg-neutral-300 text-dark hover:bg-neutral-400 ${loading ? "bg-neutral-300" : ""} disabled:bg-neutral-500`,
+    ghost: `bg-transparent text-dark hover:bg-neutral/50 ${loading ? "bg-neutral-100" : ""} ${disabled ? "cursor-not-allowed" : ""} disabled:text-dark`,
+    dark: `bg-dark text-white hover:bg-dark/80 focus:ring-border ${loading ? "bg-neutral-700" : ""} disabled:text-white`,
+    outline: `border-2 border-border/60 bg-transparent text-text hover:bg-neutral-100 dark:hover:bg-neutral-800 focus:ring-border ${loading ? "opacity-70" : ""} disabled:opacity-50 disabled:cursor-not-allowed`,
   };
 
   const sizeStyles = {
@@ -58,15 +55,17 @@ export function Button({
         variantStyles[variant],
         sizeStyles[size],
         "disabled:cursor-not-allowed",
-        className
+        className,
       )}
     >
-      {loading && (
-        <LoaderCircle className="w-4 h-4 animate-spin" />
+      {loading && <LoaderCircle className="w-4 h-4 animate-spin" />}
+      {!loading && icon && iconPosition === "left" && (
+        <span className="shrink-0">{icon}</span>
       )}
-      {!loading && icon && iconPosition === "left" && <span className="shrink-0">{icon}</span>}
-      {children && <span className="shrink-0">{children}</span>}
-      {!loading && icon && iconPosition === "right" && <span className="shrink-0">{icon}</span>}
+      {children && <>{children}</>}
+      {!loading && icon && iconPosition === "right" && (
+        <span className="shrink-0">{icon}</span>
+      )}
     </button>
   );
 }

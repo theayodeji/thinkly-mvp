@@ -1,14 +1,17 @@
 import React, { ChangeEvent, useState } from "react";
 import { TextInput } from "../ui/TextInput";
 import { Button } from "../ui/Button";
-import { useNoteStore } from "../../store/noteStore";
 import { useClose } from "@headlessui/react";
+import { useParams } from "react-router-dom";
+import { useAddSource } from "../../hooks/queries/useNotes";
+import { SourceType } from "../../shared/types/source";
 
 const PasteTextArea = () => {
   const [name, setName] = useState("");
   const [text, setText] = useState("");
 
-  const { addSource, currentNote, isActionLoading } = useNoteStore();
+  const { id } = useParams<{ id: string }>();
+  const { mutateAsync: addSource, isPending: isActionLoading } = useAddSource();
   const close = useClose();
 
   const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -21,8 +24,8 @@ const PasteTextArea = () => {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    if (!currentNote?._id) return;
-    addSource(currentNote._id, { name, text, type: "text" }).then(() =>
+    if (!id) return;
+    addSource({ id, source: { name, text, type: SourceType.TEXT } }).then(() =>
       close(),
     );
   };

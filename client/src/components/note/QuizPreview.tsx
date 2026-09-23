@@ -1,13 +1,15 @@
 //a component that shows the title of the note with "quiz on " prefix, the nature of the quiz and a start button
 import React from "react";
-import { useNoteStore } from "../../store/noteStore";
+import { useParams } from "react-router-dom";
+import { useNote } from "../../hooks/queries/useNotes";
 import { Button } from "../ui/Button";
 import { motion } from "framer-motion";
 import { useQuizStore } from "../../store/quizStore";
 // type Props = {}
 
 const QuizPreview = () => {
-  const { currentNote } = useNoteStore();
+  const { id } = useParams<{ id: string }>();
+  const { data: currentNote } = useNote(id || "");
   const startQuiz = useQuizStore((s) => s.startQuiz);
 
   return (

@@ -1,6 +1,7 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { usePomodoro } from "../../contexts/PomodoroContext";
-import toast from "react-hot-toast";
+import { Clock } from "lucide-react";
+import { Button } from "../ui/Button";
 
 const PomodoroTimer: React.FC = () => {
   const {
@@ -14,36 +15,33 @@ const PomodoroTimer: React.FC = () => {
     progress,
   } = usePomodoro();
 
-  // Effect to handle timer countdown
-  useEffect(() => {
-    if (!isActive) return;
-
-    const timer = setInterval(() => {
-      // The actual countdown is handled in the context
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [isActive]);
-
   return (
-    <div>
-      <h3 className="text-xl font-bold mb-4">Pomodoro Timer</h3>
-      <div className="card p-6 text-center bg-bg/60 dark:bg-bg/60 rounded-md">
-        <div className="relative w-40 h-40 mx-auto mb-6">
-          <svg className="w-full h-full" viewBox="0 0 100 100">
+    <div className="p-6 bg-bg border border-border/50 rounded-xl shadow-sm relative">
+      <div className="flex justify-between items-start mb-6">
+        <h3 className="text-xl font-bold">Pomodoro Timer</h3>
+        <div className="relative">
+          <Clock className="h-6 w-6 text-primary-600 dark:text-primary-400" />
+          <div className="absolute -top-3 -right-8 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded-full whitespace-nowrap">
+            {formatTime(timeLeft)}
+          </div>
+        </div>
+      </div>
+
+      <div className="text-center">
+        <div className="relative w-48 h-48 mx-auto mb-8">
+          <svg className="w-full h-full drop-shadow-md" viewBox="0 0 100 100">
             <circle
-              className="text-neutral-300"
-              strokeWidth="8"
+              className="text-neutral-100 dark:text-neutral-800"
+              strokeWidth="10"
               stroke="currentColor"
-              strokeLinecap="round"
               fill="transparent"
               r="40"
               cx="50"
               cy="50"
             />
             <circle
-              className="text-primary-500"
-              strokeWidth="8"
+              className="text-primary-700 dark:text-primary-500 transition-all duration-1000 ease-linear"
+              strokeWidth="10"
               strokeLinecap="round"
               stroke="currentColor"
               fill="transparent"
@@ -56,28 +54,32 @@ const PomodoroTimer: React.FC = () => {
             />
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <div className="text-3xl font-bold">{formatTime(timeLeft)}</div>
-            <div className="text-sm text-muted-foreground mt-1">
+            <div className="text-4xl font-extrabold tracking-tight">
+              {formatTime(timeLeft)}
+            </div>
+            <div className="text-xs font-bold text-text-secondary mt-1 uppercase tracking-widest">
               {mode === "work" ? "Focus Time" : "Break Time"}
             </div>
           </div>
         </div>
-        <div className="flex gap-2 justify-center">
-          <button
+        <div className="flex gap-4 justify-center">
+          <Button
             onClick={toggleTimer}
-            className="px-6 py-2 bg-gradient-primary text-white font-bold rounded-lg hover:bg-primary/90 transition-colors cursor-pointer"
+            className="flex-1 bg-gradient-primary hover:bg-primary-700 text-white font-bold rounded-lg h-12"
           >
             {isActive ? "Pause" : "Start"}
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="outline"
             onClick={resetTimer}
-            className="px-4 py-2 border border-input bg-background hover:bg-accent hover:text-accent-foreground rounded-lg transition-colors cursor-pointer"
+            className="flex-1 font-bold rounded-lg h-12"
           >
             Reset
-          </button>
+          </Button>
         </div>
-        <div className="mt-4 text-sm text-muted-foreground">
-          Completed cycles: {cycles}
+        <div className="mt-6 text-sm font-medium text-text-secondary">
+          Completed cycles:{" "}
+          <span className="font-bold text-text">{cycles}</span>
         </div>
       </div>
     </div>

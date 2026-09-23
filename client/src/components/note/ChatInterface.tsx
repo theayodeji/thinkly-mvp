@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useRef, memo } from "react";
+import { useState, useCallback, useRef, useEffect, memo } from "react";
 import ChatInput from "./ChatInput";
 import SummaryBlock from "./SummaryBlock";
-import { useNoteStore } from "../../store/noteStore";
 import { useStreaming } from "../../hooks/useStreaming";
 import ChatMessage from "./ChatMessage";
+import { useChatWithNote, useNote } from "../../hooks/queries/useNotes";
+import { useParams } from "react-router-dom";
 
 // Memoize the loading indicator to prevent unnecessary re-renders
 const LoadingIndicator = memo(() => (
@@ -19,14 +20,10 @@ const LoadingIndicator = memo(() => (
 LoadingIndicator.displayName = 'LoadingIndicator';
 
 function ChatInterface() {
-  const { 
-    currentNote, 
-    isChatLoading, 
-    chatHistory, 
-    clearChat, 
-    isActionLoading,
-    chatWithNote 
-  } = useNoteStore();
+  const { id: noteId } = useParams<{ id: string }>();
+  const { data: currentNote } = useNote(noteId || "");
+  const [chatHistory, setChatHistory] = useState<{ role: "user" | "assistant"; content: string }[]>([]);
+  const { mutateAsync: chatWithNote, isPending: isChatLoading } = useChatWithNote();
   
   const chatBoxRef = useRef<HTMLDivElement>(null);
 
@@ -46,21 +43,31 @@ function ChatInterface() {
     });
   }, []);
 
-  const handleSend = useCallback((message: string) => {
-    if (!message.trim() || !currentNote?._id) return;
+  const handleSend = useCallback(async (message: string) => {
+    if (!message.trim() || !noteId) return;
     
-    // Initial scroll
+    // Add user message to UI immediately
+    const newUserMsg = { role: "user" as const, content: message };
+    setChatHistory(prev => [...prev, newUserMsg]);
     scrollToBottom();
-    // chatWithNote(currentNote._id, message);
-    // The actual chat operation is now handled in ChatInput
-  }, [currentNote?._id, scrollToBottom, chatWithNote]);
+
+    try {
+      const response = await chatWithNote({
+        noteId,
+        message,
+        history: chatHistory
+      });
+      setChatHistory(prev => [...prev, { role: "assistant" as const, content: response.response }]);
+    } catch (error) {
+      console.error(error);
+    }
+  }, [noteId, chatWithNote, chatHistory, scrollToBottom]);
 
   // Clean up on unmount
   useEffect(() => {
-    return () => clearChat();
-  }, [clearChat]);
+    return () => setChatHistory([]);
+  }, []);
 
-  // Memoize the chat messages to prevent re-renders when only the input changes
   const renderedMessages = useCallback(() => {
     return chatHistory.map((msg, i) => (
       <ChatMessage
@@ -85,9 +92,10 @@ function ChatInterface() {
 
       <ChatInput 
         onSend={handleSend}
-        isActionLoading={isActionLoading}
+        isActionLoading={isChatLoading}
         chatHistory={chatHistory}
-        currentNoteId={currentNote?._id}
+        currentNoteId={noteId}
+        hasSources={currentNote?.sources ? currentNote.sources.length > 0 : false}
       />
     </div>
   );

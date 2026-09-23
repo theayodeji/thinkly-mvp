@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { Theme, THEME_KEY } from './theme.types';
+import { useLocalStorage } from '../hooks/utils/useLocalStorage';
 
 type ThemeContextType = {
   theme: Theme;
@@ -12,7 +13,7 @@ type ThemeContextType = {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>('system');
+  const [theme, setThemeState] = useLocalStorage<Theme>(THEME_KEY, 'system');
   const [mounted, setMounted] = useState(false);
 
   // Update the theme class on the HTML element
@@ -33,26 +34,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  // Initialize theme from localStorage or system preference
-  useEffect(() => {
-    // 1. Get saved theme from localStorage
-    const savedTheme = localStorage.getItem(THEME_KEY) as Theme | null;
-    
-    // 2. If user has a saved preference, use it
-    if (savedTheme) {
-      setThemeState(savedTheme);
-      updateThemeClass(savedTheme);
-    } else {
-      // 3. Otherwise, use system preference but don't save it yet
-      updateThemeClass('system');
-    }
-    
-    setMounted(true);
-  }, [updateThemeClass]);
-
-  // Update theme class when theme changes
+  // Initialize theme class and mark as mounted
   useEffect(() => {
     updateThemeClass(theme);
+    setMounted(true);
   }, [theme, updateThemeClass]);
 
   // Watch for system theme changes when in 'system' mode
@@ -73,12 +58,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, [theme]);
 
-  // Set theme and save to localStorage
+  // Set theme
   const setTheme = useCallback((newTheme: Theme) => {
     setThemeState(newTheme);
-    localStorage.setItem(THEME_KEY, newTheme);
     updateThemeClass(newTheme);
-  }, [updateThemeClass]);
+  }, [updateThemeClass, setThemeState]);
 
   // Toggle between light and dark (skips system theme)
   const toggleTheme = useCallback(() => {

@@ -23,7 +23,7 @@
 }
 /* Dark theme overrides */
 .dark {
-  --color-bg: #151515;
+  --color-bg: #0b0b0b;
   --color-bg-secondary: #212121;
   --color-text: #f8fafc;
   --color-text-secondary: #b9b9b9;

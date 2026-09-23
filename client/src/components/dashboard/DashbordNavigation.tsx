@@ -1,11 +1,11 @@
 import { PenLine, PlusCircle, BookDashed, Timer } from "lucide-react";
-import { useNoteStore } from "../../store/noteStore";
+import { useCreateNote } from "../../hooks/queries/useNotes";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 const DashbordNavigation = () => {
   const navigate = useNavigate();
-  const createNote = useNoteStore((state) => state.createNote);
+  const { mutateAsync: createNote } = useCreateNote();
 
   function createNoteHandler() {
     createNote().then((note) => {

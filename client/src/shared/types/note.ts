@@ -5,7 +5,7 @@ export type Note = {
   _id: string;
   title: string;
   content: string;
-  sources: Source[];
+  sources: (string | Source)[];
   userId: string;
   summary: string;
   createdAt: Date;

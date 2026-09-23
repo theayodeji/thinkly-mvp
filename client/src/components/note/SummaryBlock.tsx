@@ -1,6 +1,8 @@
 import { Copy, WandSparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
+import { useParams } from "react-router-dom";
+import { useNote } from "../../hooks/queries/useNotes";
 import { Button } from "../ui/Button";
-import { useNoteStore } from "../../store/noteStore";
 import toast from "react-hot-toast";
 
 const copySummary = (summary: string) => {
@@ -9,13 +11,13 @@ const copySummary = (summary: string) => {
 };
 
 const SummaryBlock = () => {
-  const { currentNote, isActionLoading } = useNoteStore();
+  const { id } = useParams<{ id: string }>();
+  const { data: currentNote, isLoading: isActionLoading } = useNote(id || "");
 
   if (isActionLoading)
     return (
-      <div className="flex flex-col bg-white dark:bg-neutral-600 rounded-md p-2 w-full gap-3">
-        <div className="animate-pulse h-6 bg-gray-200 rounded w-full"></div>
-        <div className="animate-pulse h-4 bg-gray-200 rounded w-24"></div>
+      <div className="max-w-[80%] px-3 py-2 rounded-lg text-sm bg-secondary-500/10 border border-secondary-500/20 text-text self-start">
+        <div className="flex items-center gap-2 mb-2 text-secondary-600 dark:text-secondary-400 font-medium"></div>
         <div className="animate-pulse h-16 bg-gray-200 rounded w-full"></div>
       </div>
     );

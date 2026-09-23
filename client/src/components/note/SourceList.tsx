@@ -1,10 +1,12 @@
 import { memo } from 'react';
 import NoSource from "./NoSource";
 import SourceListItem from "./SourceListItem";
-import { useNoteStore } from "../../store/noteStore";
+import { useParams } from "react-router-dom";
+import { useNote } from "../../hooks/queries/useNotes";
 
 const SourceList = memo(({ setIsSourceModalOpen }: { setIsSourceModalOpen: (isOpen: boolean) => void }) => {
-  const { currentNote, isActionLoading } = useNoteStore();
+  const { id } = useParams<{ id: string }>();
+  const { data: currentNote, isFetching: isActionLoading } = useNote(id || "");
 
   if (currentNote?.sources?.length === 0) {
     return <NoSource setIsSourceModalOpen={setIsSourceModalOpen} />;

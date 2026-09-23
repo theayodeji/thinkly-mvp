@@ -2,7 +2,9 @@ import { Radio, RadioGroup } from "@headlessui/react";
 import { CheckCircle } from "lucide-react";
 import { useQuizStore } from "../../store/quizStore";
 import { Quiz } from "../../shared/types/quiz";
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
+import { useSubmitQuiz } from "../../hooks/queries/useQuiz";
+import toast from "react-hot-toast";
 
 const QuizBox = () => {
   const {
@@ -12,12 +14,14 @@ const QuizBox = () => {
     submitAnswer,
     timeLeft,
     prevQuestion,
-    submitQuiz,
+    setQuizResult,
     isLoading,
     nextQuestion,
     status,
     tick,
   } = useQuizStore();
+
+  const { mutateAsync: submitQuizMutation, isPending: isSubmitting } = useSubmitQuiz();
 
   // Timer effect
   useEffect(() => {
@@ -47,6 +51,23 @@ const QuizBox = () => {
   const handleAnswerSelect = (answerIndex: number) => {
     submitAnswer(answerIndex);
   };
+
+  const handleSubmit = useCallback(async () => {
+    if (!quiz) return;
+    try {
+      const res = await submitQuizMutation({ id: quiz._id, answers });
+      setQuizResult(res.score, res.answers);
+    } catch (error) {
+      toast.error("Failed to submit quiz");
+    }
+  }, [quiz, answers, submitQuizMutation, setQuizResult]);
+
+  // Auto-submit when time runs out
+  useEffect(() => {
+    if (timeLeft === 0 && status === "started" && !isSubmitting) {
+      handleSubmit();
+    }
+  }, [timeLeft, status, isSubmitting, handleSubmit]);
 
   return (
     <div className="px-2 max-w-md">
@@ -122,15 +143,15 @@ const QuizBox = () => {
         )}
         {currentQuestion === quiz.questions.length - 1 && (
           <button
-            onClick={submitQuiz}
-            disabled={selectedAnswer === null}
+            onClick={handleSubmit}
+            disabled={selectedAnswer === null || isSubmitting}
             className={`px-4 py-2 rounded-lg ${
-              selectedAnswer === null
+              selectedAnswer === null || isSubmitting
                 ? "bg-gray-200 text-gray-500 cursor-not-allowed"
                 : "bg-gradient-primary text-white"
             }`}
           >
-            Submit
+            {isSubmitting ? "Submitting..." : "Submit"}
           </button>
         )}
       </div>

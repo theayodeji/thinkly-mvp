@@ -1,6 +1,6 @@
 import { PlusIcon } from "lucide-react";
 import React from "react";
-import { useNoteStore } from "../../store/noteStore";
+import { useCreateNote } from "../../hooks/queries/useNotes";
 import { useNavigate } from "react-router-dom";
 
 
@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 function NewNoteButton() {
 
   const navigate = useNavigate();
-  const { createNote } = useNoteStore();
+  const { mutateAsync: createNote } = useCreateNote();
   return (
     <div
       className="rounded-md p-10 bg-primary-500 text-white flex flex-col items-center justify-center cursor-pointer hover:bg-primary-600 transition-colors duration-300"

@@ -1,21 +1,23 @@
-import type { Request, Response } from "express";
+import type { Request, Response, NextFunction } from "express";
 import { Types } from "mongoose";
 import Note from "../models/Note.js";
 import Flashcard from "../models/Flashcard.js";
 import geminiService from "../utils/genai.js";
 import { withMongoTransaction, isValidObjectId } from "../utils/db.js";
+import { catchAsync } from "../utils/catchAsync.js";
+import { AppError } from "../utils/AppError.js";
 
-export const generateFlashcards = async (req: Request, res: Response) => {
+export const generateFlashcards = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { noteId } = req.params;
     const userId = req.userId;
 
     if (!isValidObjectId(noteId)) {
-        return res.status(400).json({ message: "Invalid note ID" });
+        throw new AppError("Invalid note ID", 400);
     }
 
     const note = await Note.findOne({ _id: noteId, userId });
     if (!note) {
-        return res.status(404).json({ message: "Note not found" });
+        throw new AppError("Note not found", 404);
     }
 
     let createdFlashcards: any[] = [];
@@ -39,26 +41,26 @@ export const generateFlashcards = async (req: Request, res: Response) => {
     });
 
     res.status(201).json({ flashcards: createdFlashcards });
-};
+});
 
-export const getFlashcards = async (req: Request, res: Response) => {
+export const getFlashcards = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { noteId } = req.params;
     const userId = req.userId;
 
     if (!isValidObjectId(noteId)) {
-        return res.status(400).json({ message: "Invalid note ID" });
+        throw new AppError("Invalid note ID", 400);
     }
 
     const flashcards = await Flashcard.find({ noteId, userId });
     res.json({ flashcards });
-};
+});
 
-export const deleteFlashcards = async (req: Request, res: Response) => {
+export const deleteFlashcards = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { noteId } = req.params;
     const userId = req.userId;
 
     if (!isValidObjectId(noteId)) {
-        return res.status(400).json({ message: "Invalid note ID" });
+        throw new AppError("Invalid note ID", 400);
     }
 
     await withMongoTransaction(async (session) => {
@@ -72,4 +74,4 @@ export const deleteFlashcards = async (req: Request, res: Response) => {
     });
     
     res.json({ message: "Flashcards deleted successfully" });
-};
+});

@@ -1,14 +1,22 @@
-import { useNoteStore } from "../../store/noteStore";
 import QuizDrawer from "./QuizDrawer";
 import QuizContainer from "./QuizContainer";
 import Drawer from "../ui/Drawer";
 import { ChartBarDecreasing } from "lucide-react";
 import FlashcardsContainer from "./FlashcardsContainer";
+import { useParams } from "react-router-dom";
+import { useNote } from "../../hooks/queries/useNotes";
+import { useFlashcards } from "../../hooks/queries/useFlashcards";
 
-const ToolsOutput = () => {
-  const isQuizLoading = useNoteStore((state) => state.isQuizLoading);
-  const currentNote = useNoteStore((state) => state.currentNote);
-  const flashcards = useNoteStore((state) => state.flashcards);
+const ToolsOutput = ({
+  isQuizLoading,
+  isFlashcardsLoading,
+}: {
+  isQuizLoading?: boolean;
+  isFlashcardsLoading?: boolean;
+}) => {
+  const { id } = useParams<{ id: string }>();
+  const { data: currentNote } = useNote(id || "");
+  const { data: flashcards = [] } = useFlashcards(id || "");
 
   if (!currentNote) return null;
   return (
@@ -20,23 +28,32 @@ const ToolsOutput = () => {
           <QuizDrawer children={<QuizContainer />} />
         )}
 
-        {currentNote.flashcards && flashcards.length > 0 && <Drawer
-          trigger={
-            <div className="flex flex-col gap-3 px-3 py-4 border-2 border-secondary-500/30 dark:border-secondary-500/10 rounded-md cursor-pointer hover:bg-secondary-400/10">
-              <div className="flex gap-2 w-full">
-                <ChartBarDecreasing className="w-6 h-6" />
-                <p>Flashcards</p>
-              </div>
-            </div>
-          }
-          title="Flashcards"
-        >
-          <FlashcardsContainer />
-        </Drawer>}
+        {currentNote.flashcards &&
+          !isFlashcardsLoading &&
+          flashcards.length > 0 && (
+            <Drawer
+              trigger={
+                <div className="flex flex-col gap-3 px-3 py-4 border-2 border-secondary-500/30 dark:border-secondary-500/10 rounded-md cursor-pointer hover:bg-secondary-400/10">
+                  <div className="flex gap-2 w-full">
+                    <ChartBarDecreasing className="w-6 h-6" />
+                    <p>Flashcards</p>
+                  </div>
+                </div>
+              }
+              title="Flashcards"
+            >
+              <FlashcardsContainer />
+            </Drawer>
+          )}
 
         {isQuizLoading && (
           <div className="h-16 w-full flex items-center justify-start px-5 bg-gray-400/30 rounded-md animate-pulse">
-            Generating...
+            Generating a new quiz...
+          </div>
+        )}
+        {isFlashcardsLoading && (
+          <div className="h-16 w-full flex items-center justify-start px-5 bg-gray-400/30 rounded-md animate-pulse">
+            Generating a new set...
           </div>
         )}
       </div>

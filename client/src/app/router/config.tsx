@@ -4,6 +4,7 @@ import type { RouteConfig } from "../../shared/types/route";
 // layouts
 import MainLayout from "../layouts/MainLayout";
 import AuthLayout from "../layouts/AuthLayout";
+import LandingLayout from "../layouts/LandingLayout";
 
 // pages
 import Login from "../../pages/Login";
@@ -16,10 +17,15 @@ import InDevelopment from "../../pages/InDevelopment";
 
 export const routeConfig: RouteConfig[] = [
   {
-    element: <MainLayout />,
+    element: <LandingLayout />,
     children: [
       { path: routes.home, element: <Home />, protected: false },
       { path: routes.inDevelopment, element: <InDevelopment />, protected: false },
+    ],
+  },
+  {
+    element: <MainLayout />,
+    children: [
       { path: routes.dashboard, element: <Dashboard />, protected: true, },
       { path: routes.notes.root, element: <NotesList />, protected: true },
       {

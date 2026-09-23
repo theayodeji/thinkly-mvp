@@ -1,12 +1,15 @@
-import { GoogleGenerativeAI, type GenerateContentResult } from "@google/generative-ai";
+import {
+  GoogleGenerativeAI,
+  type GenerateContentResult,
+} from "@google/generative-ai";
 import { z } from "zod";
 import { config } from "../config/env.js";
-import type { 
+import type {
   ChatSuggestionsResponse,
-  PromptType, 
-  QuizQuestion, 
-  SummaryResponse, 
-  TitleResponse 
+  PromptType,
+  QuizQuestion,
+  SummaryResponse,
+  TitleResponse,
 } from "./prompts.js";
 import { PROMPT_TEMPLATES } from "./prompts.js";
 
@@ -14,31 +17,35 @@ const DEFAULT_MODEL = "gemini-2.5-flash-lite";
 
 // Schemas for validation
 const SummarySchema = z.object({
-  summary: z.string()
+  summary: z.string(),
 });
 
 const TitleSchema = z.object({
-  title: z.string()
+  title: z.string(),
 });
 
-const QuizSchema = z.array(z.object({
-  question: z.string(),
-  options: z.tuple([z.string(), z.string(), z.string(), z.string()]),
-  correctAnswer: z.number(),
-  explanation: z.string()
-}));
+const QuizSchema = z.array(
+  z.object({
+    question: z.string(),
+    options: z.tuple([z.string(), z.string(), z.string(), z.string()]),
+    correctAnswer: z.number(),
+    explanation: z.string(),
+  }),
+);
 
 const ChatSuggestionsSchema = z.object({
-  questions: z.array(z.string())
+  questions: z.array(z.string()),
 });
 
-const FlashcardsSchema = z.array(z.object({
-  question: z.string(),
-  answer: z.string()
-}));
+const FlashcardsSchema = z.array(
+  z.object({
+    question: z.string(),
+    answer: z.string(),
+  }),
+);
 
 const ChatSchema = z.object({
-  response: z.string()
+  response: z.string(),
 });
 
 class GeminiService {
@@ -61,31 +68,39 @@ class GeminiService {
       return response.text();
     } catch (error) {
       console.error("Error generating content:", error);
-      throw new Error(`Failed to generate content: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to generate content: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   }
 
   public async processPrompt<T>(
     promptType: PromptType,
     content: string,
-    schema?: z.ZodType<T>
+    schema?: z.ZodType<T>,
   ): Promise<T> {
     try {
       const prompt = this.constructPrompt(promptType, content);
       let response = await this.generateContent(prompt);
-      
+
       if (schema) {
         try {
           // Remove markdown code blocks if present
-          response = response.replace(/^```(?:json)?\n|\n```$/g, '').trim();
+          response = response.replace(/^```(?:json)?\n|\n```$/g, "").trim();
           const parsed = JSON.parse(response);
           return schema.parse(parsed);
         } catch (e) {
-          console.error("Failed to parse or validate JSON response:", response, e);
-          throw new Error("Failed to parse or validate model response as expected JSON");
+          console.error(
+            "Failed to parse or validate JSON response:",
+            response,
+            e,
+          );
+          throw new Error(
+            "Failed to parse or validate model response as expected JSON",
+          );
         }
       }
-      
+
       return response as unknown as T;
     } catch (error) {
       console.error(`Error in processPrompt (${promptType}):`, error);
@@ -115,10 +130,18 @@ class GeminiService {
   public async generateQuiz(content: string): Promise<QuizQuestion[]> {
     return this.processPrompt("quiz", content, QuizSchema as any);
   }
-  public async generateChatSuggestions(content: string): Promise<ChatSuggestionsResponse> {
-    return this.processPrompt("chatSuggestions", content, ChatSuggestionsSchema);
+  public async generateChatSuggestions(
+    content: string,
+  ): Promise<ChatSuggestionsResponse> {
+    return this.processPrompt(
+      "chatSuggestions",
+      content,
+      ChatSuggestionsSchema,
+    );
   }
-  public async generateFlashcards(content: string): Promise<Array<{ question: string; answer: string }>> {
+  public async generateFlashcards(
+    content: string,
+  ): Promise<Array<{ question: string; answer: string }>> {
     return this.processPrompt("flashcards", content, FlashcardsSchema);
   }
 }

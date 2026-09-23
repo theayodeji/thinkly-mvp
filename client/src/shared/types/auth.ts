@@ -8,20 +8,20 @@ export interface User {
         longest: number;
         lastActive: Date;
     };
-    achievements: [{
-        id: String, // unique identifier, e.g. "first_quiz_completed"
-        title: String,
-        description: String,
-        icon: String,
-        earnedAt: Date,
-      }],
+    achievements: {
+        id: string; // unique identifier, e.g. "first_quiz_completed"
+        title: string;
+        description: string;
+        icon: string;
+        earnedAt: Date;
+    }[];
 
-      badges: [{
-        id: String, // e.g. "gold_streak_badge"
-        title: String,
-        level: String, // bronze, silver, gold, platinum
-        earnedAt: Date,
-      }],
+    badges: {
+        id: string; // e.g. "gold_streak_badge"
+        title: string;
+        level: string; // bronze, silver, gold, platinum
+        earnedAt: Date;
+    }[];
   }
   
   export interface AuthContextType {

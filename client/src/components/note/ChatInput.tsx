@@ -1,14 +1,14 @@
-import React, { useState, useCallback, useRef, useEffect } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import { Button } from "../ui/Button";
 import { SendIcon } from "lucide-react";
 import ChatSuggestions from "./ChatSuggestions";
-import { useNoteStore } from "../../store/noteStore";
 
 interface ChatInputProps {
-  onSend: (message: string) => void;
+  onSend: (message: string) => Promise<void>;
   isActionLoading: boolean;
   chatHistory: { role: string; content: string }[];
   currentNoteId?: string;
+  hasSources?: boolean;
 }
 
 function ChatInput({
@@ -16,18 +16,15 @@ function ChatInput({
   isActionLoading,
   chatHistory,
   currentNoteId,
+  hasSources,
 }: ChatInputProps) {
   const [input, setInput] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const { chatWithNote, currentNote } = useNoteStore();
 
   // Handle sending a message
   const handleSendMessage = useCallback(async () => {
     const message = input.trim();
     if (!message || !currentNoteId) return;
-
-    // Notify parent component that a message was sent
-    onSend(message);
 
     // Clear input and reset textarea height
     setInput("");
@@ -35,13 +32,9 @@ function ChatInput({
       textareaRef.current.style.height = "36px";
     }
 
-    // Handle the actual chat operation
-    try {
-      await chatWithNote(currentNoteId, message);
-    } catch (error) {
-      console.error("Error sending message:", error);
-    }
-  }, [input, currentNoteId, onSend, chatWithNote]);
+    // Handle the actual chat operation via parent
+    await onSend(message);
+  }, [input, currentNoteId, onSend]);
 
   // Handle keydown events for the textarea
   const handleKeyDown = useCallback(
@@ -82,14 +75,14 @@ function ChatInput({
         icon={<SendIcon className="h-4 w-4"/>}
         onClick={handleSendMessage}
         disabled={
-          !input.trim() || !currentNoteId || currentNote?.sources?.length === 0
+          !input.trim() || !currentNoteId || !hasSources || isActionLoading
         }
       >
         Send
       </Button>
       {chatHistory.length === 0 && !isActionLoading && currentNoteId && (
         <ChatSuggestions
-          chatWithNote={(message) => chatWithNote(currentNoteId, message)}
+          chatWithNote={(message) => onSend(message)}
         />
       )}
     </div>

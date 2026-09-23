@@ -1,4 +1,4 @@
-import type { Request, Response } from "express";
+import type { Request, Response, NextFunction } from "express";
 import bcrypt from "bcryptjs";
 import UserModel from "../models/User.js";
 import { Types } from "mongoose";
@@ -13,12 +13,14 @@ import {
 } from "../utils/auth.js";
 import { StreakService } from "../services/streakService.js";
 import { config } from "../config/env.js";
+import { catchAsync } from "../utils/catchAsync.js";
+import { AppError } from "../utils/AppError.js";
 
-export const register = async (req: Request, res: Response) => {
+export const register = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const { name, email, password } = req.body;
   const existingUser = await UserModel.findOne({ email });
   if (existingUser) {
-    return res.status(400).json({ message: "User already exists" });
+    throw new AppError("User already exists", 400);
   }
 
   const salt = await bcrypt.genSalt(10);
@@ -43,42 +45,30 @@ export const register = async (req: Request, res: Response) => {
     },
     ...tokens,
   });
-};
+});
 
-export const login = async (req: Request, res: Response) => {
+export const login = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const { email, password } = req.body;
 
   // Find user by email
   const user = await UserModel.findOne({ email });
   if (!user) {
-    return res.status(400).json({
-      success: false,
-      message: "Invalid credentials",
-    });
+    throw new AppError("Invalid credentials", 400);
   }
 
   // Check if user is an OAuth user trying to use password login
   if (user.googleId && !user.password) {
-    return res.status(400).json({
-      success: false,
-      message: "Please sign in with Google",
-    });
+    throw new AppError("Please sign in with Google", 400);
   }
 
   // Verify password for non-OAuth users
   if (!user.password) {
-    return res.status(400).json({
-      success: false,
-      message: "Invalid credentials",
-    });
+    throw new AppError("Invalid credentials", 400);
   }
 
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
-    return res.status(400).json({
-      success: false,
-      message: "Invalid credentials",
-    });
+    throw new AppError("Invalid credentials", 400);
   }
 
   const accessToken = generateToken(user._id);
@@ -98,24 +88,24 @@ export const login = async (req: Request, res: Response) => {
     },
     ...tokens,
   });
-};
+});
 
-export const checkAuth = async (req: Request, res: Response) => {
+export const checkAuth = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   // req.userId is already an ObjectId from auth middleware
   const user = await UserModel.findById(req.userId).select("-password");
   if (!user) {
-    return res.status(404).json({ message: "User not found" });
+    throw new AppError("User not found", 404);
   }
   const updatedUser = await StreakService.handleUpdateStreak(user, false);
   res.status(200).json(updatedUser);
-};
+});
 
-export const refreshToken = async (req: Request, res: Response) => {
+export const refreshToken = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   // Get refresh token from cookies
   const refreshToken = req.cookies?.refreshToken;
 
   if (!refreshToken) {
-    return res.status(403).json({ message: "No refresh token provided" });
+    throw new AppError("No refresh token provided", 403);
   }
 
   const decoded = jwt.verify(refreshToken, config.REFRESH_SECRET) as {
@@ -125,7 +115,7 @@ export const refreshToken = async (req: Request, res: Response) => {
   const user = await UserModel.findById(decoded.id);
 
   if (!user) {
-    return res.status(404).json({ message: "User not found" });
+    throw new AppError("User not found", 404);
   }
 
   await StreakService.handleUpdateStreak(user, false);
@@ -133,12 +123,12 @@ export const refreshToken = async (req: Request, res: Response) => {
   // Set new access token as HTTP-only cookie
   setAccessTokenCookie(res, newAccessToken);
   return res.json({});
-};
+});
 
-export const logout = async (req: Request, res: Response) => {
+export const logout = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   clearAuthCookies(res);
   return res.status(200).json({ message: "Logged out successfully" });
-};
+});
 
 export const googleLogin = passport.authenticate("google", {
   session: false,

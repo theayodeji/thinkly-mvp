@@ -2,7 +2,8 @@ import { useCallback, useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Flaschcard from "./Flaschcard";
 import { ArrowLeft, ArrowRight, Loader2, Repeat2 } from "lucide-react";
-import { useNoteStore } from "../../store/noteStore";
+import { useParams } from "react-router-dom";
+import { useFlashcards } from "../../hooks/queries/useFlashcards";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -45,15 +46,8 @@ const FlashcardsContainer = () => {
   const [direction, setDirection] = useState(0); // 1 for forward, -1 for backward
   const containerRef = useRef<HTMLDivElement>(null);
   
-  // Get flashcards and loading state from the store
-  const { currentNote, flashcards, isFlashcardsLoading, getFlashcards } = useNoteStore();
-  
-  // Fetch flashcards when the component mounts or when the currentNote changes
-  useEffect(() => {
-    if (currentNote?._id) {
-      getFlashcards(currentNote._id);
-    }
-  }, [currentNote?._id, getFlashcards]);
+  const { id } = useParams<{ id: string }>();
+  const { data: flashcards, isPending: isFlashcardsLoading } = useFlashcards(id || "");
 
   const handleFlip = useCallback(() => {
     setIsFlipped((prev) => !prev);

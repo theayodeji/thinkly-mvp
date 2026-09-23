@@ -1,10 +1,12 @@
 import { Grip, LucideShare2 } from "lucide-react";
 import { Button } from "../ui/Button";
-import { useNoteStore } from "../../store/noteStore";
+import { useParams } from "react-router-dom";
+import { useNote } from "../../hooks/queries/useNotes";
 import { BackNavigator } from "../ui/BackNavigator";
 
 const NotePageHeader = () => {
-  const { currentNote } = useNoteStore();
+  const { id } = useParams<{ id: string }>();
+  const { data: currentNote } = useNote(id || "");
   return (
     <div className="flex md:justify-between items-start gap-4 border-b border-gray-200 dark:border-neutral-800">
       <div className="flex justify-between items-center wrapper">

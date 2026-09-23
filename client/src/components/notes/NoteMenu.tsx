@@ -12,18 +12,17 @@ import {
   Trash2Icon,
   X,
 } from "lucide-react";
-import { useNoteStore } from "../../store/noteStore";
+import { useDeleteNote } from "../../hooks/queries/useNotes";
 import toast from "react-hot-toast";
 
 const NoteMenu = ({ noteId }: { noteId: string }) => {
-  const { deleteNote } = useNoteStore();
+  const { mutateAsync: deleteNote } = useDeleteNote();
 
   const handleDelete = async () => {
     if (noteId) {
       try {
-        await deleteNote(noteId).then(() => {
-          toast.success("Note deleted successfully");
-        });
+        await deleteNote(noteId);
+        toast.success("Note deleted successfully");
       } catch (error) {
         console.error("Failed to delete note:", error);
       }

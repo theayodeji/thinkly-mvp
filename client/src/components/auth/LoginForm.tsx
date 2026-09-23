@@ -1,6 +1,6 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import { loginSchema, LoginSchema } from "../../validations/auth";
+import { loginSchema, LoginSchema } from "../../shared/schemas/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "../../hooks/useAuth";
 import { TextInput } from "../ui/TextInput";

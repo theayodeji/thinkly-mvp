@@ -1,7 +1,15 @@
-import React, { createContext, useContext, useState, useCallback, ReactNode, useEffect } from 'react';
-import toast from 'react-hot-toast';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  ReactNode,
+  useEffect,
+} from "react";
+import toast from "react-hot-toast";
+import { api } from "../shared/services/api";
 
-export type TimerMode = 'work' | 'break';
+export type TimerMode = "work" | "break";
 
 interface PomodoroContextType {
   timeLeft: number;
@@ -17,19 +25,22 @@ interface PomodoroContextType {
   BREAK_DURATION: number;
 }
 
-const PomodoroContext = createContext<PomodoroContextType | undefined>(undefined);
+const PomodoroContext = createContext<PomodoroContextType | undefined>(
+  undefined,
+);
 
-export const PomodoroProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const PomodoroProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const WORK_DURATION = 25 * 60; // 25 minutes in seconds
   const BREAK_DURATION = 5 * 60; // 5 minutes in seconds
   const [timeLeft, setTimeLeft] = useState<number>(WORK_DURATION);
   const [isActive, setIsActive] = useState<boolean>(false);
-  const [mode, setMode] = useState<TimerMode>('work');
+  const [mode, setMode] = useState<TimerMode>("work");
   const [cycles, setCycles] = useState<number>(0);
 
   // Timer effect
   useEffect(() => {
-    // @ts-expect-error NodeJS namespace will be found by tsc
     let interval: NodeJS.Timeout | null = null;
 
     if (isActive && timeLeft > 0) {
@@ -37,17 +48,18 @@ export const PomodoroProvider: React.FC<{ children: ReactNode }> = ({ children }
         setTimeLeft((prev) => prev - 1);
       }, 1000);
     } else if (isActive && timeLeft === 0) {
-      const newMode = mode === 'work' ? 'break' : 'work';
-      
-      if (newMode === 'work') {
+      const newMode = mode === "work" ? "break" : "work";
+
+      if (newMode === "work") {
         setCycles((prev) => prev + 1);
-        toast('Break time is over! Time to focus!', { icon: '🎯' });
+        toast("Break time is over! Time to focus!", { icon: "🎯" });
       } else {
-        toast('Take a break! You deserve it!', { icon: '☕' });
+        toast("Take a break! You deserve it!", { icon: "☕" });
       }
-      
+
       setMode(newMode);
-      setTimeLeft(newMode === 'work' ? WORK_DURATION : BREAK_DURATION);
+      setTimeLeft(newMode === "work" ? WORK_DURATION : BREAK_DURATION);
+      completeSession();
     }
 
     return () => {
@@ -58,30 +70,48 @@ export const PomodoroProvider: React.FC<{ children: ReactNode }> = ({ children }
   const formatTime = useCallback((seconds: number): string => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   }, []);
 
   const resetTimer = useCallback(() => {
     setIsActive(false);
-    setTimeLeft(mode === 'work' ? WORK_DURATION : BREAK_DURATION);
+    setTimeLeft(mode === "work" ? WORK_DURATION : BREAK_DURATION);
   }, [mode, WORK_DURATION, BREAK_DURATION]);
+
+  const completeSession = useCallback(async () => {
+    const response = await api.post("/pomodoro/complete");
+
+    if (response.status !== 200) {
+      toast("Failed to complete pomodoro session", { icon: "❌" });
+    }
+
+    setIsActive(false);
+    setTimeLeft(mode === "work" ? WORK_DURATION : BREAK_DURATION);
+    setMode("work");
+    setCycles((prev) => prev + 1);
+    toast("Pomodoro session completed", { icon: "🎯" });
+  }, [WORK_DURATION, BREAK_DURATION]);
 
   const toggleTimer = useCallback(() => {
     if (isActive) {
-      toast('Pomodoro timer paused', { icon: '⏸️', duration: 2000 });
+      toast("Pomodoro timer paused", { icon: "⏸️", duration: 2000 });
     } else {
-      toast('Pomodoro timer started', { icon: '▶️', duration: 2000 });
+      toast("Pomodoro timer started", { icon: "▶️", duration: 2000 });
     }
     setIsActive(!isActive);
   }, [isActive]);
 
-  const switchMode = useCallback((newMode: TimerMode) => {
-    setMode(newMode);
-    setTimeLeft(newMode === 'work' ? WORK_DURATION : BREAK_DURATION);
-    setIsActive(false);
-  }, [WORK_DURATION, BREAK_DURATION]);
+  const switchMode = useCallback(
+    (newMode: TimerMode) => {
+      setMode(newMode);
+      setTimeLeft(newMode === "work" ? WORK_DURATION : BREAK_DURATION);
+      setIsActive(false);
+    },
+    [WORK_DURATION, BREAK_DURATION],
+  );
 
-  const progress = (timeLeft / (mode === 'work' ? WORK_DURATION : BREAK_DURATION)) * 100;
+  const progress =
+    (timeLeft / (mode === "work" ? WORK_DURATION : BREAK_DURATION)) * 100;
 
   return (
     <PomodoroContext.Provider
@@ -108,9 +138,7 @@ export const PomodoroProvider: React.FC<{ children: ReactNode }> = ({ children }
 export const usePomodoro = (): PomodoroContextType => {
   const context = useContext(PomodoroContext);
   if (context === undefined) {
-    throw new Error('usePomodoro must be used within a PomodoroProvider');
+    throw new Error("usePomodoro must be used within a PomodoroProvider");
   }
   return context;
 };
-
-

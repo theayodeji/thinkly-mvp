@@ -1,8 +1,9 @@
 import { Plus } from "lucide-react";
 import SourceList from "./SourceList";
 import AddSourceModal from "./AddSourceModal";
-import { useState, memo } from "react";
+import { memo } from "react";
 import { Button } from "../ui/Button";
+import { useDisclosure } from "../../hooks/utils/useDisclosure";
 
 const SourcesHeader = ({ onAddClick }: { onAddClick: () => void }) => (
   <div className="flex justify-between items-center mb-4">
@@ -20,15 +21,15 @@ const SourcesHeader = ({ onAddClick }: { onAddClick: () => void }) => (
 );
 
 const SourcesAside = () => {
-  const [isSourceModalOpen, setIsSourceModalOpen] = useState(false);
+  const { isOpen, setIsOpen, open } = useDisclosure(false);
   
   return (
     <aside className="lg:block">
-      <SourcesHeader onAddClick={() => setIsSourceModalOpen(true)} />
-      <SourceList setIsSourceModalOpen={setIsSourceModalOpen} />
+      <SourcesHeader onAddClick={open} />
+      <SourceList setIsSourceModalOpen={setIsOpen} />
       <AddSourceModal 
-        isOpen={isSourceModalOpen} 
-        setIsOpen={setIsSourceModalOpen} 
+        isOpen={isOpen} 
+        setIsOpen={setIsOpen} 
       />
     </aside>
   );

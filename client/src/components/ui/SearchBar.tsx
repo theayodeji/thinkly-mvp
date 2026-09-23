@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Search } from "lucide-react";
+import { useDebounce } from "../../hooks/utils/useDebounce";
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
@@ -14,16 +15,13 @@ const SearchBar = React.memo(
     debounceTime = 300,
   }: SearchBarProps) => {
     const [query, setQuery] = useState("");
+    const debouncedQuery = useDebounce(query, debounceTime);
     const [isTyping, setIsTyping] = useState(false);
 
     useEffect(() => {
-      const timer = setTimeout(() => {
-        onSearch(query);
-        setIsTyping(false);
-      }, debounceTime);
-
-      return () => clearTimeout(timer);
-    }, [query, debounceTime, onSearch]);
+      onSearch(debouncedQuery);
+      setIsTyping(false);
+    }, [debouncedQuery, onSearch]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
@@ -32,7 +30,6 @@ const SearchBar = React.memo(
         setIsTyping(true);
       } else {
         setIsTyping(false);
-        onSearch("");
       }
     };
 

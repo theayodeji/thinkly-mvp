@@ -12,7 +12,8 @@ import clsx from "clsx";
 import UploadDropzone from "./UploadDropzone";
 import PasteTextArea from "./PasteTextArea";
 import { useEffect } from "react";
-import { useNoteStore } from "../../store/noteStore";
+import { useParams } from "react-router-dom";
+import { useNote } from "../../hooks/queries/useNotes";
 import { AnimatePresence, motion } from "framer-motion";
 
 export default function AddSourceModal({
@@ -28,7 +29,8 @@ export default function AddSourceModal({
     { label: "Pasted Text", value: "text" },
   ];
 
-  const currentNote = useNoteStore((state) => state.currentNote);
+  const { id } = useParams<{ id: string }>();
+  const { data: currentNote } = useNote(id || "");
 
   useEffect(() => {
     if (currentNote && currentNote?.sources?.length === 0) {
