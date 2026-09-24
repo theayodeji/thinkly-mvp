@@ -15,21 +15,24 @@ import QuizContainer from "./QuizContainer";
 
 interface QuizDrawerProps {
   children?: React.ReactNode;
+  trigger?: React.ReactNode;
 }
 
-const QuizDrawer = ({ children }: QuizDrawerProps) => {
+const QuizDrawer = ({ children, trigger }: QuizDrawerProps) => {
   const [open, setIsOpen] = useState(false);
   const status = useQuizStore((s) => s.status);
 
   return (
     <Dialog open={open} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <div className="flex flex-col gap-3 px-3 py-4 border-2 border-secondary-500/30 dark:border-secondary-500/10 rounded-md cursor-pointer hover:bg-secondary-400/10">
-          <div className="flex gap-2 w-full">
-            <BadgeQuestionMark className="w-6 h-6" />
-            <p>Take Quiz</p>
+        {trigger || (
+          <div className="flex flex-col gap-3 px-3 py-4 border-2 border-secondary-500/30 dark:border-secondary-500/10 rounded-md cursor-pointer hover:bg-secondary-400/10">
+            <div className="flex gap-2 w-full">
+              <BadgeQuestionMark className="w-6 h-6" />
+              <p>Take Quiz</p>
+            </div>
           </div>
-        </div>
+        )}
       </DialogTrigger>
 
       <DialogPortal forceMount>

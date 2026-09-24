@@ -40,7 +40,7 @@ const PomodoroTimer: React.FC = () => {
               cy="50"
             />
             <circle
-              className="text-primary-700 dark:text-primary-500 transition-all duration-1000 ease-linear"
+              className="text-primary-500 dark:text-primary-500 transition-all duration-1000 ease-linear"
               strokeWidth="10"
               strokeLinecap="round"
               stroke="currentColor"

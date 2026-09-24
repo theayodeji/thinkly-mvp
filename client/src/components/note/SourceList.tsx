@@ -24,7 +24,7 @@ const SourceList = memo(({ setIsSourceModalOpen }: { setIsSourceModalOpen: (isOp
 
   return (
     <div className="space-y-2">
-      {currentNote?.sources?.map((source) => (
+      {currentNote?.sources?.map((source: any) => (
         <SourceListItem key={source._id} source={source} />
       ))}
     </div>

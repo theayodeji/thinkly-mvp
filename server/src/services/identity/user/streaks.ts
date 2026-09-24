@@ -1,9 +1,10 @@
 // services/streak.service.ts
 import { differenceInDays, isSameDay, isYesterday } from "date-fns";
-import { IUser } from "../types/entities.js";
+import mongoose, { Document } from "mongoose";
+import { IUser } from "@thinkly/shared";
 
 export class StreakService {
-  static async handleUpdateStreak(user: IUser, isExplicitLogin: boolean) {
+  static async handleUpdateStreak(user: any, isExplicitLogin: boolean) {
     try {
       const now = new Date();
       const lastActive = user.streaks?.lastActive;
@@ -41,7 +42,7 @@ export class StreakService {
       const milestones = [3, 7, 14, 30];
       if (milestones.includes(streaks.current)) {
         const badgeId = `streak_${streaks.current}`;
-        if (!user.badges.some((b) => b.id === badgeId)) {
+        if (!user.badges.some((b: any) => b.id === badgeId)) {
           user.badges.push({
             id: badgeId,
             title: `${streaks.current}-Day Streak`,

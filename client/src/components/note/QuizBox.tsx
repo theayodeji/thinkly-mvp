@@ -86,7 +86,8 @@ const QuizBox = () => {
       <p className="text-lg font-medium mb-6">{currentQ.question}</p>
 
       <RadioGroup
-        value={selectedAnswer}
+        key={currentQuestion}
+        value={selectedAnswer === null ? undefined : selectedAnswer}
         onChange={handleAnswerSelect}
         className="space-y-3 mb-6"
       >

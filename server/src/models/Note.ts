@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import type { INote, IQuizQuestion } from "../types/entities.js";
+import type { INote, IQuizQuestion } from "@thinkly/shared";
 
 const QuizQuestionSchema = new mongoose.Schema<IQuizQuestion>({
   question: { type: String, required: true },
@@ -29,7 +29,7 @@ const NoteSchema = new mongoose.Schema<INote>(
     }],
     chatSuggestions: [{ type: String }],
     userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-  },
+  } as any,
   { timestamps: true }
 );
 

@@ -37,6 +37,7 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "@thinkly/shared": "workspace:*",
     "bcryptjs": "^3.0.2",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
@@ -51,6 +52,7 @@
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "pdf-parse": "^1.1.1",
+    "serverless-http": "^4.0.0",
     "supertest": "^7.2.2",
     "winston": "^3.19.0",
     "zod": "^4.4.3"

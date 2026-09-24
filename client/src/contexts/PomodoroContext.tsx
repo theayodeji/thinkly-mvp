@@ -41,7 +41,7 @@ export const PomodoroProvider: React.FC<{ children: ReactNode }> = ({
 
   // Timer effect
   useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
+    let interval: ReturnType<typeof setTimeout> | null = null;
 
     if (isActive && timeLeft > 0) {
       interval = setInterval(() => {

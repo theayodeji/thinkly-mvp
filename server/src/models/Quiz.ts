@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import type { IQuiz, IQuizQuestion } from "../types/entities.js";
+import type { IQuiz, IQuizQuestion } from "@thinkly/shared";
 
 const QuizSchema = new mongoose.Schema<IQuiz>(
   {
@@ -19,7 +19,7 @@ const QuizSchema = new mongoose.Schema<IQuiz>(
       correctAnswer: { type: Number, required: true },
       explanation: { type: String, required: true }
     }]
-  },
+  } as any,
   { timestamps: true }
 );
 

@@ -10,44 +10,47 @@ import ToolsSection from "../../components/note/ToolsSection";
 
 const NoteDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [activeTab, setActiveTab] = useState<"sources" | "chat" | "tools">(
-    "chat",
-  );
+  const [activeTab, setActiveTab] = useState<"sources" | "chat" | "tools">("chat");
 
   useNote(id || "");
 
   return (
-    <div className="grid grid-cols-1 lg:grid-rows-[auto_76vh] grid-rows-[auto_auto_72dvh] ">
-      <NotePageHeader />
-      <TabSelect activeTab={activeTab} onTabChange={setActiveTab} />
-      <div>
-        <div className="flex px-0 wrapper pt-4 gap-4 h-full overflow-hidden max-w-screen">
-          <div
-            className={clsx(
-              "lg:flex-[1] rounded-md h-full overflow-y-auto",
-              activeTab === "sources" ? "block w-full" : "hidden lg:block",
-            )}
-          >
-            <SourcesAside />
-          </div>
+    <div className="flex flex-col h-full lg:h-[calc(100vh-5rem)]">
+      {/* Mobile Top Nav/Tabs */}
+      <div className="lg:hidden">
+        <NotePageHeader />
+        <TabSelect activeTab={activeTab} onTabChange={setActiveTab} />
+      </div>
 
-          <div
-            className={clsx(
-              "lg:flex-2 bg-neutral-200 dark:bg-neutral-800/80 rounded-md h-full overflow-y-auto",
-              activeTab === "chat" ? "block w-full" : "hidden lg:block",
-            )}
-          >
-            <ChatInterface />
-          </div>
+      <div className="flex px-0 pt-0 lg:pt-0 h-full overflow-hidden max-w-screen">
+        {/* Mobile Sources Tab (Desktop uses Drawer in Navbar) */}
+        <div
+          className={clsx(
+            "rounded-md h-full overflow-y-auto lg:hidden",
+            activeTab === "sources" ? "block w-full" : "hidden",
+          )}
+        >
+          <SourcesAside />
+        </div>
 
-          <div
-            className={clsx(
-              "lg:flex-[1] rounded-md h-full overflow-y-auto",
-              activeTab === "tools" ? "block w-full" : "hidden lg:block",
-            )}
-          >
-            <ToolsSection />
-          </div>
+        {/* Center Main Area: Chat */}
+        <div
+          className={clsx(
+            "flex-1 bg-neutral-200 dark:bg-neutral-800/80 lg:bg-transparent lg:dark:bg-transparent rounded-2xl h-full overflow-hidden flex flex-col relative",
+            activeTab === "chat" ? "flex w-full" : "hidden lg:flex",
+          )}
+        >
+          <ChatInterface />
+        </div>
+
+        {/* Right Area: Tools */}
+        <div
+          className={clsx(
+            "lg:w-80 shrink-0 rounded-md h-full overflow-y-auto lg:border-l lg:border-border/50 lg:pl-6",
+            activeTab === "tools" ? "block w-full" : "hidden lg:block",
+          )}
+        >
+          <ToolsSection />
         </div>
       </div>
     </div>

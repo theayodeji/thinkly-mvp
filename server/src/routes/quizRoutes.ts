@@ -6,12 +6,12 @@ import {
   submitQuiz,
 } from "../controllers/quizController.js";
 import { validateRequest } from "../middleware/validate.js";
-import { submitQuizSchema } from "../schemas/index.js";
+import { submitQuizSchema, paramsNoteIdSchema, paramsQuizIdSchema } from "@thinkly/shared";
 
 const router = express.Router();
 
-router.get("/:noteId/generate", authenticateJWT, generateQuiz);
-router.get("/:quizId", authenticateJWT, getQuiz);
+router.get("/:noteId/generate", authenticateJWT, validateRequest(paramsNoteIdSchema), generateQuiz);
+router.get("/:quizId", authenticateJWT, validateRequest(paramsQuizIdSchema), getQuiz);
 router.post(
   "/:quizId/submit",
   authenticateJWT,

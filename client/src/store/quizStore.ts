@@ -44,7 +44,7 @@ export const useQuizStore = create<QuizState>((set, get) => ({
 
     set({
       status: "started",
-      timeLeft: 5 * 60, // 5 minutes in seconds
+      timeLeft: 15 * 60, // 5 minutes in seconds
       currentQuestion: 0,
       answers: new Array(quiz.questions.length).fill(null), // pre-fill with nulls
       score: null,
@@ -66,7 +66,7 @@ export const useQuizStore = create<QuizState>((set, get) => ({
       return {
         currentQuestion: Math.min(
           state.currentQuestion + 1,
-          state.quiz.questions.length - 1
+          state.quiz.questions.length - 1,
         ),
       };
     }),

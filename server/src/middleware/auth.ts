@@ -21,7 +21,7 @@ export const authenticateJWT = (req: Request, res: Response, next: NextFunction)
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as { id: Types.ObjectId };
-    req.userId = decoded.id;
+    req.userId = String(decoded.id);
     next();
   } catch (error) {
     console.error('JWT verification error:', error);

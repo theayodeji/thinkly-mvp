@@ -1,8 +1,6 @@
 import { Copy, WandSparkles } from "lucide-react";
-import { Sparkles } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { useNote } from "../../hooks/queries/useNotes";
-import { Button } from "../ui/Button";
 import toast from "react-hot-toast";
 
 const copySummary = (summary: string) => {
@@ -16,35 +14,39 @@ const SummaryBlock = () => {
 
   if (isActionLoading)
     return (
-      <div className="max-w-[80%] px-3 py-2 rounded-lg text-sm bg-secondary-500/10 border border-secondary-500/20 text-text self-start">
-        <div className="flex items-center gap-2 mb-2 text-secondary-600 dark:text-secondary-400 font-medium"></div>
-        <div className="animate-pulse h-16 bg-gray-200 rounded w-full"></div>
+      <div className="flex gap-4 p-4 max-w-3xl">
+        <div className="w-8 h-8 rounded-full bg-primary-600/20 animate-pulse flex-shrink-0" />
+        <div className="flex-1 space-y-3">
+          <div className="animate-pulse h-4 bg-border/50 rounded w-1/4" />
+          <div className="animate-pulse h-24 bg-border/50 rounded w-full" />
+        </div>
       </div>
     );
 
+  if (!currentNote?.summary) return null;
+
   return (
-    <div className="bg-bg rounded-md p-2 mb-8">
-      <h3 className="font-medium text-text text-wrap md:text-lg">
-        {currentNote?.title || "Untitled Note"}
-        <Button
-          variant="primary"
-          size="icon"
-          className="ml-2 scale-80 sm:scale-100"
-        >
-          <WandSparkles className="inline h-5" />
-        </Button>
-      </h3>
-      <p className="text-xs text-text-secondary italic">
-        Based on {currentNote?.sources?.length || 0}{" "}
-        {currentNote?.sources?.length === 1 ? "source" : "sources"}
-      </p>
-      <p className="text-sm text-text mt-2">
-        {currentNote?.summary || "Summary will appear here"}
-        <Copy
-          className="inline ml-1 cursor-pointer text-gray-500 w-4 h-4"
-          onClick={() => copySummary(currentNote?.summary || "")}
-        />
-      </p>
+    <div className="flex gap-4 p-4 max-w-3xl mb-4 group">
+      <div className="w-8 h-8 rounded-full bg-primary-600 flex items-center justify-center flex-shrink-0 shadow-md">
+        <WandSparkles className="h-4 w-4 text-white" />
+      </div>
+      <div className="flex-1 space-y-2">
+        <div className="flex items-center justify-between">
+          <span className="font-semibold text-text text-sm">Thinkly Summary</span>
+        </div>
+        <div className="text-text/90 leading-relaxed text-sm">
+          {currentNote.summary}
+        </div>
+        <div className="flex items-center gap-4 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <button
+            onClick={() => copySummary(currentNote.summary || "")}
+            className="flex items-center gap-1.5 text-xs text-text-secondary hover:text-text transition-colors"
+          >
+            <Copy className="h-3.5 w-3.5" />
+            <span>Copy</span>
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

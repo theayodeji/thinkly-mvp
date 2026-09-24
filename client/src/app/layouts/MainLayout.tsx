@@ -13,9 +13,9 @@ const MainLayout = () => {
   return (
     <div className={`flex min-h-screen ${theme === 'dark' ? 'dark' : 'light'} bg-bg text-text`}>
       <Sidebar isOpen={isSidebarOpen} toggle={() => setIsSidebarOpen(!isSidebarOpen)} />
-      <div className="flex-1 flex flex-col min-w-0 max-h-screen">
+      <div className="relative flex-1 flex flex-col min-w-0 max-h-screen">
         <Navbar />
-        <main className="flex-1 p-6 pb-24 md:pb-6 overflow-y-auto">
+        <main className="flex-1 overflow-y-auto">
           <Outlet />
         </main>
       </div>

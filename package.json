@@ -1,0 +1,13 @@
+{
+  "name": "thinkly-mvp",
+  "version": "1.0.0",
+  "private": true,
+  "packageManager": "pnpm@10.28.1",
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build"
+  },
+  "devDependencies": {
+    "turbo": "^2.11.3"
+  }
+}

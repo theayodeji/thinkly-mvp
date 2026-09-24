@@ -20,7 +20,7 @@ export const useGenerateQuiz = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: quizService.generateQuiz,
-    onSuccess: (data, noteId) => {
+    onSuccess: (_, noteId) => {
       // Invalidate the note so it pulls the new quiz reference
       queryClient.invalidateQueries({ queryKey: NOTE_KEYS.detail(noteId) });
     },
@@ -32,7 +32,7 @@ export const useSubmitQuiz = () => {
   return useMutation({
     mutationFn: ({ id, answers }: { id: string; answers: (number | null)[] }) =>
       quizService.submitQuiz(id, answers),
-    onSuccess: (data, { id }) => {
+    onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: QUIZ_KEYS.detail(id) });
     },
   });

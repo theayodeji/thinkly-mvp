@@ -12,7 +12,7 @@ import {
 import { authenticateJWT } from "../middleware/auth.js";
 import { catchAsync } from "../utils/catchAsync.js";
 import { validateRequest } from "../middleware/validate.js";
-import { registerSchema, loginSchema } from "../schemas/index.js";
+import { registerSchema, loginSchema } from "@thinkly/shared";
 
 const router = express.Router();
 

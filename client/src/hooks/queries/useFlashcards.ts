@@ -23,7 +23,7 @@ export const useGenerateFlashcards = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: flashcardService.generateFlashcards,
-    onSuccess: (data, noteId) => {
+    onSuccess: (_, noteId) => {
       queryClient.invalidateQueries({ queryKey: FLASHCARD_KEYS.list(noteId) });
       queryClient.invalidateQueries({ queryKey: NOTE_KEYS.detail(noteId) });
     },

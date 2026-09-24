@@ -1,6 +1,6 @@
 // src/models/User.ts
 import mongoose, { Schema, Document, Model } from "mongoose";
-import type { IUser } from "../types/entities.js";
+import type { IUser } from "@thinkly/shared";
 
 // Extend the IUser interface to include the static method
 export interface IUserModel extends Model<IUser> {
@@ -44,7 +44,7 @@ const userSchema = new Schema<IUser, IUserModel>(
       completed: Number,
       lastCompletedAt: Date,
     },
-  },
+  } as any,
   {
     timestamps: true,
   },

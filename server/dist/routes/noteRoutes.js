@@ -1,0 +1,13 @@
+import express from "express";
+import { getNotes, getNote, createNote, deleteNote, updateNote, chat, } from "../controllers/noteController.js";
+import { authenticateJWT } from "../middleware/auth.js";
+import { validateRequest } from "../middleware/validate.js";
+import { updateNoteSchema, chatSchema, paramsIdSchema } from "@thinkly/shared";
+const router = express.Router();
+router.get("/", authenticateJWT, getNotes);
+router.get("/:id", authenticateJWT, validateRequest(paramsIdSchema), getNote);
+router.post("/create", authenticateJWT, createNote);
+router.post("/chat", authenticateJWT, validateRequest(chatSchema), chat);
+router.delete("/delete/:id", authenticateJWT, validateRequest(paramsIdSchema), deleteNote);
+router.put("/rename/:id", authenticateJWT, validateRequest(updateNoteSchema), updateNote);
+export default router;

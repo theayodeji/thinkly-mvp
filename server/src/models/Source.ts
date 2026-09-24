@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import type { ISource } from "../types/entities.js";
+import type { ISource } from "@thinkly/shared";
 
 const SourceSchema = new mongoose.Schema<ISource>(
   {
@@ -9,7 +9,7 @@ const SourceSchema = new mongoose.Schema<ISource>(
     text: { type: String },
     noteId: { type: mongoose.Schema.Types.ObjectId, ref: "Note", required: true },
     status: { type: String, enum: ["parsing", "parsed", "error"], default: "parsing" },
-  },
+  } as any,
   { timestamps: true }
 );
 

@@ -1,11 +1,9 @@
-// src/types/User.ts
-import { Document, Types } from "mongoose";
-
-export interface IUser extends Document<Types.ObjectId> {
+export interface IUser {
+  _id: string;
   name: string;
   email: string;
-  password?: string; // Optional for OAuth users
-  googleId?: string; // Google OAuth ID
+  password?: string;
+  googleId?: string;
   streaks: {
     current: number;
     longest: number;
@@ -13,21 +11,20 @@ export interface IUser extends Document<Types.ObjectId> {
   };
   achievements: [
     {
-      id: string; // unique identifier, e.g. "first_quiz_completed"
+      id: string;
       title: string;
       description: string;
       icon: string;
       earnedAt: Date;
-    },
+    }
   ];
-
   badges: [
     {
-      id: string; // e.g. "gold_streak_badge"
+      id: string;
       title: string;
-      level: string; // bronze, silver, gold, platinum
+      level: string;
       earnedAt: Date;
-    },
+    }
   ];
   pomodoros: {
     total: number;
@@ -38,15 +35,16 @@ export interface IUser extends Document<Types.ObjectId> {
   updatedAt: Date;
 }
 
-export interface INote extends Document<Types.ObjectId> {
+export interface INote {
+  _id: string;
   title: string;
   content: string;
-  sources: Types.ObjectId[];
-  userId: Types.ObjectId;
+  sources: string[];
+  userId: string;
   summary: string;
-  quiz?: Types.ObjectId;
+  quiz?: string;
   chatSuggestions?: string[];
-  flashcards: Types.ObjectId[];
+  flashcards: string[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -57,12 +55,13 @@ export enum SourceType {
   LINK = "link",
 }
 
-export interface ISource extends Document<Types.ObjectId> {
+export interface ISource {
+  _id: string;
   type: SourceType;
   name?: string;
   file_url?: string;
   text?: string;
-  noteId: Types.ObjectId;
+  noteId: string;
   status: "parsing" | "parsed" | "error";
   createdAt: Date;
   updatedAt: Date;
@@ -75,19 +74,21 @@ export interface IQuizQuestion {
   explanation: string;
 }
 
-export interface IQuiz extends Document<Types.ObjectId> {
-  userId: Types.ObjectId;
-  noteId: Types.ObjectId;
+export interface IQuiz {
+  _id: string;
+  userId: string;
+  noteId: string;
   questions: IQuizQuestion[];
   createdAt: Date;
   updatedAt: Date;
 }
 
-export interface IFlashcard extends Document<Types.ObjectId> {
+export interface IFlashcard {
+  _id: string;
   question: string;
   answer: string;
-  noteId: Types.ObjectId;
-  userId: Types.ObjectId;
+  noteId: string;
+  userId: string;
   createdAt: Date;
   updatedAt: Date;
 }

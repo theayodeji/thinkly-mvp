@@ -3,6 +3,7 @@ import { toast } from "react-hot-toast";
 import { api, AxiosErrorWithResponse } from "../shared/services/api";
 import type { User, AuthContextType } from "../shared/types/auth";
 import { useNavigate } from "react-router-dom";
+import { queryClient } from "../lib/react-query";
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -60,6 +61,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const logout = useCallback(async () => {
     await api.post("/auth/logout");
+    queryClient.clear();
     toast.success("Logged out successfully");
     setUser(null);
     navigate("/auth/login");

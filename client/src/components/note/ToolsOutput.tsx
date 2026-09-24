@@ -1,7 +1,7 @@
 import QuizDrawer from "./QuizDrawer";
 import QuizContainer from "./QuizContainer";
 import Drawer from "../ui/Drawer";
-import { ChartBarDecreasing } from "lucide-react";
+import { ChartBarDecreasing, BadgeQuestionMark, Sparkles, Loader2 } from "lucide-react";
 import FlashcardsContainer from "./FlashcardsContainer";
 import { useParams } from "react-router-dom";
 import { useNote } from "../../hooks/queries/useNotes";
@@ -19,41 +19,84 @@ const ToolsOutput = ({
   const { data: flashcards = [] } = useFlashcards(id || "");
 
   if (!currentNote) return null;
+
+  const hasQuiz = currentNote?.quiz;
+  const hasFlashcards = currentNote?.flashcards && flashcards.length > 0;
+
+  if (!hasQuiz && !hasFlashcards && !isQuizLoading && !isFlashcardsLoading) {
+    return null;
+  }
+
   return (
-    <div className="flex flex-col gap-2 mt-4 p-2">
-      <h2 className="text-lg font-semibold">Tools Output</h2>
+    <div className="mt-4">
+      <div className="flex items-center gap-2 mb-3">
+        <Sparkles className="w-4 h-4 text-text-secondary" />
+        <h3 className="font-semibold text-sm text-text">Generated Materials</h3>
+      </div>
 
-      <div className="flex-col flex gap-2">
-        {currentNote?.quiz && !isQuizLoading && (
-          <QuizDrawer children={<QuizContainer />} />
-        )}
-
-        {currentNote.flashcards &&
-          !isFlashcardsLoading &&
-          flashcards.length > 0 && (
-            <Drawer
-              trigger={
-                <div className="flex flex-col gap-3 px-3 py-4 border-2 border-secondary-500/30 dark:border-secondary-500/10 rounded-md cursor-pointer hover:bg-secondary-400/10">
-                  <div className="flex gap-2 w-full">
-                    <ChartBarDecreasing className="w-6 h-6" />
-                    <p>Flashcards</p>
+      <div className="flex flex-col gap-2">
+        {hasQuiz && !isQuizLoading && (
+          <QuizDrawer
+            trigger={
+              <button className="w-full">
+                <div className="bg-bg hover:bg-neutral-100 dark:bg-transparent dark:hover:bg-neutral-800/80 border border-border/50 rounded-xl p-3 flex items-start gap-3 text-left transition-colors cursor-pointer group">
+                  <div className="mt-0.5 w-8 h-8 rounded-lg flex items-center justify-center shrink-0 bg-primary-600/10 text-primary-600 dark:text-primary-400">
+                    <BadgeQuestionMark className="w-4 h-4" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-sm font-semibold text-text truncate group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">Take Quiz</h4>
+                    <p className="text-xs text-text-secondary mt-0.5 line-clamp-1">Test your knowledge</p>
                   </div>
                 </div>
-              }
-              title="Flashcards"
-            >
-              <FlashcardsContainer />
-            </Drawer>
-          )}
+              </button>
+            }
+          >
+            <QuizContainer />
+          </QuizDrawer>
+        )}
+
+        {hasFlashcards && !isFlashcardsLoading && (
+          <Drawer
+            trigger={
+              <button className="w-full">
+                <div className="bg-bg hover:bg-neutral-100 dark:bg-transparent dark:hover:bg-neutral-800/80 border border-border/50 rounded-xl p-3 flex items-start gap-3 text-left transition-colors cursor-pointer group">
+                  <div className="mt-0.5 w-8 h-8 rounded-lg flex items-center justify-center shrink-0 bg-teal-500/10 text-teal-600 dark:text-teal-400">
+                    <ChartBarDecreasing className="w-4 h-4" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-sm font-semibold text-text truncate group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">Study Flashcards</h4>
+                    <p className="text-xs text-text-secondary mt-0.5 line-clamp-1">Review key concepts</p>
+                  </div>
+                </div>
+              </button>
+            }
+            title="Flashcards"
+          >
+            <FlashcardsContainer />
+          </Drawer>
+        )}
 
         {isQuizLoading && (
-          <div className="h-16 w-full flex items-center justify-start px-5 bg-gray-400/30 rounded-md animate-pulse">
-            Generating a new quiz...
+          <div className="bg-neutral-100 dark:bg-neutral-800/80 border border-border/50 rounded-xl p-3 flex items-start gap-3 text-left transition-colors">
+            <div className="mt-0.5 w-8 h-8 rounded-lg flex items-center justify-center shrink-0 bg-neutral-200 dark:bg-neutral-700">
+              <Loader2 className="w-4 h-4 text-text-secondary animate-spin" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h4 className="text-sm font-semibold text-text">Generating Quiz...</h4>
+              <p className="text-xs text-text-secondary mt-0.5 line-clamp-1">Analyzing your notes</p>
+            </div>
           </div>
         )}
+
         {isFlashcardsLoading && (
-          <div className="h-16 w-full flex items-center justify-start px-5 bg-gray-400/30 rounded-md animate-pulse">
-            Generating a new set...
+          <div className="bg-neutral-100 dark:bg-neutral-800/80 border border-border/50 rounded-xl p-3 flex items-start gap-3 text-left transition-colors">
+            <div className="mt-0.5 w-8 h-8 rounded-lg flex items-center justify-center shrink-0 bg-neutral-200 dark:bg-neutral-700">
+              <Loader2 className="w-4 h-4 text-text-secondary animate-spin" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h4 className="text-sm font-semibold text-text">Generating Flashcards...</h4>
+              <p className="text-xs text-text-secondary mt-0.5 line-clamp-1">Extracting concepts</p>
+            </div>
           </div>
         )}
       </div>

@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useRef } from "react";
 import { Button } from "../ui/Button";
-import { SendIcon } from "lucide-react";
+import { SendIcon, Paperclip, Search, Wand2 } from "lucide-react";
 import ChatSuggestions from "./ChatSuggestions";
 
 interface ChatInputProps {
@@ -16,27 +16,18 @@ function ChatInput({
   isActionLoading,
   chatHistory,
   currentNoteId,
-  hasSources,
 }: ChatInputProps) {
   const [input, setInput] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Handle sending a message
   const handleSendMessage = useCallback(async () => {
     const message = input.trim();
     if (!message || !currentNoteId) return;
-
-    // Clear input and reset textarea height
     setInput("");
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "36px";
-    }
-
-    // Handle the actual chat operation via parent
+    if (textareaRef.current) textareaRef.current.style.height = "24px";
     await onSend(message);
   }, [input, currentNoteId, onSend]);
 
-  // Handle keydown events for the textarea
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
       if (e.key === "Enter" && !e.shiftKey) {
@@ -47,7 +38,6 @@ function ChatInput({
     [handleSendMessage]
   );
 
-  // Handle textarea changes with auto-resize
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       setInput(e.target.value);
@@ -58,32 +48,35 @@ function ChatInput({
     },
     []
   );
+
   return (
-    <div className="rounded-b-lg border-1 border-neutral-300 dark:border-neutral-700 sm:px-4 sm:py-4 px-2 py-2 flex items-end gap-2 relative">
-      <textarea
-        ref={textareaRef}
-        className="bg-bg flex-1 rounded-lg border border-neutral-300 dark:border-neutral-800 px-3 py-2 text-sm focus:outline-none focus:ring-none focus:bg-bg/50 resize-none min-h-[36px] max-h-[150px] leading-tight transition-all duration-200"
-        placeholder="Ask anything..."
-        value={input}
-        onChange={handleChange}
-        onKeyDown={handleKeyDown}
-        rows={1}
-      />
-      <Button
-        variant="primary"
-        size="sm"
-        icon={<SendIcon className="h-4 w-4"/>}
-        onClick={handleSendMessage}
-        disabled={
-          !input.trim() || !currentNoteId || !hasSources || isActionLoading
-        }
-      >
-        Send
-      </Button>
-      {chatHistory.length === 0 && !isActionLoading && currentNoteId && (
-        <ChatSuggestions
-          chatWithNote={(message) => onSend(message)}
+    <div className="flex flex-col gap-3 relative pb-4 px-4 shrink-0">
+      <div className="flex items-center gap-3 bg-neutral-100 dark:bg-neutral-800/80 rounded-full px-2 py-2 ring-1 ring-border/50">
+        <button className="text-text-secondary hover:text-text transition-colors">
+          <Paperclip className="h-5 w-5" />
+        </button>
+        <textarea
+          ref={textareaRef}
+          className="bg-transparent flex-1 text-sm focus:outline-none resize-none min-h-[24px] max-h-[150px] leading-relaxed text-text placeholder-text-secondary custom-scrollbar"
+          placeholder="Ask Thinkly anything..."
+          value={input}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+          rows={1}
         />
+        <button
+          onClick={handleSendMessage}
+          disabled={!input.trim() || !currentNoteId || isActionLoading}
+          className="bg-primary-600 hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-full p-2.5 transition-all flex items-center justify-center"
+        >
+          <SendIcon className="h-4 w-4 ml-0.5" />
+        </button>
+      </div>
+
+      {chatHistory.length === 0 && !isActionLoading && currentNoteId && (
+        <div className="absolute bottom-full left-0 w-full mb-4 px-4">
+          <ChatSuggestions chatWithNote={(message) => onSend(message)} />
+        </div>
       )}
     </div>
   );
