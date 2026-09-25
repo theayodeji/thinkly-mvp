@@ -12,8 +12,10 @@
   "dependencies": {
     "@headlessui/react": "^2.2.7",
     "@hookform/resolvers": "^5.2.1",
+    "@radix-ui/react-dialog": "^1.1.23",
     "@tailwindcss/vite": "^4.1.13",
     "@tanstack/react-query": "^5.87.1",
+    "@thinkly/shared": "workspace:*",
     "axios": "^1.11.0",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
@@ -33,8 +35,7 @@
     "tailwind-merge": "^3.3.1",
     "typeit-react": "^2.7.8",
     "zod": "^4.4.3",
-    "zustand": "^5.0.8",
-    "@thinkly/shared": "workspace:*"
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
