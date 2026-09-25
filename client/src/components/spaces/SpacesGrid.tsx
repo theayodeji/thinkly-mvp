@@ -97,7 +97,17 @@ const SpacesGrid = () => {
             <p className="text-text-secondary text-lg">No spaces match "{searchQuery}"</p>
             <button onClick={() => setSearchQuery("")} className="mt-2 text-primary-500 hover:underline">Clear search</button>
           </div>
-        ) : null}
+        ) : (
+          <div className="col-span-full sm:col-span-1 lg:col-span-2 xl:col-span-3 flex flex-col items-center justify-center py-12 text-center">
+            <div className="w-16 h-16 bg-primary-500/10 rounded-full flex items-center justify-center mb-4">
+              <FileText className="w-8 h-8 text-primary-500/60" />
+            </div>
+            <h3 className="text-xl font-semibold text-text mb-2">No spaces yet</h3>
+            <p className="text-text-secondary max-w-sm">
+              You haven't created any spaces. Click the "Create New Space" button to get started!
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

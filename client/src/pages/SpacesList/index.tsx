@@ -21,7 +21,7 @@ const SpacesList = () => {
                 <FolderKanban className="w-6 h-6 text-primary-600 dark:text-primary-400" />
               </div>
               <h1 className="text-3xl font-bold text-text">
-                <span className="text-primary-600 dark:text-primary-400">{user?.name?.split(" ")[0]}</span>'s Spaces
+                <span className="text-primary-600 dark:text-primary-400">{user?.name?.split(" ")[0]}</span>'s Study Spaces
               </h1>
             </div>
             <p className="text-text-secondary">
