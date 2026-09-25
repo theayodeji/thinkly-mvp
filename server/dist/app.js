@@ -6,7 +6,7 @@ import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import { logger } from './utils/logger.js';
 import authRoutes from './routes/authRoutes.js';
-import noteRoutes from './routes/noteRoutes.js';
+import spaceRoutes from './routes/spaceRoutes.js';
 import sourceRoutes from './routes/sourceRoutes.js';
 import quizRoutes from './routes/quizRoutes.js';
 import flashcardRoutes from './routes/flashcardRoutes.js';
@@ -28,14 +28,17 @@ app.use(morgan(morganFormat, {
         write: (message) => logger.info(message.trim())
     }
 }));
+import { errorHandler } from './middleware/errorHandler.js';
+import { apiLimiter } from './middleware/rateLimiter.js';
 app.get('/', (req, res) => {
     res.json({ message: 'Welcome to Thinkly API' });
 });
+// Apply general rate limit to all /api routes
+app.use('/api', apiLimiter);
 app.use('/api/auth', authRoutes);
-app.use('/api/notes', noteRoutes);
+app.use('/api/spaces', spaceRoutes);
 app.use('/api/sources', sourceRoutes);
 app.use('/api/quiz', quizRoutes);
 app.use('/api/flashcards', flashcardRoutes);
-import { errorHandler } from './middleware/errorHandler.js';
 app.use(errorHandler);
 export default app;

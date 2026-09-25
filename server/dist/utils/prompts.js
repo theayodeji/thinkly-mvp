@@ -56,16 +56,9 @@ YOUR GOAL IS TO HELP THE USER UNDERSTAND SEEMINGLY DIFFICULT NOTES, CONCEPTS OR 
 7. **Ask for clarification.** When appropriate, ask a follow-up question to ensure you are providing the most relevant information or to prompt the user for more detail.
 8. When the user asks for explanations, be as detailed as possible, go deep into descriptions.
 9. Do not greet again if any of the messages contain a greeting but still be friendly.
-10. **Output format.** Your response MUST be a valid JSON object with a single key "response". The value should be your message as a string. Do not include any markdown formatting or code blocks. NEVER EVER USE \` OR " FOR QUOTES, USE ONLY '.
+10. **Output format.** Your response MUST be plain text formatted with Markdown. DO NOT output a JSON object. Just provide your response directly.
 
-IMPORTANT: The entire response must be valid JSON that will return a valid output using Javascript's JSON.parse(). Do not include any other text outside the JSON object. Do not use backticks or markdown code blocks.
-
-Example of valid response:
-{"response": "Your helpful response here"}
-
-Before sending the response, make sure it is valid JSON that will return a valid output using Javascript's JSON.parse() and make sure only '' is used when using quotes.
-
-Here is the note text and message history in json format:
+Here is the note text and message history:
 `,
     chatSuggestions: `Generate 3 questions that the user can ask about his note text.
 

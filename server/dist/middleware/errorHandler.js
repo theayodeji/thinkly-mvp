@@ -30,6 +30,10 @@ export const errorHandler = (err, req, res, next) => {
         const message = Object.values(err.errors).map((val) => val.message).join(', ');
         error = new AppError(message, 400);
     }
+    // If it's a Gemini API Quota error (429)
+    if (err.message && (err.message.includes('429') || err.message.toLowerCase().includes('quota exceeded') || err.message.toLowerCase().includes('resource has been exhausted'))) {
+        error = new AppError('AI provider quota exceeded. Please try again later.', 429);
+    }
     const statusCode = error.statusCode || 500;
     if (config.NODE_ENV === 'development') {
         res.status(statusCode).json({

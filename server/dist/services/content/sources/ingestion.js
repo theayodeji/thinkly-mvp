@@ -1,5 +1,5 @@
 import { SourceType } from "@thinkly/shared";
-import NoteModel from "../../../models/Note.js";
+import SpaceModel from "../../../models/Space.js";
 import SourceModel from "../../../models/Source.js";
 import geminiService from "../../../utils/genai.js";
 import { withMongoTransaction } from "../../../utils/db.js";
@@ -11,27 +11,27 @@ export const processAndAddSource = async (source, userId) => {
     source.name = source.name || title;
     let newSource = null;
     await withMongoTransaction(async (session) => {
-        // Find the note and lock it for update
-        const note = await NoteModel.findOne({ _id: source.noteId, userId }).session(session);
-        if (!note) {
-            throw new AppError("Note not found", 404);
+        // Find the space and lock it for update
+        const space = await SpaceModel.findOne({ _id: source.spaceId, userId }).session(session);
+        if (!space) {
+            throw new AppError("Space not found", 404);
         }
-        // Create the source first
+        // Create the source
         newSource = new SourceModel({
             ...source,
             status: source.type === SourceType.TEXT ? "parsed" : "parsing", // Set initial status
         });
         await newSource.save({ session });
-        // Update the note with the new source
-        note.sources.push(String(newSource._id));
-        note.content = (note.content || "") + "\n" + source.text;
-        note.chatSuggestions = [...(note.chatSuggestions || []), ...questions];
+        // Update the space content and optionally title/summary
+        space.content = (space.content || "") + "\n" + source.text;
+        // Check if this is the first source
+        const sourceCount = await SourceModel.countDocuments({ spaceId: space._id }).session(session);
         // Generate title if this is the first source
-        if (note.sources.length === 1) {
-            note.title = title;
-            note.summary = summary;
+        if (sourceCount === 1) { // 1 because we just saved it
+            space.title = title;
+            space.summary = summary;
         }
-        await note.save({ session });
+        await space.save({ session });
     });
     return newSource;
 };

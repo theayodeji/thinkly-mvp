@@ -4,7 +4,7 @@ const SourceSchema = new mongoose.Schema({
     name: { type: String },
     file_url: { type: String },
     text: { type: String },
-    noteId: { type: mongoose.Schema.Types.ObjectId, ref: "Note", required: true },
+    spaceId: { type: mongoose.Schema.Types.ObjectId, ref: "Space", required: true },
     status: { type: String, enum: ["parsing", "parsed", "error"], default: "parsing" },
 }, { timestamps: true });
 export default mongoose.model("Source", SourceSchema);

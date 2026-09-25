@@ -7,6 +7,13 @@ export const getQuizByIdAndUserId = async (quizId, userId) => {
     }
     return quiz;
 };
+export const getQuizBySpaceIdAndUserId = async (spaceId, userId) => {
+    const quiz = await Quiz.findOne({ spaceId, userId }).sort({ createdAt: -1 });
+    if (!quiz) {
+        throw new AppError("Quiz not found", 404);
+    }
+    return quiz;
+};
 export const evaluateQuizSubmission = async (quizId, userId, answers) => {
     const quiz = await Quiz.findOne({ _id: quizId, userId });
     if (!quiz) {

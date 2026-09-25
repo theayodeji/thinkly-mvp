@@ -5,9 +5,9 @@ const QuizSchema = new mongoose.Schema({
         ref: "User",
         required: true
     },
-    noteId: {
+    spaceId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Note",
+        ref: "Space",
         required: true
     },
     questions: [{

@@ -34,9 +34,12 @@ class GeminiService {
         this.genAI = new GoogleGenerativeAI(apiKey);
         this.modelName = modelName;
     }
-    async generateContent(prompt) {
+    async generateContent(prompt, isJson = false) {
         try {
-            const model = this.genAI.getGenerativeModel({ model: this.modelName });
+            const model = this.genAI.getGenerativeModel({
+                model: this.modelName,
+                ...(isJson ? { generationConfig: { responseMimeType: "application/json" } } : {})
+            });
             const result = await model.generateContent(prompt);
             const response = result.response;
             return response.text();
@@ -49,7 +52,7 @@ class GeminiService {
     async processPrompt(promptType, content, schema) {
         try {
             const prompt = this.constructPrompt(promptType, content);
-            let response = await this.generateContent(prompt);
+            let response = await this.generateContent(prompt, !!schema);
             if (schema) {
                 try {
                     // Remove markdown code blocks if present
@@ -74,9 +77,25 @@ class GeminiService {
         return `${template}\n\n ${content}`;
     }
     // Convenience methods for specific prompt types
-    async generateChat(content) {
-        const result = await this.processPrompt("chat", content, ChatSchema);
-        return JSON.stringify(result); // Legacy behavior returning JSON string to the controller
+    async generateChatStream(content) {
+        try {
+            const prompt = this.constructPrompt("chat", content);
+            const model = this.genAI.getGenerativeModel({ model: this.modelName });
+            const result = await model.generateContentStream(prompt);
+            // result.response is a Promise that rejects if the stream fails.
+            // We must catch it to prevent unhandled promise rejections that crash the server.
+            result.response.catch(() => { });
+            async function* streamGenerator() {
+                for await (const chunk of result.stream) {
+                    yield chunk.text();
+                }
+            }
+            return streamGenerator();
+        }
+        catch (error) {
+            console.error("Error generating chat stream:", error);
+            throw error;
+        }
     }
     async generateSummary(content) {
         return this.processPrompt("summary", content, SummarySchema);
