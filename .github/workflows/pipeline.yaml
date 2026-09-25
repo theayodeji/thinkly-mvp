@@ -18,14 +18,20 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 10
+          run_install: false
+
       - name: Install dependencies
-        run: cd ./client && npm install
+        run: cd ./client && pnpm install
 
       - name: Build
-        run: cd ./client && npm run build
+        run: cd ./client && pnpm run build
 
       - name: Install backend dependencies
-        run: cd ./server && npm install
+        run: cd ./server && pnpm install
 
       - name: Build backend
-        run: cd ./server && npm run build
+        run: cd ./server && pnpm run build
