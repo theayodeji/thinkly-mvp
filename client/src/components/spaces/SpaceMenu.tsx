@@ -30,8 +30,8 @@ const SpaceMenu = ({ SpaceId }: { SpaceId: string }) => {
   };
 
   return (
-    <Popover className="absolute top-2 right-2">
-      <PopoverButton className="outline-none focus:outline-none cursor-pointer">
+    <Popover className="relative">
+      <PopoverButton className="outline-none focus:outline-none p-1.5 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-800 transition-colors cursor-pointer text-text-secondary">
         <EllipsisVertical />
       </PopoverButton>
       <PopoverPanel
@@ -63,7 +63,7 @@ const SpaceMenu = ({ SpaceId }: { SpaceId: string }) => {
               
               <PopoverPanel 
                 anchor="right" 
-                className="ml-2 bg-white shadow-2xl drop-shadow-xl rounded-md p-4 w-64 z-50"
+                className="ml-2 bg-bg border border-border shadow-2xl drop-shadow-xl rounded-md p-4 w-64 z-50"
               >
                 <div className="flex flex-col space-y-4">
                   <div className="flex justify-between items-center">
@@ -71,16 +71,16 @@ const SpaceMenu = ({ SpaceId }: { SpaceId: string }) => {
                       <AlertTriangle className="w-5 h-5 mr-2" />
                       <span className="font-medium">Delete Space?</span>
                     </div>
-                    <PopoverButton className="text-gray-500 hover:text-gray-700">
+                    <PopoverButton className="text-text-secondary hover:text-text transition-colors">
                       <X className="w-4 h-4" />
                     </PopoverButton>
                   </div>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-text-secondary">
                     This action cannot be undone. The Space will be permanently deleted.
                   </p>
                   <div className="flex justify-end space-x-2">
                     <PopoverButton 
-                      className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
+                      className="px-4 py-2 text-sm text-text-secondary hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded-md transition-colors"
                     >
                       Cancel
                     </PopoverButton>
