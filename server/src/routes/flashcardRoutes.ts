@@ -5,10 +5,12 @@ import { generateFlashcards, getFlashcards, deleteFlashcards } from "../controll
 import { validateRequest } from "../middleware/validate.js";
 import { paramsSpaceIdSchema } from "@thinkly/shared";
 
+import { aiLimiter } from "../middleware/rateLimiter.js";
+
 const router = express.Router();
 
 // Generate flashcards for a note
-router.post("/:spaceId/generate", authenticateJWT, validateRequest(paramsSpaceIdSchema), generateFlashcards);
+router.post("/:spaceId/generate", authenticateJWT, aiLimiter, validateRequest(paramsSpaceIdSchema), generateFlashcards);
 
 // Get all flashcards for a note
 router.get("/:spaceId", authenticateJWT, validateRequest(paramsSpaceIdSchema), getFlashcards);

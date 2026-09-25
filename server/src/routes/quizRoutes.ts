@@ -8,9 +8,11 @@ import {
 import { validateRequest } from "../middleware/validate.js";
 import { submitQuizSchema, paramsSpaceIdSchema, paramsQuizIdSchema } from "@thinkly/shared";
 
+import { aiLimiter } from "../middleware/rateLimiter.js";
+
 const router = express.Router();
 
-router.get("/:spaceId/generate", authenticateJWT, validateRequest(paramsSpaceIdSchema), generateQuiz);
+router.get("/:spaceId/generate", authenticateJWT, aiLimiter, validateRequest(paramsSpaceIdSchema), generateQuiz);
 router.get("/:spaceId", authenticateJWT, validateRequest(paramsSpaceIdSchema), getQuiz);
 router.post(
   "/:quizId/submit",

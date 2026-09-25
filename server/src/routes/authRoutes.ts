@@ -14,11 +14,13 @@ import { catchAsync } from "../utils/catchAsync.js";
 import { validateRequest } from "../middleware/validate.js";
 import { registerSchema, loginSchema } from "@thinkly/shared";
 
+import { authLimiter } from "../middleware/rateLimiter.js";
+
 const router = express.Router();
 
 // Regular email/password auth
-router.post("/register", validateRequest(registerSchema), register);
-router.post("/login", validateRequest(loginSchema), login);
+router.post("/register", authLimiter, validateRequest(registerSchema), register);
+router.post("/login", authLimiter, validateRequest(loginSchema), login);
 router.post("/logout", logout);
 router.get("/me", authenticateJWT, checkAuth);
 router.post("/refresh-token", refreshToken);

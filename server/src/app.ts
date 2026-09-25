@@ -35,17 +35,21 @@ app.use(morgan(morganFormat, {
   }
 }));
 
+import { errorHandler } from './middleware/errorHandler.js';
+import { apiLimiter } from './middleware/rateLimiter.js';
+
 app.get('/', (req, res) => {
   res.json({ message: 'Welcome to Thinkly API' });
 });
+
+// Apply general rate limit to all /api routes
+app.use('/api', apiLimiter);
 
 app.use('/api/auth', authRoutes);
 app.use('/api/spaces', spaceRoutes);
 app.use('/api/sources', sourceRoutes);
 app.use('/api/quiz', quizRoutes);
 app.use('/api/flashcards', flashcardRoutes);
-
-import { errorHandler } from './middleware/errorHandler.js';
 
 app.use(errorHandler);
 
