@@ -14,7 +14,7 @@ const Notifications: React.FC = () => {
               New Feature: AI Summaries
             </p>
             <p className="text-sm text-text-secondary leading-relaxed">
-              Get concise summaries of your notes with our new AI feature. Study smarter, not harder.
+              Get concise summaries of your Spaces with our new AI feature. Study smarter, not harder.
             </p>
           </div>
         </div>

@@ -1,7 +1,7 @@
 import WelcomeBanner from "../../components/dashboard/WelcomeBanner";
 import QuickActions from "../../components/dashboard/QuickActions";
 import LearningProgress from "../../components/dashboard/LearningProgress";
-import RecentNotes from "../../components/dashboard/RecentNotes";
+import RecentSpaces from "../../components/dashboard/RecentSpaces";
 import PomodoroTimer from "../../components/dashboard/PomodoroTimer";
 import Notifications from "../../components/dashboard/Notifications";
 
@@ -15,7 +15,7 @@ const Dashboard = () => {
         <div className="lg:col-span-8 space-y-8">
           <QuickActions />
           <LearningProgress />
-          <RecentNotes />
+          <RecentSpaces />
         </div>
 
         {/* Right Column (Span 4) */}

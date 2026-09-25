@@ -33,7 +33,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const { data: { user } } = await api.post("/auth/register", { email, password, name });
       setUser(user);
-      navigate("/notes");
+      navigate("/spaces");
       toast.success("Registered successfully");
     } catch (error: unknown) {
       const axiosError = error as AxiosErrorWithResponse;
@@ -48,7 +48,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const { data: { user} } = await api.post("/auth/login", { email, password });
       setUser(user);
-      navigate("/notes");
+      navigate("/spaces");
       toast.success("Logged in successfully");
     } catch (error: unknown) {
       const axiosError = error as AxiosErrorWithResponse;

@@ -1,23 +1,23 @@
 import { create } from "zustand";
-import { Quiz, QuizQuestion } from "../shared/types/quiz";
+import { IQuiz, IQuizQuestion } from "@thinkly/shared";
 
 type QuizStatus = "idle" | "started" | "completed" | "review";
 
 interface QuizState {
-  quiz: Quiz | null;
+  quiz: IQuiz | null;
   currentQuestion: number;
   answers: (number | null)[]; // null = unanswered
   timeLeft: number;
   status: QuizStatus;
   isLoading: boolean;
   score: number | null;
-  quizAnswers: (QuizQuestion | null)[];
-  setQuiz: (quiz: Quiz) => void;
+  quizAnswers: (IQuizQuestion | null)[];
+  setQuiz: (quiz: IQuiz) => void;
   startQuiz: () => void;
   submitAnswer: (answerIndex: number) => void;
   nextQuestion: () => void;
   prevQuestion: () => void;
-  setQuizResult: (score: number, answers: (QuizQuestion | null)[]) => void;
+  setQuizResult: (score: number, answers: (IQuizQuestion | null)[]) => void;
   reviewAnswers: () => void;
   resetQuiz: () => void;
   tick: () => void;
@@ -33,7 +33,7 @@ export const useQuizStore = create<QuizState>((set, get) => ({
   score: null,
   quizAnswers: [],
   /** Load quiz into state */
-  setQuiz: (quiz: Quiz) => {
+  setQuiz: (quiz: IQuiz) => {
     set({ quiz, isLoading: false });
   },
 

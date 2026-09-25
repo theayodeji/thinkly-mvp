@@ -40,8 +40,8 @@ const itemRight = {
 const steps = [
   {
     number: 1,
-    title: "Upload Your Notes",
-    description: "Easily upload your notes, textbooks, or lecture transcripts in various formats.",
+    title: "Upload Your Spaces",
+    description: "Easily upload your Spaces, textbooks, or lecture transcripts in various formats.",
     align: "left"
   },
   {

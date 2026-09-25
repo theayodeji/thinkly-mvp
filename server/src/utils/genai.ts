@@ -60,9 +60,12 @@ class GeminiService {
     this.modelName = modelName;
   }
 
-  private async generateContent(prompt: string): Promise<string> {
+  private async generateContent(prompt: string, isJson: boolean = false): Promise<string> {
     try {
-      const model = this.genAI.getGenerativeModel({ model: this.modelName });
+      const model = this.genAI.getGenerativeModel({ 
+        model: this.modelName,
+        ...(isJson ? { generationConfig: { responseMimeType: "application/json" } } : {})
+      });
       const result: GenerateContentResult = await model.generateContent(prompt);
       const response = result.response;
       return response.text();
@@ -81,7 +84,7 @@ class GeminiService {
   ): Promise<T> {
     try {
       const prompt = this.constructPrompt(promptType, content);
-      let response = await this.generateContent(prompt);
+      let response = await this.generateContent(prompt, !!schema);
 
       if (schema) {
         try {
@@ -114,9 +117,22 @@ class GeminiService {
   }
 
   // Convenience methods for specific prompt types
-  public async generateChat(content: string): Promise<string> {
-    const result = await this.processPrompt("chat", content, ChatSchema);
-    return JSON.stringify(result); // Legacy behavior returning JSON string to the controller
+  public async generateChatStream(content: string): Promise<AsyncGenerator<string, void, unknown>> {
+    try {
+      const prompt = this.constructPrompt("chat", content);
+      const model = this.genAI.getGenerativeModel({ model: this.modelName });
+      const result = await model.generateContentStream(prompt);
+
+      async function* streamGenerator() {
+        for await (const chunk of result.stream) {
+          yield chunk.text();
+        }
+      }
+      return streamGenerator();
+    } catch (error) {
+      console.error("Error generating chat stream:", error);
+      throw error;
+    }
   }
 
   public async generateSummary(content: string): Promise<SummaryResponse> {

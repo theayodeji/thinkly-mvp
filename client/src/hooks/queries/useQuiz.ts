@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { quizService } from "../../shared/services/quizService";
-import { NOTE_KEYS } from "./useNotes";
+import { SPACE_KEYS } from "./useSpaces";
 
 export const QUIZ_KEYS = {
   all: ["quiz"] as const,
@@ -20,9 +20,8 @@ export const useGenerateQuiz = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: quizService.generateQuiz,
-    onSuccess: (_, noteId) => {
-      // Invalidate the note so it pulls the new quiz reference
-      queryClient.invalidateQueries({ queryKey: NOTE_KEYS.detail(noteId) });
+    onSuccess: (_, SpaceId) => {
+      queryClient.invalidateQueries({ queryKey: QUIZ_KEYS.detail(SpaceId) });
     },
   });
 };

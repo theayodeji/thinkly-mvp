@@ -1,4 +1,4 @@
-import { Flame, Trophy, FileText, Search } from "lucide-react";
+import { Flame, Trophy, FileText, Search, Grip, LucideShare2 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import ThemeToggle from "./ThemeToggle";
@@ -7,10 +7,10 @@ import { Button } from "./Button";
 import { useDisclosure } from "../../hooks/utils/useDisclosure";
 import { UserMenu } from "./UserMenu";
 import { AchievementsModal } from "./AchievementsModal";
-import { useNote } from "../../hooks/queries/useNotes";
+import { useSpace, useSpaceSources } from "../../hooks/queries/useSpaces";
 import { BackNavigator } from "./BackNavigator";
 import QuizDrawer from "./Drawer";
-import SourcesAside from "../note/SourcesSection";
+import SourcesAside from "../space/SourcesSection";
 
 const Navbar = () => {
   const { logout, user } = useAuth();
@@ -18,26 +18,27 @@ const Navbar = () => {
   const { isOpen, open, close } = useDisclosure(false);
   const location = useLocation();
 
-  const noteMatch = location.pathname.match(/^\/notes\/([a-f0-9]+)$/i);
-  const noteId = noteMatch ? noteMatch[1] : null;
-  const { data: currentNote } = useNote(noteId || "");
+  const spaceMatch = location.pathname.match(/^\/spaces\/([a-f0-9]+)$/i);
+  const spaceId = spaceMatch ? spaceMatch[1] : null;
+  const { data: currentSpace } = useSpace(spaceId || "");
+  const { data: sources } = useSpaceSources(spaceId || "");
 
-  const isNoteDetail = !!noteId;
-  const sourcesCount = currentNote?.sources?.length || 0;
+  const isSpaceDetail = !!spaceId;
+  const sourcesCount = sources?.length || 0;
 
   return (
     <>
       <header className={`sticky top-0 z-50 flex items-center h-20 transition-all ${
-        isNoteDetail ? 'bg-bg border-b-2 border-border/50' : 'border-b-2 border-border/50 bg-bg/80 backdrop-blur-sm'
+        isSpaceDetail ? 'bg-bg border-b-2 border-border/50' : 'border-b-2 border-border/50 bg-bg/80 backdrop-blur-sm'
       }`}>
         <div className={`w-full px-6 flex items-center justify-between`}>
-          {/* Left Side: Note Header OR Spacer */}
-          {isNoteDetail ? (
+          {/* Left Side: Space Header OR Spacer */}
+          {isSpaceDetail ? (
             <div className="flex items-center gap-4">
               <BackNavigator label="" className="p-2 text-text" />
               <div className="flex flex-col">
                 <h2 className="text-xl md:text-2xl font-bold text-text truncate max-w-lg">
-                  {currentNote?.title || "Untitled Note"}
+                  {currentSpace?.title || "Untitled Space"}
                 </h2>
                 <div className="hidden lg:flex items-center mt-1">
                   <QuizDrawer
@@ -61,15 +62,23 @@ const Navbar = () => {
 
           {/* Right Side: User Stats & Settings */}
           <div className="flex items-center gap-4 shrink-0">
-            {isNoteDetail && (
-              <Button size="icon" variant="ghost" className="hidden md:flex">
-                <Search className="h-5 w-5 text-text-secondary" />
-              </Button>
+            {isSpaceDetail && (
+              <>
+                <Button size="icon" variant="ghost" className="hidden md:flex">
+                  <Search className="h-5 w-5 text-text-secondary" />
+                </Button>
+                <Button size="icon" variant="neutral" className="p-1.5 bg-neutral-200 dark:bg-neutral-800 border-none text-text">
+                  <Grip className="h-5 w-5" />
+                </Button>
+                <Button size="icon" variant="neutral" className="p-1.5 bg-neutral-200 dark:bg-neutral-800 border-none text-text">
+                  <LucideShare2 className="h-5 w-5" />
+                </Button>
+              </>
             )}
             
             {user ? (
               <>
-                {!isNoteDetail && (
+                {!isSpaceDetail && (
                   <div className="hidden items-center gap-4 md:flex bg-neutral-100 dark:bg-neutral-800 px-4 py-2 rounded-full text-text-secondary cursor-pointer" onClick={open}>
                     <div className="flex items-center gap-1">
                       <Trophy className="h-5 w-5 text-yellow-500" />

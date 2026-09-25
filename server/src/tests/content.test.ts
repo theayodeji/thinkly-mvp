@@ -1,11 +1,11 @@
 import request from 'supertest';
 import app from '../app.js';
 import User from '../models/User.js';
-import Note from '../models/Note.js';
+import Space from '../models/Space.js';
 import jwt from 'jsonwebtoken';
 import { config } from '../config/env.js';
 
-describe('Content Endpoints (Notes)', () => {
+describe('Content Endpoints (Spaces)', () => {
   let token: string;
   let userId: string;
 
@@ -19,43 +19,43 @@ describe('Content Endpoints (Notes)', () => {
     token = jwt.sign({ id: user.id }, config.JWT_SECRET, { expiresIn: '1h' });
   });
 
-  describe('GET /api/notes', () => {
-    it('should return empty list if user has no notes', async () => {
+  describe('GET /api/spaces', () => {
+    it('should return empty list if user has no spaces', async () => {
       const res = await request(app)
-        .get('/api/notes')
+        .get('/api/spaces')
         .set('Cookie', [`accessToken=${token}`]);
         
       expect(res.status).toBe(200);
-      expect(res.body.notes).toEqual([]);
+      expect(res.body.spaces).toEqual([]);
     });
 
-    it('should return notes if user has them', async () => {
-      await Note.create({ userId, title: 'My Note', content: 'hello' });
+    it('should return spaces if user has them', async () => {
+      await Space.create({ userId, title: 'My Space', content: 'hello' });
       
       const res = await request(app)
-        .get('/api/notes')
+        .get('/api/spaces')
         .set('Cookie', [`accessToken=${token}`]);
         
       expect(res.status).toBe(200);
-      expect(res.body.notes).toHaveLength(1);
-      expect(res.body.notes[0].title).toBe('My Note');
+      expect(res.body.spaces).toHaveLength(1);
+      expect(res.body.spaces[0].title).toBe('My Space');
     });
     
     it('should fail without token', async () => {
-      const res = await request(app).get('/api/notes');
+      const res = await request(app).get('/api/spaces');
       expect(res.status).toBe(401);
     });
   });
 
-  describe('POST /api/notes', () => {
-    it('should create a new note', async () => {
+  describe('POST /api/spaces', () => {
+    it('should create a new space', async () => {
       const res = await request(app)
-        .post('/api/notes')
+        .post('/api/spaces/create')
         .set('Cookie', [`accessToken=${token}`]);
         
       expect(res.status).toBe(200);
-      expect(res.body.note.title).toMatch(/Untitled Note/);
-      expect(res.body.note.userId.toString()).toBe(userId);
+      expect(res.body.space.title).toMatch(/Untitled Space/);
+      expect(res.body.space.userId.toString()).toBe(userId);
     });
   });
 });

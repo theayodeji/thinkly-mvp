@@ -9,9 +9,9 @@ export const paramsIdSchema = z.object({
   }),
 });
 
-export const paramsNoteIdSchema = z.object({
+export const paramsSpaceIdSchema = z.object({
   params: z.object({
-    noteId: objectIdSchema,
+    spaceId: objectIdSchema,
   }),
 });
 
@@ -36,7 +36,7 @@ export const loginSchema = z.object({
   }),
 });
 
-export const updateNoteSchema = z.object({
+export const updateSpaceSchema = z.object({
   params: z.object({
     id: objectIdSchema,
   }),
@@ -48,7 +48,7 @@ export const updateNoteSchema = z.object({
 export const addSourceSchema = z.object({
   body: z
     .object({
-      noteId: objectIdSchema,
+      spaceId: objectIdSchema,
       type: z.nativeEnum(SourceType),
       text: z.string().optional(),
       name: z.string().optional(),
@@ -78,9 +78,9 @@ export const submitQuizSchema = z.object({
 
 export const chatSchema = z.object({
   body: z.object({
-    noteId: objectIdSchema,
+    spaceId: objectIdSchema,
     message: z.string().min(1, "Message is required"),
-    history: z.array(z.any()),
+    history: z.array(z.any()).optional(),
   }),
 });
 
@@ -132,7 +132,7 @@ export const SourceSchema = z
     file_url: z.string().optional(),
     name: z.string().optional(),
     text: z.string().optional(),
-    noteId: z.string(),
+    spaceId: z.string(),
     status: z.enum(["parsing", "parsed", "error"]),
     createdAt: z.coerce.date(),
     updatedAt: z.coerce.date(),
@@ -144,7 +144,7 @@ export const FlashcardSchema = z
     _id: z.string(),
     question: z.string(),
     answer: z.string(),
-    noteId: z.string(),
+    spaceId: z.string(),
     userId: z.string(),
     createdAt: z.string().or(z.coerce.date()).optional(),
     updatedAt: z.string().or(z.coerce.date()).optional(),
@@ -164,32 +164,44 @@ export const QuizSchema = z
   .object({
     _id: z.string(),
     userId: z.string(),
-    noteId: z.string(),
+    spaceId: z.string(),
     questions: z.array(QuizQuestionSchema),
     createdAt: z.coerce.date(),
     updatedAt: z.coerce.date(),
   })
   .passthrough();
 
-export const NoteSchema = z
+export const SpaceSchema = z
   .object({
     _id: z.string(),
-    title: z.string().nullish().transform(v => v || "Untitled Note"),
+    title: z.string().nullish().transform(v => v || "Untitled Space"),
     content: z.string().nullish().transform(v => v || ""),
-    sources: z.array(z.string().or(SourceSchema)).nullish().transform(v => v || []),
     userId: z.string(),
     summary: z.string().nullish().transform(v => v || ""),
+    sourcesCount: z.number().optional(),
     createdAt: z.coerce.date(),
     updatedAt: z.coerce.date(),
-    quiz: z.string().optional(),
-    chatSuggestions: z.array(z.string()).optional(),
-    flashcards: z.array(z.string().or(FlashcardSchema)).optional(),
   })
   .passthrough();
 
-export const NotePreviewSchema = NoteSchema.pick({
+export const SpacePreviewSchema = SpaceSchema.pick({
   _id: true,
   title: true,
-  sources: true,
   createdAt: true,
+});
+
+export const MessageSchema = z.object({
+  role: z.enum(["user", "assistant"]),
+  content: z.string(),
+  createdAt: z.coerce.date(),
+});
+
+export const ChatSchema = z.object({
+  _id: z.string(),
+  spaceId: z.string(),
+  userId: z.string(),
+  title: z.string().optional(),
+  messages: z.array(MessageSchema),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
 });

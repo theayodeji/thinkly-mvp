@@ -16,27 +16,27 @@ import {
 } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 import { Button } from "./Button";
-import { useCreateNote, useNotes } from "../../hooks/queries/useNotes";
+import { useCreateSpace, useSpaces } from "../../hooks/queries/useSpaces";
 
 export const Sidebar = ({ isOpen, toggle }: { isOpen: boolean; toggle: () => void }) => {
   const { theme } = useTheme();
   const { logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-  const { mutateAsync: createNote } = useCreateNote();
-  const { data: recentNotesData } = useNotes();
+  const { mutateAsync: createSpace } = useCreateSpace();
+  const { data: recentSpacesData } = useSpaces();
   const [isCreating, setIsCreating] = useState(false);
 
-  // Take the 5 most recently updated notes
-  const recentNotes: any[] = (recentNotesData || []).slice(0, 5);
+  // Take the 4 most recently updated Spaces
+  const recentSpaces: any[] = (recentSpacesData || []).slice(0, 4);
 
-  const handleCreateNote = async () => {
+  const handleCreateSpace = async () => {
     setIsCreating(true);
     try {
-      const newNote = await createNote();
-      navigate(`/notes/${newNote._id}`);
+      const newSpace = await createSpace();
+      navigate(`/spaces/${newSpace._id}`);
     } catch (error) {
-      console.error("Failed to create note:", error);
+      console.error("Failed to create Space:", error);
     } finally {
       setIsCreating(false);
     }
@@ -44,7 +44,7 @@ export const Sidebar = ({ isOpen, toggle }: { isOpen: boolean; toggle: () => voi
 
   const navItems = [
     { name: "Dashboard", path: "/dashboard", icon: Home },
-    { name: "My Notes", path: "/notes", icon: FileText },
+    { name: "My Spaces", path: "/spaces", icon: FileText },
     { name: "My Stats", path: "/statistics", icon: BarChart2 },
     { name: "Settings", path: "/settings", icon: Settings },
   ];
@@ -77,12 +77,12 @@ export const Sidebar = ({ isOpen, toggle }: { isOpen: boolean; toggle: () => voi
 
       <div className="p-4">
         <Button
-          onClick={handleCreateNote}
+          onClick={handleCreateSpace}
           loading={isCreating}
           className={`w-full flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 text-white border-none ${!isOpen && 'px-0'}`}
         >
           <PlusCircle className="h-5 w-5" />
-          {isOpen && <span>Create Note</span>}
+          {isOpen && <span>Create Space</span>}
         </Button>
       </div>
 
@@ -106,18 +106,18 @@ export const Sidebar = ({ isOpen, toggle }: { isOpen: boolean; toggle: () => voi
           );
         })}
 
-        {isOpen && recentNotes.length > 0 && (
+        {isOpen && recentSpaces.length > 0 && (
           <div className="mt-8 mb-2">
             <div className="flex items-center justify-between px-2 mb-2">
               <span className="text-xs font-semibold text-text-secondary uppercase tracking-wider">Recent</span>
             </div>
             <div className="space-y-1">
-              {recentNotes.map((note: any) => {
-                const isActive = location.pathname === `/notes/${note._id}`;
+              {recentSpaces.map((Space: any) => {
+                const isActive = location.pathname === `/spaces/${Space._id}`;
                 return (
                   <Link
-                    key={note._id}
-                    to={`/notes/${note._id}`}
+                    key={Space._id}
+                    to={`/spaces/${Space._id}`}
                     className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
                       isActive 
                         ? "bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 font-medium" 
@@ -125,7 +125,7 @@ export const Sidebar = ({ isOpen, toggle }: { isOpen: boolean; toggle: () => voi
                     }`}
                   >
                     <MessageSquare className="h-4 w-4 shrink-0" />
-                    <span className="truncate text-sm">{note.title || "Untitled Note"}</span>
+                    <span className="truncate text-sm">{Space.title || "Untitled Space"}</span>
                   </Link>
                 );
               })}

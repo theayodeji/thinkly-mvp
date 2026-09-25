@@ -1,21 +1,21 @@
 import React, { useState } from "react";
 import { FilePlus, Mic, FileQuestion, Timer } from "lucide-react";
 import { Button } from "../ui/Button";
-import { useCreateNote } from "../../hooks/queries/useNotes";
+import { useCreateSpace } from "../../hooks/queries/useSpaces";
 import { useNavigate } from "react-router-dom";
 
 const QuickActions = () => {
-  const { mutateAsync: createNote } = useCreateNote();
+  const { mutateAsync: createSpace } = useCreateSpace();
   const navigate = useNavigate();
   const [isCreating, setIsCreating] = useState(false);
 
-  const handleCreateNote = async () => {
+  const handleCreateSpace = async () => {
     setIsCreating(true);
     try {
-      const newNote = await createNote();
-      navigate(`/notes/${newNote._id}`);
+      const newSpace = await createSpace();
+      navigate(`/spaces/${newSpace._id}`);
     } catch (error) {
-      console.error("Failed to create note:", error);
+      console.error("Failed to create Space:", error);
     } finally {
       setIsCreating(false);
     }
@@ -24,12 +24,12 @@ const QuickActions = () => {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
       <Button
-        onClick={handleCreateNote}
+        onClick={handleCreateSpace}
         loading={isCreating}
         className="flex flex-col items-center justify-center gap-3 h-28 bg-gradient-primary hover:bg-primary-700 text-white rounded-xl shadow-sm border border-primary-800"
       >
         <FilePlus className="h-6 w-6" />
-        <span className="font-semibold text-sm">Create Note</span>
+        <span className="font-semibold text-sm">Create Space</span>
       </Button>
       <Button
         variant="outline"

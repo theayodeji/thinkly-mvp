@@ -4,6 +4,6 @@ export {
   FlashcardSchema,
   QuizQuestionSchema,
   QuizSchema,
-  NoteSchema,
-  NotePreviewSchema
+  SpaceSchema,
+  SpacePreviewSchema
 } from "@thinkly/shared";

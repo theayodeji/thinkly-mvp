@@ -5,9 +5,9 @@ export const routes = {
     register: "/auth/register",
   },
   dashboard: "/dashboard",
-  notes: {
-    root: "/notes",
-    note: (id: string) => `/notes/${id}`,
+  Spaces: {
+    root: "/spaces",
+    Space: (id: string) => `/spaces/${id}`,
   },
   inDevelopment: "/in-development",
 } as const;

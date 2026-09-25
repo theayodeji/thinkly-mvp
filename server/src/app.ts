@@ -8,7 +8,7 @@ import morgan from 'morgan';
 import { logger } from './utils/logger.js';
 
 import authRoutes from './routes/authRoutes.js';
-import noteRoutes from './routes/noteRoutes.js';
+import spaceRoutes from './routes/spaceRoutes.js';
 import sourceRoutes from './routes/sourceRoutes.js';
 import quizRoutes from './routes/quizRoutes.js';
 import flashcardRoutes from './routes/flashcardRoutes.js';
@@ -40,7 +40,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/auth', authRoutes);
-app.use('/api/notes', noteRoutes);
+app.use('/api/spaces', spaceRoutes);
 app.use('/api/sources', sourceRoutes);
 app.use('/api/quiz', quizRoutes);
 app.use('/api/flashcards', flashcardRoutes);

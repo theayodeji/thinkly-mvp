@@ -44,11 +44,11 @@ export const UserMenu = ({ onLogout }: UserMenuProps) => {
                 Dashboard
               </Link>
               <Link
-                to="/notes"
+                to="/spaces"
                 className="p-3 hover:bg-neutral/70 color-transition dark:text-white text-black"
                 onClick={() => close()}
               >
-                Notes
+                Spaces
               </Link>
               <Link
                 to="/in-development"

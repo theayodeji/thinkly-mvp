@@ -12,7 +12,7 @@ export const BottomNavigation = () => {
 
   const navItems = [
     { name: "Home", path: "/dashboard", icon: Home },
-    { name: "Notes", path: "/notes", icon: FileText },
+    { name: "Spaces", path: "/spaces", icon: FileText },
     { name: "Cards", path: "/flashcards", icon: Layers },
     { name: "Stats", path: "/statistics", icon: BarChart2 },
     { name: "Settings", path: "/settings", icon: Settings },

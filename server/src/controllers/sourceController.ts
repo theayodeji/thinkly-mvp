@@ -1,7 +1,12 @@
 import type { Request, Response, NextFunction } from "express";
 import { catchAsync } from "../utils/catchAsync.js";
 import { processAndAddSource } from "../services/content/sources/ingestion.js";
-import { deleteSourceTransaction } from "../services/content/sources/management.js";
+import { deleteSourceTransaction, getSourcesBySpaceId } from "../services/content/sources/management.js";
+
+export const getSources = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  const sources = await getSourcesBySpaceId(req.params.spaceId as string);
+  res.status(200).json({ sources });
+});
 
 export const addSource = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const newSource = await processAndAddSource(req.body, req.userId as string);

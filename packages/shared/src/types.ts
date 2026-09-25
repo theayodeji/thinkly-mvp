@@ -35,16 +35,13 @@ export interface IUser {
   updatedAt: Date;
 }
 
-export interface INote {
+export interface ISpace {
   _id: string;
   title: string;
   content: string;
-  sources: string[];
   userId: string;
   summary: string;
-  quiz?: string;
-  chatSuggestions?: string[];
-  flashcards: string[];
+  sourcesCount?: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -61,7 +58,7 @@ export interface ISource {
   name?: string;
   file_url?: string;
   text?: string;
-  noteId: string;
+  spaceId: string;
   status: "parsing" | "parsed" | "error";
   createdAt: Date;
   updatedAt: Date;
@@ -77,7 +74,7 @@ export interface IQuizQuestion {
 export interface IQuiz {
   _id: string;
   userId: string;
-  noteId: string;
+  spaceId: string;
   questions: IQuizQuestion[];
   createdAt: Date;
   updatedAt: Date;
@@ -87,8 +84,32 @@ export interface IFlashcard {
   _id: string;
   question: string;
   answer: string;
-  noteId: string;
+  spaceId: string;
   userId: string;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface IMessage {
+  _id?: string;
+  chatId: string;
+  spaceId: string;
+  role: "user" | "assistant";
+  content: string;
+  createdAt: Date;
+}
+
+export interface IChat {
+  _id: string;
+  spaceId: string;
+  userId: string;
+  title?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface IPaginatedChatHistory {
+  history: IMessage[];
+  hasMore: boolean;
+  nextCursor?: string;
 }

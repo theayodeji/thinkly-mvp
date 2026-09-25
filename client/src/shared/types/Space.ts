@@ -1,0 +1,18 @@
+import { Source } from "./source";
+import { Flashcard } from "./flashcard";
+
+export type Space = {
+  _id: string;
+  title: string;
+  content: string;
+  sources: (string | Source)[];
+  userId: string;
+  summary: string;
+  createdAt: Date;
+  updatedAt: Date;
+  quiz?: string;
+  chatSuggestions?: string[];
+  flashcards?: string[] | Flashcard[]; // Can be array of IDs or populated flashcards
+};
+
+export type SpacePreview = Pick<Space, "_id" | "title" | "sources" | "createdAt">;

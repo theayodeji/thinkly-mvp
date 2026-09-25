@@ -1,7 +1,7 @@
 import {
   BadgeQuestionMark,
   IdCardIcon,
-  LucideNotepadTextDashed,
+  NotepadTextDashed,
   MessageSquareText,
   Mic2,
   TimerIcon,
@@ -25,10 +25,10 @@ const item = {
 
 const features = [
   {
-    icon: <LucideNotepadTextDashed className="w-12 h-12" />,
+    icon: <NotepadTextDashed className="w-12 h-12" />,
     title: "Summarizer",
     description:
-      "Get concise summaries of your notes and textbooks, focusing on key concepts.",
+      "Get concise summaries of your Spaces and textbooks, focusing on key concepts.",
   },
   {
     icon: <BadgeQuestionMark className="w-12 h-12" />,
@@ -46,7 +46,7 @@ const features = [
     icon: <Mic2 className="w-12 h-12" />,
     title: "Transcriber",
     description:
-      "Convert lectures and discussions into text for easy note-taking and review.",
+      "Convert lectures and discussions into text for easy Space-taking and review.",
   },
   {
     icon: <TimerIcon className="w-12 h-12" />,

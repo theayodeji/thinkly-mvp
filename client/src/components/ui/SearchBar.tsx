@@ -11,7 +11,7 @@ interface SearchBarProps {
 const SearchBar = React.memo(
   ({
     onSearch,
-    placeholder = "Search notes...",
+    placeholder = "Search Spaces...",
     debounceTime = 300,
   }: SearchBarProps) => {
     const [query, setQuery] = useState("");
@@ -45,7 +45,7 @@ const SearchBar = React.memo(
             placeholder={placeholder}
             value={query}
             onChange={handleChange}
-            aria-label="Search notes"
+            aria-label="Search Spaces"
           />
           {isTyping && (
             <div className="absolute inset-y-0 right-0 pr-3 flex items-center">

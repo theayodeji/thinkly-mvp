@@ -6,9 +6,9 @@ export declare const paramsIdSchema: z.ZodObject<{
         id: z.ZodString;
     }, z.core.$strip>;
 }, z.core.$strip>;
-export declare const paramsNoteIdSchema: z.ZodObject<{
+export declare const paramsSpaceIdSchema: z.ZodObject<{
     params: z.ZodObject<{
-        noteId: z.ZodString;
+        spaceId: z.ZodString;
     }, z.core.$strip>;
 }, z.core.$strip>;
 export declare const paramsQuizIdSchema: z.ZodObject<{
@@ -29,7 +29,7 @@ export declare const loginSchema: z.ZodObject<{
         password: z.ZodString;
     }, z.core.$strip>;
 }, z.core.$strip>;
-export declare const updateNoteSchema: z.ZodObject<{
+export declare const updateSpaceSchema: z.ZodObject<{
     params: z.ZodObject<{
         id: z.ZodString;
     }, z.core.$strip>;
@@ -39,7 +39,7 @@ export declare const updateNoteSchema: z.ZodObject<{
 }, z.core.$strip>;
 export declare const addSourceSchema: z.ZodObject<{
     body: z.ZodObject<{
-        noteId: z.ZodString;
+        spaceId: z.ZodString;
         type: z.ZodEnum<typeof SourceType>;
         text: z.ZodOptional<z.ZodString>;
         name: z.ZodOptional<z.ZodString>;
@@ -55,9 +55,9 @@ export declare const submitQuizSchema: z.ZodObject<{
 }, z.core.$strip>;
 export declare const chatSchema: z.ZodObject<{
     body: z.ZodObject<{
-        noteId: z.ZodString;
+        spaceId: z.ZodString;
         message: z.ZodString;
-        history: z.ZodArray<z.ZodAny>;
+        history: z.ZodOptional<z.ZodArray<z.ZodAny>>;
     }, z.core.$strip>;
 }, z.core.$strip>;
 export declare const UserSchema: z.ZodObject<{
@@ -91,7 +91,7 @@ export declare const SourceSchema: z.ZodObject<{
     file_url: z.ZodOptional<z.ZodString>;
     name: z.ZodOptional<z.ZodString>;
     text: z.ZodOptional<z.ZodString>;
-    noteId: z.ZodString;
+    spaceId: z.ZodString;
     status: z.ZodEnum<{
         parsing: "parsing";
         parsed: "parsed";
@@ -104,7 +104,7 @@ export declare const FlashcardSchema: z.ZodObject<{
     _id: z.ZodString;
     question: z.ZodString;
     answer: z.ZodString;
-    noteId: z.ZodString;
+    spaceId: z.ZodString;
     userId: z.ZodString;
     createdAt: z.ZodOptional<z.ZodUnion<[z.ZodString, z.ZodCoercedDate<unknown>]>>;
     updatedAt: z.ZodOptional<z.ZodUnion<[z.ZodString, z.ZodCoercedDate<unknown>]>>;
@@ -118,7 +118,7 @@ export declare const QuizQuestionSchema: z.ZodObject<{
 export declare const QuizSchema: z.ZodObject<{
     _id: z.ZodString;
     userId: z.ZodString;
-    noteId: z.ZodString;
+    spaceId: z.ZodString;
     questions: z.ZodArray<z.ZodObject<{
         question: z.ZodString;
         options: z.ZodArray<z.ZodString>;
@@ -128,102 +128,42 @@ export declare const QuizSchema: z.ZodObject<{
     createdAt: z.ZodCoercedDate<unknown>;
     updatedAt: z.ZodCoercedDate<unknown>;
 }, z.core.$loose>;
-export declare const NoteSchema: z.ZodObject<{
+export declare const SpaceSchema: z.ZodObject<{
     _id: z.ZodString;
     title: z.ZodPipe<z.ZodOptional<z.ZodNullable<z.ZodString>>, z.ZodTransform<string, string | null | undefined>>;
     content: z.ZodPipe<z.ZodOptional<z.ZodNullable<z.ZodString>>, z.ZodTransform<string, string | null | undefined>>;
-    sources: z.ZodPipe<z.ZodOptional<z.ZodNullable<z.ZodArray<z.ZodUnion<[z.ZodString, z.ZodObject<{
-        _id: z.ZodString;
-        type: z.ZodEnum<typeof SourceType>;
-        file_url: z.ZodOptional<z.ZodString>;
-        name: z.ZodOptional<z.ZodString>;
-        text: z.ZodOptional<z.ZodString>;
-        noteId: z.ZodString;
-        status: z.ZodEnum<{
-            parsing: "parsing";
-            parsed: "parsed";
-            error: "error";
-        }>;
-        createdAt: z.ZodCoercedDate<unknown>;
-        updatedAt: z.ZodCoercedDate<unknown>;
-    }, z.core.$loose>]>>>>, z.ZodTransform<(string | {
-        [x: string]: unknown;
-        _id: string;
-        type: SourceType;
-        noteId: string;
-        status: "parsing" | "parsed" | "error";
-        createdAt: Date;
-        updatedAt: Date;
-        file_url?: string | undefined;
-        name?: string | undefined;
-        text?: string | undefined;
-    })[], (string | {
-        [x: string]: unknown;
-        _id: string;
-        type: SourceType;
-        noteId: string;
-        status: "parsing" | "parsed" | "error";
-        createdAt: Date;
-        updatedAt: Date;
-        file_url?: string | undefined;
-        name?: string | undefined;
-        text?: string | undefined;
-    })[] | null | undefined>>;
     userId: z.ZodString;
     summary: z.ZodPipe<z.ZodOptional<z.ZodNullable<z.ZodString>>, z.ZodTransform<string, string | null | undefined>>;
+    sourcesCount: z.ZodOptional<z.ZodNumber>;
     createdAt: z.ZodCoercedDate<unknown>;
     updatedAt: z.ZodCoercedDate<unknown>;
-    quiz: z.ZodOptional<z.ZodString>;
-    chatSuggestions: z.ZodOptional<z.ZodArray<z.ZodString>>;
-    flashcards: z.ZodOptional<z.ZodArray<z.ZodUnion<[z.ZodString, z.ZodObject<{
-        _id: z.ZodString;
-        question: z.ZodString;
-        answer: z.ZodString;
-        noteId: z.ZodString;
-        userId: z.ZodString;
-        createdAt: z.ZodOptional<z.ZodUnion<[z.ZodString, z.ZodCoercedDate<unknown>]>>;
-        updatedAt: z.ZodOptional<z.ZodUnion<[z.ZodString, z.ZodCoercedDate<unknown>]>>;
-    }, z.core.$loose>]>>>;
 }, z.core.$loose>;
-export declare const NotePreviewSchema: z.ZodObject<{
+export declare const SpacePreviewSchema: z.ZodObject<{
     title: z.ZodPipe<z.ZodOptional<z.ZodNullable<z.ZodString>>, z.ZodTransform<string, string | null | undefined>>;
     _id: z.ZodString;
     createdAt: z.ZodCoercedDate<unknown>;
-    sources: z.ZodPipe<z.ZodOptional<z.ZodNullable<z.ZodArray<z.ZodUnion<[z.ZodString, z.ZodObject<{
-        _id: z.ZodString;
-        type: z.ZodEnum<typeof SourceType>;
-        file_url: z.ZodOptional<z.ZodString>;
-        name: z.ZodOptional<z.ZodString>;
-        text: z.ZodOptional<z.ZodString>;
-        noteId: z.ZodString;
-        status: z.ZodEnum<{
-            parsing: "parsing";
-            parsed: "parsed";
-            error: "error";
-        }>;
-        createdAt: z.ZodCoercedDate<unknown>;
-        updatedAt: z.ZodCoercedDate<unknown>;
-    }, z.core.$loose>]>>>>, z.ZodTransform<(string | {
-        [x: string]: unknown;
-        _id: string;
-        type: SourceType;
-        noteId: string;
-        status: "parsing" | "parsed" | "error";
-        createdAt: Date;
-        updatedAt: Date;
-        file_url?: string | undefined;
-        name?: string | undefined;
-        text?: string | undefined;
-    })[], (string | {
-        [x: string]: unknown;
-        _id: string;
-        type: SourceType;
-        noteId: string;
-        status: "parsing" | "parsed" | "error";
-        createdAt: Date;
-        updatedAt: Date;
-        file_url?: string | undefined;
-        name?: string | undefined;
-        text?: string | undefined;
-    })[] | null | undefined>>;
 }, z.core.$loose>;
+export declare const MessageSchema: z.ZodObject<{
+    role: z.ZodEnum<{
+        user: "user";
+        assistant: "assistant";
+    }>;
+    content: z.ZodString;
+    createdAt: z.ZodCoercedDate<unknown>;
+}, z.core.$strip>;
+export declare const ChatSchema: z.ZodObject<{
+    _id: z.ZodString;
+    spaceId: z.ZodString;
+    userId: z.ZodString;
+    title: z.ZodOptional<z.ZodString>;
+    messages: z.ZodArray<z.ZodObject<{
+        role: z.ZodEnum<{
+            user: "user";
+            assistant: "assistant";
+        }>;
+        content: z.ZodString;
+        createdAt: z.ZodCoercedDate<unknown>;
+    }, z.core.$strip>>;
+    createdAt: z.ZodCoercedDate<unknown>;
+    updatedAt: z.ZodCoercedDate<unknown>;
+}, z.core.$strip>;

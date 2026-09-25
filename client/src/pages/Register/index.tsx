@@ -32,10 +32,10 @@ const Register = () => {
             className="w-[280px] flex flex-col items-center text-center absolute top-22 left-1/2 transform -translate-x-1/2 -translate-y-0"
           >
             <h1 className="text-white text-4xl font-bold">
-              Say Goodbye to Abstract Notes
+              Say Goodbye to Abstract Spaces
             </h1>
             <p className="text-white text-sm">
-              Assimilate your notes better in minutes and ask anything about
+              Assimilate your Spaces better in minutes and ask anything about
               them
             </p>
           </motion.div>

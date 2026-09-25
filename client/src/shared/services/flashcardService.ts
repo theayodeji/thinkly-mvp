@@ -1,20 +1,19 @@
 import { api } from "./api";
-import { Flashcard } from "../types/flashcard";
-import { FlashcardSchema } from "../schemas";
+import { IFlashcard, FlashcardSchema } from "@thinkly/shared";
 import { z } from "zod";
 
 export const flashcardService = {
-  generateFlashcards: async (noteId: string): Promise<{ flashcards: Flashcard[] }> => {
-    const response = await api.post(`/flashcards/${noteId}/generate`);
-    return { flashcards: z.array(FlashcardSchema).parse(response.data.flashcards) as Flashcard[] };
+  generateFlashcards: async (SpaceId: string): Promise<{ flashcards: IFlashcard[] }> => {
+    const response = await api.post(`/flashcards/${SpaceId}/generate`);
+    return { flashcards: z.array(FlashcardSchema).parse(response.data.flashcards) as IFlashcard[] };
   },
 
-  getFlashcards: async (noteId: string): Promise<{ flashcards: Flashcard[] }> => {
-    const response = await api.get(`/flashcards/${noteId}`);
-    return { flashcards: z.array(FlashcardSchema).parse(response.data.flashcards) as Flashcard[] };
+  getFlashcards: async (SpaceId: string): Promise<{ flashcards: IFlashcard[] }> => {
+    const response = await api.get(`/flashcards/${SpaceId}`);
+    return { flashcards: z.array(FlashcardSchema).parse(response.data.flashcards) as IFlashcard[] };
   },
 
-  deleteFlashcards: async (noteId: string): Promise<void> => {
-    await api.delete(`/flashcards/${noteId}`);
+  deleteFlashcards: async (SpaceId: string): Promise<void> => {
+    await api.delete(`/flashcards/${SpaceId}`);
   },
 };

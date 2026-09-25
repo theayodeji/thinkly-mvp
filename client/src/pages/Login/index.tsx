@@ -35,7 +35,7 @@ const Login = () => {
               No More Abstract Notes
             </h1>
             <p className="text-white text-sm">
-              Assimilate your notes better in minutes and ask anything about
+              Assimilate your Class Notes better in minutes and ask anything about
               them
             </p>
           </motion.div>

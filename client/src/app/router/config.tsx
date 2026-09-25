@@ -10,8 +10,8 @@ import LandingLayout from "../layouts/LandingLayout";
 import Login from "../../pages/Login";
 import Register from "../../pages/Register";
 import Dashboard from "../../pages/Dashboard";
-import NotesList from "../../pages/NotesList";
-import NoteDetail from "../../pages/NoteDetail";
+import SpacesList from "../../pages/SpacesList";
+import SpaceDetail from "../../pages/SpaceDetail";
 import Home from "../../pages/Home";
 import InDevelopment from "../../pages/InDevelopment";
 
@@ -27,10 +27,10 @@ export const routeConfig: RouteConfig[] = [
     element: <MainLayout />,
     children: [
       { path: routes.dashboard, element: <Dashboard />, protected: true, },
-      { path: routes.notes.root, element: <NotesList />, protected: true },
+      { path: routes.Spaces.root, element: <SpacesList />, protected: true },
       {
-        path: routes.notes.note(":id"),
-        element: <NoteDetail />,
+        path: routes.Spaces.Space(":id"),
+        element: <SpaceDetail />,
         protected: true,
       },
     ],
