@@ -98,7 +98,8 @@ function ChatInterface() {
     if (isNetworkFinished && isCaughtUp && streamingIndex !== null) {
       setChatHistory(prev => {
         const newHistory = [...prev];
-        newHistory[newHistory.length - 1] = { role: "assistant", content: streamedText };
+        const prevMsg = newHistory[newHistory.length - 1];
+        newHistory[newHistory.length - 1] = { ...prevMsg, role: "assistant", content: streamedText };
         return newHistory;
       });
       setStreamingIndex(null);
@@ -117,12 +118,13 @@ function ChatInterface() {
     
     // Immediately finalize using the current SMOOTHED text, so we stop exactly where the user is looking
     setChatHistory(prev => {
-      // Check if we are actually streaming
-      if (streamingIndex === null) return prev;
-      
       const newHistory = [...prev];
-      // Use smoothedStreamedText to stop exactly what is on screen
-      newHistory[newHistory.length - 1] = { role: "assistant", content: smoothedStreamedText };
+      const lastMsg = newHistory[newHistory.length - 1];
+      
+      // Ensure we are only modifying an assistant message that is actively streaming
+      if (lastMsg && lastMsg.role === "assistant") {
+        newHistory[newHistory.length - 1] = { ...lastMsg, content: smoothedStreamedText };
+      }
       return newHistory;
     });
     setStreamingIndex(null);
@@ -170,13 +172,19 @@ function ChatInterface() {
       setIsChatLoading(false);
       
       // Update the placeholder with a helpful error message
+      const errorMessage = error?.response?.data?.error || error?.response?.data?.message || "Sorry, I ran into an error while generating a response. Please try again or check your connection.";
+      
       setChatHistory(prev => {
-        if (streamingIndex === null) return prev; // Just in case
         const newHistory = [...prev];
-        newHistory[newHistory.length - 1] = { 
-          role: "assistant", 
-          content: "Sorry, I ran into an error while generating a response. Please try again or check your connection."
-        };
+        const lastMsg = newHistory[newHistory.length - 1];
+        
+        // Ensure we are only modifying the placeholder we just created
+        if (lastMsg && lastMsg.role === "assistant" && lastMsg.content === "") {
+          newHistory[newHistory.length - 1] = { 
+            ...lastMsg,
+            content: `⚠️ **Error:** ${errorMessage}`
+          };
+        }
         return newHistory;
       });
       
