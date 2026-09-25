@@ -69,13 +69,21 @@ function ChatInterface() {
     }
   }, [chatHistory]);
 
-  const scrollToBottom = useCallback(() => {
-    requestAnimationFrame(() => {
-      chatBoxRef.current?.scrollTo({
-        top: chatBoxRef.current.scrollHeight,
-        behavior: "smooth",
+  const scrollToBottom = useCallback((force = false) => {
+    if (!chatBoxRef.current) return;
+    
+    const { scrollTop, scrollHeight, clientHeight } = chatBoxRef.current;
+    // If force is true, or user is within 150px of the bottom, auto-scroll.
+    const isNearBottom = scrollHeight - scrollTop - clientHeight < 150;
+    
+    if (force || isNearBottom) {
+      requestAnimationFrame(() => {
+        chatBoxRef.current?.scrollTo({
+          top: chatBoxRef.current.scrollHeight,
+          behavior: "smooth",
+        });
       });
-    });
+    }
   }, []);
 
   const handleScroll = useCallback(() => {
@@ -139,7 +147,7 @@ function ChatInterface() {
     // Add user message to UI immediately with a stable temp ID
     const newUserMsg = { _id: crypto.randomUUID(), role: "user" as const, content: message };
     setChatHistory(prev => [...prev, newUserMsg as any]);
-    scrollToBottom();
+    scrollToBottom(true);
     
     setIsChatLoading(true);
     setIsNetworkFinished(false);

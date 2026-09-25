@@ -123,6 +123,10 @@ class GeminiService {
       const model = this.genAI.getGenerativeModel({ model: this.modelName });
       const result = await model.generateContentStream(prompt);
 
+      // result.response is a Promise that rejects if the stream fails.
+      // We must catch it to prevent unhandled promise rejections that crash the server.
+      result.response.catch(() => {});
+
       async function* streamGenerator() {
         for await (const chunk of result.stream) {
           yield chunk.text();
