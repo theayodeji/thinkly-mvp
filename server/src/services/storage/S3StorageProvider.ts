@@ -10,7 +10,16 @@ export class S3StorageProvider implements IStorageProvider {
     this.bucketName = process.env.S3_BUCKET_NAME || "";
     
     // For R2, the endpoint looks like https://<ACCOUNT_ID>.r2.cloudflarestorage.com
-    const endpoint = process.env.S3_ENDPOINT;
+    // Sometimes users accidentally copy the bucket-specific URL which includes the path /bucket-name
+    let endpoint = process.env.S3_ENDPOINT;
+    if (endpoint) {
+      try {
+        const url = new URL(endpoint);
+        endpoint = url.origin; // Strips any path like /thinkly-mvp
+      } catch (e) {
+        // Fallback if invalid URL
+      }
+    }
     
     this.client = new S3Client({
       region: process.env.S3_REGION || "auto", // R2 typically uses 'auto'
