@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Headphones, Loader2, Play, Pause, Trash2 } from "lucide-react";
+import React from "react";
+import { Headphones, Loader2, Trash2 } from "lucide-react";
 import { IAudioExplainer } from "@thinkly/shared";
 import { useDeleteExplainer } from "../../hooks/queries/useExplainers";
 
@@ -8,24 +8,7 @@ interface Props {
 }
 
 const AudioExplainerCard = ({ explainer }: Props) => {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const audioRef = React.useRef<HTMLAudioElement | null>(null);
   const { mutate: deleteExplainer, isPending: isDeleting } = useDeleteExplainer();
-
-  const togglePlay = () => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
-      } else {
-        audioRef.current.play();
-      }
-      setIsPlaying(!isPlaying);
-    }
-  };
-
-  const handleEnded = () => {
-    setIsPlaying(false);
-  };
 
   return (
     <div className="bg-bg hover:bg-neutral-100 dark:bg-transparent dark:hover:bg-neutral-800/80 border border-border/50 rounded-xl p-3 flex items-start gap-3 text-left transition-colors group">
@@ -40,15 +23,6 @@ const AudioExplainerCard = ({ explainer }: Props) => {
           </h4>
           
           <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-            {explainer.status === "ready" && (
-              <button 
-                onClick={togglePlay}
-                className="text-primary-600 dark:text-primary-400 hover:text-primary-700 p-1"
-              >
-                {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-              </button>
-            )}
-            
             <button 
               onClick={() => deleteExplainer(explainer._id)}
               disabled={isDeleting}
@@ -67,18 +41,19 @@ const AudioExplainerCard = ({ explainer }: Props) => {
         ) : explainer.status === "error" ? (
           <p className="text-xs text-red-500 mt-0.5 line-clamp-1">Failed to generate audio</p>
         ) : (
-          <p className="text-xs text-text-secondary mt-0.5 line-clamp-1">Audio ready</p>
+          <div className="mt-3 mb-1">
+            {explainer.audioUrl && (
+              <audio 
+                controls
+                autoPlay={false}
+                src={explainer.audioUrl} 
+                className="w-full h-8"
+                controlsList="nodownload noplaybackrate"
+              />
+            )}
+          </div>
         )}
       </div>
-
-      {explainer.audioUrl && (
-        <audio 
-          ref={audioRef} 
-          src={explainer.audioUrl} 
-          onEnded={handleEnded} 
-          className="hidden" 
-        />
-      )}
     </div>
   );
 };
