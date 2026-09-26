@@ -33,7 +33,7 @@ const AudioExplainerCard = ({ explainer }: Props) => {
         <Headphones className="w-4 h-4" />
       </div>
       
-      <div className="flex-1 min-w-0 flex flex-col justify-center h-8">
+      <div className="flex-1 min-w-0 flex flex-col justify-center min-h-[2rem]">
         <div className="flex items-center justify-between gap-2 w-full">
           <h4 className="text-sm font-semibold text-text truncate">
             {explainer.concept}

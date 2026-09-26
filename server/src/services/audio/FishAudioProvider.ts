@@ -5,13 +5,19 @@ import { AppError } from "../../utils/AppError.js";
 export class FishAudioProvider implements IAudioProvider {
   async generateSpeech(text: string, options?: AudioOptions): Promise<Buffer> {
     try {
+      const payload: any = {
+        text,
+        format: "mp3",
+      };
+
+      const refId = options?.voiceId || process.env.HIP_MODEL_ID;
+      if (refId && refId !== "default") {
+        payload.reference_id = refId;
+      }
+
       const response = await axios.post(
         "https://api.fish.audio/v1/tts",
-        {
-          text,
-          reference_id: options?.voiceId || process.env.HIP_MODEL_ID,
-          format: "mp3",
-        },
+        payload,
         {
           headers: {
             Authorization: `Bearer ${process.env.FISH_AUDIO_API_KEY}`,
@@ -21,7 +27,7 @@ export class FishAudioProvider implements IAudioProvider {
             // If they are on a paid plan, s2-pro or whatever is valid. 
             // Often "FishAudio" doesn't strictly require it if fallback handles it, 
             // but we'll include it just in case! 
-            "model": "s2-pro"
+            "model": "s2.1-pro-free"
           },
           responseType: "arraybuffer",
         }

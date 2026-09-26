@@ -7,6 +7,13 @@ export const useExplainers = (spaceId: string) => {
     queryKey: ["explainers", spaceId],
     queryFn: () => explainerService.getBySpaceId(spaceId),
     enabled: !!spaceId,
+    refetchInterval: (query) => {
+      const data = query.state.data as IAudioExplainer[] | undefined;
+      if (data?.some((e) => e.status === "processing")) {
+        return 2000;
+      }
+      return false;
+    },
   });
 };
 

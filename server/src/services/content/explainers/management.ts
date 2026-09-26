@@ -5,6 +5,7 @@ import AudioExplainer from "../../../models/AudioExplainer.js";
 import geminiService from "../../../utils/genai.js";
 import Space from "../../../models/Space.js";
 import { AppError } from "../../../utils/AppError.js";
+import { logger } from "../../../utils/logger.js";
 
 export class AudioExplainerService {
   private audioProvider: IAudioProvider;
@@ -35,7 +36,7 @@ export class AudioExplainerService {
 
     // 3. Process asynchronously
     this.processAudioExplainer(explainer._id.toString(), concept, space.content, explainer.voiceId).catch(
-      (err) => console.error(`Error processing explainer ${explainer._id}:`, err)
+      (err) => logger.error(`[AudioExplainer] Error processing explainer ${explainer._id}: ${err}`)
     );
 
     return explainer;
@@ -43,6 +44,7 @@ export class AudioExplainerService {
 
   private async processAudioExplainer(explainerId: string, concept: string, context: string, voiceId: string) {
     try {
+      logger.debug(`[AudioExplainer] Started processing script for ${explainerId}`);
       // 1. Generate the script using Gemini
       const prompt = `You are a friendly, encouraging, and reassuring tutor. 
 Your task is to write an audio script explaining the concept: "${concept}".
@@ -58,24 +60,31 @@ Important instructions for the script:
    Place these anywhere in the sentence to control the tone! Do NOT include speaker labels like "Speaker 1:".`;
 
       const script = await geminiService.generateContent(prompt);
+      
+      logger.debug(`[AudioExplainer] Script generated successfully for ${explainerId}`);
 
       // Update script in DB
       await AudioExplainer.findByIdAndUpdate(explainerId, { script });
 
+      logger.debug(`[AudioExplainer] Generating audio via Fish Audio for ${explainerId}`);
       // 2. Generate Audio via Provider
       const audioBuffer = await this.audioProvider.generateSpeech(script, { voiceId });
 
+      logger.debug(`[AudioExplainer] Uploading audio to storage for ${explainerId}`);
       // 3. Upload to Storage Provider
       const filename = `explainers/${explainerId}-${Date.now()}.mp3`;
       const audioUrl = await this.storageProvider.uploadFile(audioBuffer, filename, "audio/mpeg");
+
+      logger.debug(`[AudioExplainer] Audio uploaded successfully. URL: ${audioUrl}`);
 
       // 4. Update the DB with success
       await AudioExplainer.findByIdAndUpdate(explainerId, {
         audioUrl,
         status: "ready",
       });
+      logger.debug(`[AudioExplainer] Explainer ${explainerId} is ready!`);
     } catch (error) {
-      console.error("Explainer processing failed:", error);
+      logger.error(`[AudioExplainer] Processing failed for ${explainerId}: ${error}`);
       await AudioExplainer.findByIdAndUpdate(explainerId, { status: "error" });
     }
   }
