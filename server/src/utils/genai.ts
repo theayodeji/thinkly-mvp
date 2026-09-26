@@ -60,7 +60,7 @@ class GeminiService {
     this.modelName = modelName;
   }
 
-  private async generateContent(prompt: string, isJson: boolean = false): Promise<string> {
+  public async generateContent(prompt: string, isJson: boolean = false): Promise<string> {
     try {
       const model = this.genAI.getGenerativeModel({ 
         model: this.modelName,

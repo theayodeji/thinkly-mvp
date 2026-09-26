@@ -205,3 +205,24 @@ export const ChatSchema = z.object({
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
 });
+
+export const generateExplainerSchema = z.object({
+  body: z.object({
+    concept: z.string().min(1, "Concept is required"),
+    voiceId: z.string().optional()
+  }),
+});
+
+export const AudioExplainerSchema = z.object({
+  _id: z.string(),
+  spaceId: z.string(),
+  userId: z.string(),
+  concept: z.string(),
+  script: z.string(),
+  audioUrl: z.string(),
+  voiceId: z.string(),
+  duration: z.number().optional(),
+  status: z.enum(["processing", "ready", "error"]),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+}).passthrough();

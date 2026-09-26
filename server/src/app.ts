@@ -12,6 +12,7 @@ import spaceRoutes from './routes/spaceRoutes.js';
 import sourceRoutes from './routes/sourceRoutes.js';
 import quizRoutes from './routes/quizRoutes.js';
 import flashcardRoutes from './routes/flashcardRoutes.js';
+import explainerRoutes from './routes/explainerRoutes.js';
 
 const app = express();
 
@@ -50,6 +51,7 @@ app.use('/api/spaces', spaceRoutes);
 app.use('/api/sources', sourceRoutes);
 app.use('/api/quiz', quizRoutes);
 app.use('/api/flashcards', flashcardRoutes);
+app.use('/api/explainers', explainerRoutes);
 
 app.use(errorHandler);
 

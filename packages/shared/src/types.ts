@@ -113,3 +113,16 @@ export interface IPaginatedChatHistory {
   hasMore: boolean;
   nextCursor?: string;
 }
+export interface IAudioExplainer {
+  _id: string;
+  spaceId: string;
+  userId: string;
+  concept: string;
+  script: string;
+  audioUrl: string;
+  voiceId: string;
+  duration?: number;
+  status: "processing" | "ready" | "error";
+  createdAt: Date;
+  updatedAt: Date;
+}

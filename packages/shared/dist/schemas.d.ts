@@ -93,9 +93,9 @@ export declare const SourceSchema: z.ZodObject<{
     text: z.ZodOptional<z.ZodString>;
     spaceId: z.ZodString;
     status: z.ZodEnum<{
+        error: "error";
         parsing: "parsing";
         parsed: "parsed";
-        error: "error";
     }>;
     createdAt: z.ZodCoercedDate<unknown>;
     updatedAt: z.ZodCoercedDate<unknown>;
@@ -167,3 +167,26 @@ export declare const ChatSchema: z.ZodObject<{
     createdAt: z.ZodCoercedDate<unknown>;
     updatedAt: z.ZodCoercedDate<unknown>;
 }, z.core.$strip>;
+export declare const generateExplainerSchema: z.ZodObject<{
+    body: z.ZodObject<{
+        concept: z.ZodString;
+        voiceId: z.ZodOptional<z.ZodString>;
+    }, z.core.$strip>;
+}, z.core.$strip>;
+export declare const AudioExplainerSchema: z.ZodObject<{
+    _id: z.ZodString;
+    spaceId: z.ZodString;
+    userId: z.ZodString;
+    concept: z.ZodString;
+    script: z.ZodString;
+    audioUrl: z.ZodString;
+    voiceId: z.ZodString;
+    duration: z.ZodOptional<z.ZodNumber>;
+    status: z.ZodEnum<{
+        error: "error";
+        processing: "processing";
+        ready: "ready";
+    }>;
+    createdAt: z.ZodCoercedDate<unknown>;
+    updatedAt: z.ZodCoercedDate<unknown>;
+}, z.core.$loose>;
