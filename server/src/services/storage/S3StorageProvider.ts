@@ -8,8 +8,13 @@ export class S3StorageProvider implements IStorageProvider {
 
   constructor() {
     this.bucketName = process.env.S3_BUCKET_NAME || "";
+    
+    // For R2, the endpoint looks like https://<ACCOUNT_ID>.r2.cloudflarestorage.com
+    const endpoint = process.env.S3_ENDPOINT;
+    
     this.client = new S3Client({
-      region: process.env.S3_REGION || "us-east-1",
+      region: process.env.S3_REGION || "auto", // R2 typically uses 'auto'
+      ...(endpoint && { endpoint }),
       credentials: {
         accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
         secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
@@ -32,8 +37,12 @@ export class S3StorageProvider implements IStorageProvider {
 
       await this.client.send(command);
 
-      // Return the public URL. Assumes the bucket is public or a CDN is configured.
-      // E.g. https://my-bucket.s3.amazonaws.com/filename.mp3
+      // If using R2, you usually have a public dev URL or a custom domain
+      if (process.env.S3_PUBLIC_URL) {
+        return `${process.env.S3_PUBLIC_URL}/${filename}`;
+      }
+
+      // Fallback for standard AWS S3
       return `https://${this.bucketName}.s3.${process.env.S3_REGION || "us-east-1"}.amazonaws.com/${filename}`;
     } catch (error: any) {
       console.error("S3 Upload Error:", error);
