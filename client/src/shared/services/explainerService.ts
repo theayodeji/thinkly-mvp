@@ -1,4 +1,4 @@
-import api from "./api";
+import { api } from "./api";
 
 export const explainerService = {
   generate: async (spaceId: string, concept: string, voiceId?: string) => {

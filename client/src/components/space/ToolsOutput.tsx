@@ -7,6 +7,8 @@ import { useParams } from "react-router-dom";
 import { useSpace } from "../../hooks/queries/useSpaces";
 import { useFlashcards } from "../../hooks/queries/useFlashcards";
 import { useQuiz } from "../../hooks/queries/useQuiz";
+import { useExplainers } from "../../hooks/queries/useExplainers";
+import AudioExplainerCard from "./AudioExplainerCard";
 
 const ToolsOutput = ({
   isQuizLoading,
@@ -18,14 +20,16 @@ const ToolsOutput = ({
   const { id } = useParams<{ id: string }>();
   const { data: currentSpace } = useSpace(id || "");
   const { data: flashcards = [] } = useFlashcards(id || "");
-  const { data: quiz } = useQuiz(id || ""); // assuming useQuiz exists and takes id
+  const { data: quiz } = useQuiz(id || ""); 
+  const { data: explainers = [] } = useExplainers(id || "");
 
   if (!currentSpace) return null;
 
   const hasQuiz = !!quiz;
   const hasFlashcards = flashcards.length > 0;
+  const hasExplainers = explainers.length > 0;
 
-  if (!hasQuiz && !hasFlashcards && !isQuizLoading && !isFlashcardsLoading) {
+  if (!hasQuiz && !hasFlashcards && !hasExplainers && !isQuizLoading && !isFlashcardsLoading) {
     return null;
   }
 
@@ -77,6 +81,10 @@ const ToolsOutput = ({
             <FlashcardsContainer />
           </Drawer>
         )}
+
+        {explainers.map((explainer: any) => (
+          <AudioExplainerCard key={explainer._id} explainer={explainer} />
+        ))}
 
         {isQuizLoading && (
           <div className="bg-neutral-100 dark:bg-neutral-800/80 border border-border/50 rounded-xl p-3 flex items-start gap-3 text-left transition-colors">

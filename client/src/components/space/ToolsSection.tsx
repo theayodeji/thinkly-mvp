@@ -1,9 +1,10 @@
-import { BadgeQuestionMark, IdCard, Key, MapPinPen, Sparkles, ChevronRight } from "lucide-react";
+import { BadgeQuestionMark, IdCard, Headphones, MapPinPen, Sparkles, ChevronRight } from "lucide-react";
 import ToolsOutput from "./ToolsOutput";
 import { WorkInProgressDrawer } from "../WorkInProgress";
 import { useParams } from "react-router-dom";
 import { useGenerateQuiz } from "../../hooks/queries/useQuiz";
 import { useGenerateFlashcards } from "../../hooks/queries/useFlashcards";
+import { ExplainerModal } from "./ExplainerModal";
 
 const tools = [
   {
@@ -21,11 +22,11 @@ const tools = [
     isReady: true 
   },
   { 
-    name: "Key Points", 
-    description: "Extract the most important concepts",
-    icon: <Key className="w-4 h-4" />, 
-    action: "keypoints", 
-    isReady: false 
+    name: "Audio Explainer", 
+    description: "Generate a quick audio explanation",
+    icon: <Headphones className="w-4 h-4" />, 
+    action: "explainer", 
+    isReady: true 
   },
   {
     name: "Learning Path",
@@ -80,6 +81,20 @@ const ToolsSection = () => {
                 </div>
               </div>
             );
+
+            if (tool.action === "explainer" && id) {
+              return (
+                <ExplainerModal
+                  key={index}
+                  spaceId={id}
+                  trigger={
+                    <button className="w-full text-left">
+                      {buttonContent}
+                    </button>
+                  }
+                />
+              );
+            }
 
             return tool.isReady ? (
               <button
