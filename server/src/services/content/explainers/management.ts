@@ -53,7 +53,9 @@ Important instructions for the script:
 3. Use the following context from the user's study space if relevant:
 <context>${context}</context>
 4. Keep the script conversational and aim for about 200-250 words (roughly 1 minute and 30 seconds of speaking time).
-5. Do NOT include sound effects tags or speaker labels (like [Sighs] or Speaker 1:). Just return the plain spoken text.`;
+5. You CAN and SHOULD use Fish Audio emotion tags in square brackets to make the delivery sound human and expressive.
+   Examples: [laugh], [sigh], [whispering], [excited], [soft voice], [voice breaking]. 
+   Place these anywhere in the sentence to control the tone! Do NOT include speaker labels like "Speaker 1:".`;
 
       const script = await geminiService.generateContent(prompt);
 

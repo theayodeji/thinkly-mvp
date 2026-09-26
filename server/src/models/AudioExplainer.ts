@@ -6,8 +6,8 @@ const audioExplainerSchema = new Schema(
     spaceId: { type: Schema.Types.ObjectId, ref: "Space", required: true },
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     concept: { type: String, required: true },
-    script: { type: String, required: true },
-    audioUrl: { type: String, required: true },
+    script: { type: String },
+    audioUrl: { type: String },
     voiceId: { type: String, required: true },
     duration: { type: Number },
     status: {
