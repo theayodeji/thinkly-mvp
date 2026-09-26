@@ -93,9 +93,9 @@ export declare const SourceSchema: z.ZodObject<{
     text: z.ZodOptional<z.ZodString>;
     spaceId: z.ZodString;
     status: z.ZodEnum<{
-        error: "error";
         parsing: "parsing";
         parsed: "parsed";
+        error: "error";
     }>;
     createdAt: z.ZodCoercedDate<unknown>;
     updatedAt: z.ZodCoercedDate<unknown>;

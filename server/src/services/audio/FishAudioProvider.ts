@@ -3,7 +3,7 @@ import { IAudioProvider, AudioOptions } from "@thinkly/shared";
 import { AppError } from "../../utils/AppError.js";
 
 export class FishAudioProvider implements IAudioProvider {
-  async generateSpeech(text: string, options?: AudioOptions): Promise<Buffer> {
+  async generateSpeech(text: string, options?: AudioOptions): Promise<Uint8Array> {
     try {
       const payload: any = {
         text,

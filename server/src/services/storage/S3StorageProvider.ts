@@ -32,7 +32,7 @@ export class S3StorageProvider implements IStorageProvider {
     });
   }
 
-  async uploadFile(buffer: Buffer, filename: string, mimeType: string): Promise<string> {
+  async uploadFile(buffer: Uint8Array, filename: string, mimeType: string): Promise<string> {
     try {
       if (!this.bucketName) {
         throw new Error("S3_BUCKET_NAME is not configured");
