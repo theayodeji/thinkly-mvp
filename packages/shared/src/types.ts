@@ -126,3 +126,10 @@ export interface IAudioExplainer {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export const VOICE_PERSONAS = [
+  { id: "hip", name: "Chloe (Hip)", description: "Casual, modern & energetic" },
+  { id: "robotty", name: "Nova (Robotty)", description: "Precise, clear & technical" }
+] as const;
+
+export type VoicePersonaId = typeof VOICE_PERSONAS[number]["id"];

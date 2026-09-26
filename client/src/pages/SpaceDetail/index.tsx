@@ -10,7 +10,9 @@ import ToolsSection from "../../components/space/ToolsSection";
 
 const SpaceDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [activeTab, setActiveTab] = useState<"sources" | "chat" | "tools">("chat");
+  const [activeTab, setActiveTab] = useState<"sources" | "chat" | "tools">(
+    "chat",
+  );
 
   useSpace(id || "");
 
@@ -45,7 +47,7 @@ const SpaceDetail: React.FC = () => {
         {/* Right Area: Tools */}
         <div
           className={clsx(
-            "lg:w-80 shrink-0 rounded-md h-full overflow-y-auto lg:border-l lg:border-border/50 lg:pl-6",
+            "lg:w-90 shrink-0 rounded-md h-full overflow-y-auto lg:border-l lg:border-border/50 lg:pl-6",
             activeTab === "tools" ? "block w-full" : "hidden lg:block",
           )}
         >

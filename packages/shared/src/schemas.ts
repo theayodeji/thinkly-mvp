@@ -209,7 +209,7 @@ export const ChatSchema = z.object({
 export const generateExplainerSchema = z.object({
   body: z.object({
     concept: z.string().min(1, "Concept is required"),
-    voiceId: z.string().optional()
+    voiceId: z.enum(["hip", "robotty"]).optional()
   }),
 });
 
