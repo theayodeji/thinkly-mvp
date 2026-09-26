@@ -54,9 +54,14 @@ Important instructions for the script:
 2. Start with an encouraging and reassuring tone to build the student's confidence before diving into the explanation.
 3. Explain the concept clearly, simply, and conversationally.
 4. Aim for about 200-250 words (roughly 1 minute and 30 seconds of speaking time).
-5. INJECT EMOTION: You MUST use Fish Audio emotion tags in square brackets to make the delivery sound vibrant, human, and expressive. 
-   - Inject tags like [excited], [laugh], [sigh], [whispering], or [soft voice] throughout the script to shift the tone naturally.
-   - Example: "[excited] Oh, I absolutely love this topic! [laugh] Let's break it down."
+5. INJECT EMOTION & PACING: You MUST use Fish Audio inline bracket tags to make the delivery sound vibrant, human, and expressive. 
+   Supported tags you should heavily use:
+   - Core Emotions: [excited], [sympathetic], [determined], [bored]
+   - Tone Delivery: [whispering], [soft tone], [shouting], [in a hurry tone]
+   - Human Sounds: [laughing], [chuckling], [sighing], [gasping], [clear throat], [sobbing]
+   - Pacing Control: [pause], [long pause]
+   - Emphasis: Place [emphasis] immediately before a word to punch it.
+   Example: "[excited] Oh wow, I love this topic! [pause] [whispering] But here is the [emphasis] real secret... [chuckling]"
 6. Do NOT include speaker labels (like "Tutor:"). Just return the plain spoken text with emotion tags.
 
 Use the following context from the user's study space if relevant:
