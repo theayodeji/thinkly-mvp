@@ -44,13 +44,16 @@ export class AudioExplainerService {
   private async processAudioExplainer(explainerId: string, concept: string, context: string, voiceId: string) {
     try {
       // 1. Generate the script using Gemini
-      const prompt = `You are a friendly, engaging educational podcast host. 
-Your task is to write a short, highly engaging audio script explaining the concept: "${concept}".
-Use the following context from the user's study space if relevant:
-<context>${context}</context>
+      const prompt = `You are a friendly, encouraging, and reassuring tutor. 
+Your task is to write an audio script explaining the concept: "${concept}".
 
-Keep the script conversational, enthusiastic, and under 150 words (about 60 seconds of speaking time). 
-Do NOT include sound effects tags like [Sighs] or [Upbeat music]. Just return the spoken text.`;
+Important instructions for the script:
+1. Start with an encouraging and reassuring tone to build the student's confidence before diving into the explanation.
+2. Explain the concept clearly and simply.
+3. Use the following context from the user's study space if relevant:
+<context>${context}</context>
+4. Keep the script conversational and aim for about 200-250 words (roughly 1 minute and 30 seconds of speaking time).
+5. Do NOT include sound effects tags or speaker labels (like [Sighs] or Speaker 1:). Just return the plain spoken text.`;
 
       const script = await geminiService.generateContent(prompt);
 
