@@ -15,6 +15,7 @@ export class S3StorageProvider implements IStorageProvider {
     this.client = new S3Client({
       region: process.env.S3_REGION || "auto", // R2 typically uses 'auto'
       ...(endpoint && { endpoint }),
+      forcePathStyle: true,
       credentials: {
         accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
         secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
