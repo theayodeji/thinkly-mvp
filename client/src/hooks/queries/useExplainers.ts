@@ -10,7 +10,7 @@ export const useExplainers = (spaceId: string) => {
     refetchInterval: (query) => {
       const data = query.state.data as IAudioExplainer[] | undefined;
       if (data?.some((e) => e.status === "processing")) {
-        return 2000;
+        return 4000;
       }
       return false;
     },
