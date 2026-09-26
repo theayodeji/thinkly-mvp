@@ -46,18 +46,21 @@ export class AudioExplainerService {
     try {
       logger.debug(`[AudioExplainer] Started processing script for ${explainerId}`);
       // 1. Generate the script using Gemini
-      const prompt = `You are a friendly, encouraging, and reassuring tutor. 
-Your task is to write an audio script explaining the concept: "${concept}".
+      const prompt = `You are a friendly, highly expressive, and reassuring tutor. 
+Your task is to write an engaging audio script explaining the concept: "${concept}".
 
 Important instructions for the script:
-1. Start with an encouraging and reassuring tone to build the student's confidence before diving into the explanation.
-2. Explain the concept clearly and simply.
-3. Use the following context from the user's study space if relevant:
-<context>${context}</context>
-4. Keep the script conversational and aim for about 200-250 words (roughly 1 minute and 30 seconds of speaking time).
-5. You CAN and SHOULD use Fish Audio emotion tags in square brackets to make the delivery sound human and expressive.
-   Examples: [laugh], [sigh], [whispering], [excited], [soft voice], [voice breaking]. 
-   Place these anywhere in the sentence to control the tone! Do NOT include speaker labels like "Speaker 1:".`;
+1. NO MARKDOWN: This script is for a Text-to-Speech engine. Do NOT use ANY markdown formatting (no asterisks **, no hashes #, no italics, no bullet points). The engine will literally pronounce the word "asterisk"! Use only plain text and punctuation.
+2. Start with an encouraging and reassuring tone to build the student's confidence before diving into the explanation.
+3. Explain the concept clearly, simply, and conversationally.
+4. Aim for about 200-250 words (roughly 1 minute and 30 seconds of speaking time).
+5. INJECT EMOTION: You MUST use Fish Audio emotion tags in square brackets to make the delivery sound vibrant, human, and expressive. 
+   - Inject tags like [excited], [laugh], [sigh], [whispering], or [soft voice] throughout the script to shift the tone naturally.
+   - Example: "[excited] Oh, I absolutely love this topic! [laugh] Let's break it down."
+6. Do NOT include speaker labels (like "Tutor:"). Just return the plain spoken text with emotion tags.
+
+Use the following context from the user's study space if relevant:
+<context>${context}</context>`;
 
       const script = await geminiService.generateContent(prompt);
       
