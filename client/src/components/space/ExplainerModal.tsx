@@ -13,6 +13,7 @@ interface ExplainerModalProps {
 export const ExplainerModal = ({ spaceId, trigger }: ExplainerModalProps) => {
   const [open, setOpen] = useState(false);
   const [concept, setConcept] = useState("");
+  const [voiceId, setVoiceId] = useState<"hip" | "robotty">("hip");
   const { mutateAsync: generateExplainer, isPending } = useGenerateExplainer();
 
   const handleGenerate = async () => {
@@ -22,7 +23,7 @@ export const ExplainerModal = ({ spaceId, trigger }: ExplainerModalProps) => {
     }
 
     try {
-      await generateExplainer({ spaceId, concept });
+      await generateExplainer({ spaceId, concept, voiceId });
       toast.success("Audio explainer is generating!");
       setConcept("");
       setOpen(false);
@@ -81,6 +82,38 @@ export const ExplainerModal = ({ spaceId, trigger }: ExplainerModalProps) => {
                       placeholder="e.g. Action potentials in neurons..."
                       className="w-full bg-transparent border border-border/50 rounded-xl p-3 text-sm text-text placeholder:text-text-secondary focus:outline-none focus:ring-2 focus:ring-primary-500/20 resize-none h-24"
                     />
+
+                    <div className="flex flex-col gap-2">
+                      <label className="text-xs font-semibold text-text-secondary uppercase tracking-wider">Voice Persona</label>
+                      <div className="grid grid-cols-2 gap-2">
+                        <button
+                          onClick={() => setVoiceId("hip")}
+                          className={`p-3 rounded-xl border flex flex-col gap-1 items-start text-left transition-colors ${
+                            voiceId === "hip" 
+                              ? "border-primary-500 bg-primary-500/5 dark:bg-primary-500/10" 
+                              : "border-border/50 hover:bg-neutral-50 dark:hover:bg-neutral-800/50"
+                          }`}
+                        >
+                          <span className={`text-sm font-medium ${voiceId === "hip" ? "text-primary-600 dark:text-primary-400" : "text-text"}`}>
+                            Chloe (Hip)
+                          </span>
+                          <span className="text-xs text-text-secondary">Casual, modern & energetic</span>
+                        </button>
+                        <button
+                          onClick={() => setVoiceId("robotty")}
+                          className={`p-3 rounded-xl border flex flex-col gap-1 items-start text-left transition-colors ${
+                            voiceId === "robotty" 
+                              ? "border-primary-500 bg-primary-500/5 dark:bg-primary-500/10" 
+                              : "border-border/50 hover:bg-neutral-50 dark:hover:bg-neutral-800/50"
+                          }`}
+                        >
+                          <span className={`text-sm font-medium ${voiceId === "robotty" ? "text-primary-600 dark:text-primary-400" : "text-text"}`}>
+                            Nova (Robotty)
+                          </span>
+                          <span className="text-xs text-text-secondary">Precise, clear & technical</span>
+                        </button>
+                      </div>
+                    </div>
 
                     <div className="flex justify-end pt-2">
                       <button

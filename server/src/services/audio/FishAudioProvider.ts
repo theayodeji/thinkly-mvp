@@ -10,7 +10,15 @@ export class FishAudioProvider implements IAudioProvider {
         format: "mp3",
       };
 
-      const refId = options?.voiceId || process.env.HIP_MODEL_ID;
+      let refId = options?.voiceId || process.env.HIP_MODEL_ID;
+      
+      // Map aliases from frontend to actual model IDs from .env
+      if (refId === "hip") {
+        refId = process.env.HIP_MODEL_ID;
+      } else if (refId === "robotty") {
+        refId = process.env.ROBOTY; // Note: typo in .env variable name ROBOTY
+      }
+
       if (refId && refId !== "default") {
         payload.reference_id = refId;
       }
