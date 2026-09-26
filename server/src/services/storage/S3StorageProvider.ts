@@ -39,7 +39,8 @@ export class S3StorageProvider implements IStorageProvider {
 
       // If using R2, you usually have a public dev URL or a custom domain
       if (process.env.S3_PUBLIC_URL) {
-        return `${process.env.S3_PUBLIC_URL}/${filename}`;
+        const baseUrl = process.env.S3_PUBLIC_URL.replace(/\/+$/, "");
+        return `${baseUrl}/${filename}`;
       }
 
       // Fallback for standard AWS S3
