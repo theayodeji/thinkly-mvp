@@ -90,7 +90,20 @@ class GeminiService {
         try {
           // Remove markdown code blocks if present
           response = response.replace(/^```(?:json)?\n|\n```$/g, "").trim();
-          const parsed = JSON.parse(response);
+          let parsed;
+          try {
+            parsed = JSON.parse(response);
+          } catch (firstError) {
+            // Fallback: replace literal newlines and tabs which break JSON strings
+            const cleanedResponse = response.replace(/\n/g, "\\n").replace(/\t/g, "\\t");
+            try {
+              parsed = JSON.parse(cleanedResponse);
+            } catch (secondError) {
+              // If it still fails, replace all newlines with space just in case
+              const aggressiveClean = response.replace(/[\n\r\t]/g, " ");
+              parsed = JSON.parse(aggressiveClean);
+            }
+          }
           return schema.parse(parsed);
         } catch (e) {
           console.error(

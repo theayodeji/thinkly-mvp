@@ -94,7 +94,18 @@ export const useAddSource = () => {
     mutationFn: ({ id, source }: { id: string; source: Partial<ISource> }) =>
       spaceService.addSource(id, source),
     onSuccess: (_, { id }) => {
-      queryClient.invalidateQueries({ queryKey: SPACE_KEYS.sources(id) });
+      queryClient.invalidateQueries({ queryKey: SPACE_KEYS.detail(id) });
+    },
+  });
+};
+
+export const useUploadSource = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ formData }: { spaceId: string; formData: FormData }) =>
+      spaceService.uploadSource(formData),
+    onSuccess: (_, { spaceId }) => {
+      queryClient.invalidateQueries({ queryKey: SPACE_KEYS.detail(spaceId) });
     },
   });
 };
@@ -105,7 +116,7 @@ export const useDeleteSource = () => {
     mutationFn: ({ sourceId }: { spaceId: string; sourceId: string }) =>
       spaceService.deleteSource(sourceId),
     onSuccess: (_, { spaceId }) => {
-      queryClient.invalidateQueries({ queryKey: SPACE_KEYS.sources(spaceId) });
+      queryClient.invalidateQueries({ queryKey: SPACE_KEYS.detail(spaceId) });
     },
   });
 };

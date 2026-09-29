@@ -7,17 +7,24 @@ import ChatInterface from "../../components/space/ChatInterface";
 import TabSelect from "../../components/space/TabSelect";
 import { useSpace } from "../../hooks/queries/useSpaces";
 import ToolsSection from "../../components/space/ToolsSection";
+import AddSourceModal from "../../components/space/AddSourceModal";
+import { useSpaceUIStore } from "../../store/spaceUIStore";
 
 const SpaceDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [activeTab, setActiveTab] = useState<"sources" | "chat" | "tools">(
     "chat",
   );
+  const { isAddSourceModalOpen, setAddSourceModalOpen } = useSpaceUIStore();
 
   useSpace(id || "");
 
   return (
     <div className="flex flex-col h-full lg:h-[calc(100vh-5rem)]">
+      <AddSourceModal 
+        isOpen={isAddSourceModalOpen}
+        setIsOpen={setAddSourceModalOpen}
+      />
       {/* Mobile Top Nav/Tabs */}
       <div className="lg:hidden">
         <TabSelect activeTab={activeTab} onTabChange={setActiveTab} />

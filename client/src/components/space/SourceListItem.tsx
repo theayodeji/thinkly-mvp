@@ -2,7 +2,24 @@ import { NotebookText, Globe, Text, Image } from "lucide-react";
 import { ISource, SourceType } from "@thinkly/shared";
 import { JSX } from "react";
 
+import { Download } from "lucide-react";
+
+const getBaseUrl = () => {
+  const url = import.meta.env.VITE_API_URL ?? "http://localhost:4000/api";
+  return url.replace(/\/api$/, "");
+};
+
 const SourceListItem = ({ source }: { source: ISource }): JSX.Element => {
+  const handleDownload = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (source.file_url) {
+      const url = source.file_url.startsWith("http") 
+        ? source.file_url 
+        : `${getBaseUrl()}${source.file_url}`;
+      window.open(url, "_blank");
+    }
+  };
+
   return (
     <div
       className="bg-bg hover:bg-neutral-100 dark:bg-transparent dark:hover:bg-neutral-800/80 border border-border/50 rounded-xl p-3 flex items-start gap-3 text-left transition-colors cursor-pointer group mb-2"
@@ -21,6 +38,15 @@ const SourceListItem = ({ source }: { source: ISource }): JSX.Element => {
           {source.type[0].toUpperCase() + source.type.slice(1)}
         </p>
       </div>
+      {source.file_url && (
+        <button
+          onClick={handleDownload}
+          className="mt-1 p-1.5 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors text-text-secondary"
+          title="Download Source"
+        >
+          <Download className="w-4 h-4" />
+        </button>
+      )}
     </div>
   );
 };

@@ -51,8 +51,8 @@ Your task is to write an engaging audio script explaining the concept: "${concep
 
 Important instructions for the script:
 1. NO MARKDOWN: This script is for a Text-to-Speech engine. Do NOT use ANY markdown formatting (no asterisks **, no hashes #, no italics, no bullet points). The engine will literally pronounce the word "asterisk"! Use only plain text and punctuation.
-2. Start with an encouraging and reassuring tone to build the student's confidence before diving into the explanation.
-3. Explain the concept clearly, simply, and conversationally.
+2. Start with a fun intro or something interesting to hook the listener or at least get them invested in the topic.
+3. Explain the concept clearly, simply, and conversationally, the goal is to make the listener feel like they're having a conversation with a friend who's teaching them.
 4. Aim for about 200-250 words (roughly 1 minute and 30 seconds of speaking time).
 5. INJECT EMOTION & PACING: You MUST use Fish Audio inline bracket tags to make the delivery sound vibrant, human, and expressive. 
    Supported tags you should heavily use:

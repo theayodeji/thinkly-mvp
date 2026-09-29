@@ -14,9 +14,11 @@ import { CloseButtonWithWarning } from "./CloseButtonWithWarning";
 interface QuizDrawerProps {
   children?: React.ReactNode;
   closeType?: "warning" | "normal";
-  trigger: React.ReactNode;
+  trigger?: React.ReactNode;
   title?: string;
   position?: "right" | "bottom" | "fullscreen";
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 const QuizDrawer = ({
@@ -25,8 +27,12 @@ const QuizDrawer = ({
   trigger,
   title,
   position = "fullscreen",
+  open: controlledOpen,
+  onOpenChange: controlledOnOpenChange,
 }: QuizDrawerProps) => {
-  const [open, setIsOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = controlledOpen !== undefined ? controlledOpen : internalOpen;
+  const setIsOpen = controlledOnOpenChange || setInternalOpen;
 
   const getAnimationProps = () => {
     if (position === "right") {
