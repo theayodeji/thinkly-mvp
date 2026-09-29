@@ -30,6 +30,7 @@ export const PROMPT_TEMPLATES: PromptTemplates = {
   summary: `Create a concise summary that captures the key points and main ideas from the following text. Focus on the most important information while maintaining accuracy and clarity. Keep it brief but comprehensive.
 
 Respond ONLY with a valid JSON object containing a single 'summary' field.
+Ensure all string values are properly escaped (e.g., escape newlines as \\n and quotes as \\").
 Do not add any identifiers like "json" or "JSON" to the response. DONT!!!!!!!!!!!!
 Example: {"summary": "..."}
 

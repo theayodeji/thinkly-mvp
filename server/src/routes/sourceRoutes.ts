@@ -8,9 +8,12 @@ const router = express.Router();
 
 router.get("/:spaceId", authenticateJWT, validateRequest(paramsSpaceIdSchema), getSources);
 
+import { upload } from "../middleware/upload.js";
+
 router.post(
   "/add",
   authenticateJWT,
+  upload.single("file"),
   validateRequest(addSourceSchema),
   addSource,
 );

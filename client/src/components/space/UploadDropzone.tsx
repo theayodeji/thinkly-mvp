@@ -5,7 +5,7 @@ import { useDropzone } from "react-dropzone";
 import { Button } from "../ui/Button";
 import { usePdfTextExtractor } from "../../hooks/usePdfExtraction";
 import { useParams } from "react-router-dom";
-import { useAddSource } from "../../hooks/queries/useSpaces";
+import { useAddSource, useUploadSource } from "../../hooks/queries/useSpaces";
 import toast from "react-hot-toast";
 import { SourceType } from "../../shared/types/source";
 
@@ -17,7 +17,8 @@ const UploadDropzone = ({
   const [acceptedFiles, setAcceptedFiles] = useState<File[]>([]);
   const { extractFromFile, loading, error } = usePdfTextExtractor();
   const { id } = useParams<{ id: string }>();
-  const { mutateAsync: addSource } = useAddSource();
+  const { mutateAsync: uploadSource } = useUploadSource();
+  const [isUploading, setIsUploading] = useState(false);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     setAcceptedFiles(acceptedFiles);
@@ -31,29 +32,37 @@ const UploadDropzone = ({
         [".docx"],
     },
     maxFiles: 1,
+    maxSize: 5 * 1024 * 1024, // 5MB limit on the client side
+    onDropRejected: (fileRejections) => {
+      const error = fileRejections[0]?.errors[0];
+      if (error?.code === "file-too-large") {
+        toast.error("File is larger than 5MB");
+      } else {
+        toast.error("Invalid file");
+      }
+    }
   });
 
   const handleUpload = async () => {
     if (acceptedFiles.length > 0) {
       try {
+        setIsUploading(true);
         const result = await extractFromFile(acceptedFiles[0]);
         if (!id) return;
-        await addSource({
-          id,
-          source: {
-            name: acceptedFiles[0].name,
-            text: result,
-            type: SourceType.FILE_PDF,
-          },
-        });
-        toast.success("Source added successfully");
+
+        const formData = new FormData();
+        formData.append("spaceId", id);
+        formData.append("type", SourceType.FILE_PDF);
+        formData.append("name", acceptedFiles[0].name);
+        formData.append("text", result);
+        formData.append("file", acceptedFiles[0]);
+
+        await uploadSource({ spaceId: id, formData });
         setIsOpen(false);
       } catch (error) {
-        console.error("Error extracting text:", error);
-        toast.error(
-          (error as Error)?.message ||
-            "Failed to extract text from PDF. Please ensure it is a valid PDF file.",
-        );
+        console.error("Error uploading source:", error);
+      } finally {
+        setIsUploading(false);
       }
     }
   };
@@ -100,13 +109,13 @@ const UploadDropzone = ({
       </div>
       {error && <p className="text-sm text-red-500 mt-4">{error}</p>}
       <Button
-        disabled={acceptedFiles?.length === 0 || loading}
+        disabled={acceptedFiles?.length === 0 || loading || isUploading}
         icon={<Sparkles className="w-5 h-5" />}
         className="mt-3 self-end"
         onClick={handleUpload}
-        loading={loading}
+        loading={loading || isUploading}
       >
-        {loading ? "Uploading..." : "Upload"}
+        {loading || isUploading ? "Uploading..." : "Upload"}
       </Button>
     </div>
   );

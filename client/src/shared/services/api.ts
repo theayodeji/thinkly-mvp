@@ -35,10 +35,6 @@ api.interceptors.response.use(
     // if (error.code === "ERR_NETWORK") {
     //   toast.error("Network error, please try again");
     // }
-    if (error.code === "ERR_BAD_RESPONSE") {
-      toast.error("Something's wrong but its not your fault");
-    }
-    
     return Promise.reject(error);
   }
 );

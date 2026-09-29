@@ -3,6 +3,13 @@ import { ISpace, ISource, SpaceSchema, SourceSchema } from "@thinkly/shared";
 import { z } from "zod";
 import toast from "react-hot-toast";
 
+const getErrorMessage = (error: any, defaultMessage: string) => {
+  if (error.response?.status >= 500) {
+    return "An unexpected error occurred on our end. Please try again later.";
+  }
+  return error.response?.data?.error || error.response?.data?.message || defaultMessage;
+};
+
 export const spaceService = {
   // Space collection operations
   getSpaces: async (): Promise<{ spaces: ISpace[] }> => {
@@ -29,8 +36,18 @@ export const spaceService = {
       toast.success("Source added successfully");
       return SourceSchema.parse(response.data.source) as ISource;
     } catch (error: any) {
-      const message = error.response?.data?.error || error.response?.data?.message || "Failed to add source";
-      toast.error(message);
+      toast.error(getErrorMessage(error, "Failed to add source"));
+      throw error;
+    }
+  },
+
+  uploadSource: async (formData: FormData): Promise<ISource> => {
+    try {
+      const response = await api.post<{ source: ISource }>(`/sources/add`, formData);
+      toast.success("Source added successfully");
+      return SourceSchema.parse(response.data.source) as ISource;
+    } catch (error: any) {
+      toast.error(getErrorMessage(error, "Failed to upload source"));
       throw error;
     }
   },

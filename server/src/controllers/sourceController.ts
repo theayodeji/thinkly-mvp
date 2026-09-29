@@ -8,8 +8,21 @@ export const getSources = catchAsync(async (req: Request, res: Response, next: N
   res.status(200).json({ sources });
 });
 
+import { S3StorageProvider } from "../services/storage/S3StorageProvider.js";
+
+const storageProvider = new S3StorageProvider();
+
 export const addSource = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-  const newSource = await processAndAddSource(req.body, req.userId as string);
+  const sourceData = { ...req.body };
+  if (req.file) {
+    const filename = `${Date.now()}-${req.file.originalname}`;
+    sourceData.file_url = await storageProvider.uploadFile(
+      req.file.buffer,
+      filename,
+      req.file.mimetype
+    );
+  }
+  const newSource = await processAndAddSource(sourceData, req.userId as string);
   res.status(201).json({ source: newSource });
 });
 

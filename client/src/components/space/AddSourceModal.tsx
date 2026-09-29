@@ -11,7 +11,7 @@ import {
 import clsx from "clsx";
 import UploadDropzone from "./UploadDropzone";
 import PasteTextArea from "./PasteTextArea";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { useSpaceSources } from "../../hooks/queries/useSpaces";
 import { AnimatePresence, motion } from "framer-motion";
@@ -31,10 +31,12 @@ export default function AddSourceModal({
 
   const { id } = useParams<{ id: string }>();
   const { data: sources, isLoading } = useSpaceSources(id || "");
+  const hasAutoOpened = useRef(false);
 
   useEffect(() => {
-    if (!isLoading && sources && sources.length === 0) {
+    if (!isLoading && sources && sources.length === 0 && !hasAutoOpened.current) {
       setIsOpen(true);
+      hasAutoOpened.current = true;
     }
   }, [sources, isLoading, setIsOpen]);
 

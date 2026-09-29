@@ -11,12 +11,14 @@ import { useSpace, useSpaceSources } from "../../hooks/queries/useSpaces";
 import { BackNavigator } from "./BackNavigator";
 import QuizDrawer from "./Drawer";
 import SourcesAside from "../space/SourcesSection";
+import { useSpaceUIStore } from "../../store/spaceUIStore";
 
 const Navbar = () => {
   const { logout, user } = useAuth();
   const { theme } = useTheme();
   const { isOpen, open, close } = useDisclosure(false);
   const location = useLocation();
+  const { isSourceDrawerOpen, setSourceDrawerOpen } = useSpaceUIStore();
 
   const spaceMatch = location.pathname.match(/^\/spaces\/([a-f0-9]+)$/i);
   const spaceId = spaceMatch ? spaceMatch[1] : null;
@@ -42,6 +44,8 @@ const Navbar = () => {
                 </h2>
                 <div className="hidden lg:flex items-center mt-1">
                   <QuizDrawer
+                    open={isSourceDrawerOpen}
+                    onOpenChange={setSourceDrawerOpen}
                     trigger={
                       <button className="flex items-center gap-2 px-2 py-0.5 rounded-full bg-neutral-200/50 dark:bg-neutral-800/50 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors text-xs text-text-secondary font-medium">
                         <FileText className="h-3 w-3" />
