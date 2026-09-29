@@ -102,7 +102,7 @@ export const useAddSource = () => {
 export const useUploadSource = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ spaceId, formData }: { spaceId: string; formData: FormData }) =>
+    mutationFn: ({ formData }: { spaceId: string; formData: FormData }) =>
       spaceService.uploadSource(formData),
     onSuccess: (_, { spaceId }) => {
       queryClient.invalidateQueries({ queryKey: SPACE_KEYS.detail(spaceId) });
