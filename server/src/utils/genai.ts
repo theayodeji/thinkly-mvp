@@ -13,7 +13,7 @@ import type {
 } from "./prompts.js";
 import { PROMPT_TEMPLATES } from "./prompts.js";
 
-const DEFAULT_MODEL = "gemini-2.5-flash-lite";
+const DEFAULT_MODEL = "gemini-3.1-flash-lite";
 
 // Schemas for validation
 const SummarySchema = z.object({

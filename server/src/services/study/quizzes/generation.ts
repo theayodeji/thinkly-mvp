@@ -14,9 +14,18 @@ export const generateAndSaveQuiz = async (spaceId: string, userId: string) => {
   const sources = await SourceModel.find({ spaceId });
   const sourcesContext = sources.map(s => s.text).join('\n\n');
 
+  const contentContext = [
+    space.content ? `Space Content: ${space.content}` : '',
+    sourcesContext ? `Sources:\n${sourcesContext}` : ''
+  ].filter(Boolean).join('\n\n');
+
+  if (!contentContext) {
+    throw new AppError("Cannot generate quiz: No content or sources found in this space", 400);
+  }
+
   let savedQuiz: any = null;
   await withMongoTransaction(async (session) => {
-    const questions = await geminiService.generateQuiz("Space Content: " + space.content + "\n\nSources:\n" + sourcesContext);
+    const questions = await geminiService.generateQuiz(contentContext);
     const quiz = new Quiz({
       userId,
       spaceId: space._id,
