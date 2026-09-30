@@ -23,7 +23,9 @@
     "noUnusedParameters": true,
     "erasableSyntaxOnly": false,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+
+    "types": ["vitest/globals", "@testing-library/jest-dom"]
   },
   "include": ["src", "tailwind.config.js"]
 }
