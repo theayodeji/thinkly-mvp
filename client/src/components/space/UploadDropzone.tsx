@@ -3,9 +3,8 @@ import clsx from "clsx";
 import { NotebookText, Sparkles, UploadCloud, X } from "lucide-react";
 import { useDropzone } from "react-dropzone";
 import { Button } from "../ui/Button";
-import { usePdfTextExtractor } from "../../hooks/usePdfExtraction";
 import { useParams } from "react-router-dom";
-import { useAddSource, useUploadSource } from "../../hooks/queries/useSpaces";
+import { useUploadSource } from "../../hooks/queries/useSpaces";
 import toast from "react-hot-toast";
 import { SourceType } from "../../shared/types/source";
 
@@ -15,7 +14,6 @@ const UploadDropzone = ({
   setIsOpen: (isOpen: boolean) => void;
 }) => {
   const [acceptedFiles, setAcceptedFiles] = useState<File[]>([]);
-  const { extractFromFile, loading, error } = usePdfTextExtractor();
   const { id } = useParams<{ id: string }>();
   const { mutateAsync: uploadSource } = useUploadSource();
   const [isUploading, setIsUploading] = useState(false);
@@ -47,14 +45,12 @@ const UploadDropzone = ({
     if (acceptedFiles.length > 0) {
       try {
         setIsUploading(true);
-        const result = await extractFromFile(acceptedFiles[0]);
         if (!id) return;
 
         const formData = new FormData();
         formData.append("spaceId", id);
         formData.append("type", SourceType.FILE_PDF);
         formData.append("name", acceptedFiles[0].name);
-        formData.append("text", result);
         formData.append("file", acceptedFiles[0]);
 
         await uploadSource({ spaceId: id, formData });
@@ -73,7 +69,7 @@ const UploadDropzone = ({
         {...getRootProps()}
         className={clsx(
           "border-2 border-dashed border-neutral rounded-md text-center px-4 py-6 w-full flex flex-col items-center justify-center transition-colors duration-300 cursor-pointer",
-          isDragActive || loading ? "bg-neutral/20" : "",
+          isDragActive || isUploading ? "bg-neutral/20" : "",
         )}
       >
         <UploadCloud size={64} strokeWidth={1} className="text-neutral mb-4" />
@@ -83,7 +79,7 @@ const UploadDropzone = ({
         <p className="text-xs text-neutral">
           Supported formats: PDF, DOC, DOCX
         </p>
-        <input {...getInputProps()} disabled={loading} />
+        <input {...getInputProps()} disabled={isUploading} />
 
         {/* display the document name and icon based on type */}
         {acceptedFiles?.length > 0 &&
@@ -107,15 +103,15 @@ const UploadDropzone = ({
           <p className="text-xs text-red-500 mt-4">Invalid file type</p>
         ) : null}
       </div>
-      {error && <p className="text-sm text-red-500 mt-4">{error}</p>}
+      
       <Button
-        disabled={acceptedFiles?.length === 0 || loading || isUploading}
+        disabled={acceptedFiles?.length === 0 || isUploading}
         icon={<Sparkles className="w-5 h-5" />}
         className="mt-3 self-end"
         onClick={handleUpload}
-        loading={loading || isUploading}
+        loading={isUploading}
       >
-        {loading || isUploading ? "Uploading..." : "Upload"}
+        {isUploading ? "Uploading..." : "Upload"}
       </Button>
     </div>
   );
