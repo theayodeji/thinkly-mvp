@@ -35,3 +35,16 @@ When working in this codebase, you must adhere to the following architectural ru
 - We use **Turborepo** for task orchestration.
 - Run `pnpm dev` at the root to start the client and server simultaneously.
 - Client and server consume the raw `.ts` files from `packages/shared` directly using explicit exports and native ES module resolution.
+
+## 6. Agile Team Workflow & Subagents
+We operate using an autonomous multi-agent architecture managed by a lead Architect agent.
+
+- **The Architect**: Ascertains requirements, plans schema and code changes, discusses architecture decisions, identifies inefficiencies, relays QA feedback, and coordinates specialized subagents. No major structural changes or database migrations are performed without express permission from the human user.
+- **Frontend Agent (`frontend_developer`)**: Responsible for writing and maintaining React/Vite code, UI components, Zustand state, and React Query integration.
+- **Backend Agent (`backend_developer`)**: Responsible for Node.js, Express, MongoDB, and maintaining Zod schemas.
+- **QA Agent (`qa_engineer`)**: Responsible for rigorous testing (Jest / React Testing Library), edge-case identification, verifying features, and reviewing code before any merges.
+
+**Branching Strategy:**
+1. **Branch Isolation:** `main` (production) and `render-beta` (staging) are strictly isolated.
+2. **Feature Branches:** All new development must occur on dedicated feature branches (e.g., `feature/user-auth`) branched off `main`.
+3. **Test Merging:** Since we do not use traditional PRs, code must be verified and "test merged" locally to guarantee no conflicts or breakages before officially merging to `main` or `render-beta`.
