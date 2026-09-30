@@ -39,3 +39,14 @@ export const useDeleteExplainer = () => {
     },
   });
 };
+
+export const useRetryExplainer = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => explainerService.retryExplainer(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["explainers"] });
+    },
+  });
+};

@@ -14,4 +14,9 @@ export const explainerService = {
   delete: async (id: string) => {
     await api.delete(`/explainers/${id}`);
   },
+
+  retryExplainer: async (id: string) => {
+    const response = await api.post(`/explainers/${id}/retry`);
+    return response.data.data;
+  },
 };

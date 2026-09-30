@@ -6,6 +6,7 @@ import {
   getExplainersForSpace,
   getExplainer,
   deleteExplainer,
+  retryExplainer,
 } from "../controllers/explainerController.js";
 import { paramsSpaceIdSchema, generateExplainerSchema } from "@thinkly/shared";
 
@@ -28,5 +29,6 @@ router.get(
 
 router.get("/:id", getExplainer);
 router.delete("/:id", deleteExplainer);
+router.post("/:id/retry", retryExplainer);
 
 export default router;

@@ -1,7 +1,7 @@
 import React from "react";
-import { Headphones, Loader2, Trash2 } from "lucide-react";
+import { Headphones, Loader2, Trash2, RefreshCw } from "lucide-react";
 import { IAudioExplainer } from "@thinkly/shared";
-import { useDeleteExplainer } from "../../hooks/queries/useExplainers";
+import { useDeleteExplainer, useRetryExplainer } from "../../hooks/queries/useExplainers";
 
 interface Props {
   explainer: IAudioExplainer;
@@ -9,6 +9,7 @@ interface Props {
 
 const AudioExplainerCard = ({ explainer }: Props) => {
   const { mutate: deleteExplainer, isPending: isDeleting } = useDeleteExplainer();
+  const { mutate: retryExplainer, isPending: isRetrying } = useRetryExplainer();
 
   return (
     <div className="bg-bg hover:bg-neutral-100 dark:bg-transparent dark:hover:bg-neutral-800/80 border border-border/50 rounded-xl p-3 flex items-start gap-3 text-left transition-colors group">
@@ -39,7 +40,21 @@ const AudioExplainerCard = ({ explainer }: Props) => {
             <span>Generating audio...</span>
           </div>
         ) : explainer.status === "error" ? (
-          <p className="text-xs text-red-500 mt-0.5 line-clamp-1">Failed to generate audio</p>
+          <div className="flex items-center gap-2 mt-0.5">
+            <p className="text-xs text-red-500 line-clamp-1">Failed to generate audio</p>
+            <button
+              onClick={() => retryExplainer(explainer._id)}
+              disabled={isRetrying}
+              className="text-text-secondary hover:text-text transition-colors p-1"
+              title="Retry"
+            >
+              {isRetrying ? (
+                <Loader2 className="w-3 h-3 animate-spin" />
+              ) : (
+                <RefreshCw className="w-3 h-3" />
+              )}
+            </button>
+          </div>
         ) : (
           <div className="mt-3 mb-1">
             {explainer.audioUrl && (
