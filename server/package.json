@@ -53,6 +53,7 @@
     "mongodb-memory-server": "^11.2.0",
     "mongoose": "^8.18.0",
     "morgan": "^1.11.0",
+    "multer": "^2.4.0",
     "node-cron": "^4.2.1",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
