@@ -33,5 +33,8 @@ jobs:
       - name: Install backend dependencies
         run: cd ./server && pnpm install
 
+      - name: Run Tests
+        run: cd ./server && pnpm test
+
       - name: Build backend
         run: cd ./server && pnpm run build
