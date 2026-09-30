@@ -26,6 +26,7 @@
     "@types/multer": "^2.2.0",
     "@types/passport": "^1.0.17",
     "@types/passport-google-oauth20": "^2.0.16",
+    "@types/pdf-parse": "^1.1.5",
     "@types/supertest": "^7.2.0",
     "cross-env": "^10.1.0",
     "jest": "^30.4.2",

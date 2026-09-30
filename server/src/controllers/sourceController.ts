@@ -9,6 +9,7 @@ export const getSources = catchAsync(async (req: Request, res: Response, next: N
 });
 
 import { S3StorageProvider } from "../services/storage/S3StorageProvider.js";
+import { parsePdfBuffer } from "../services/content/sources/documentParser.js";
 
 const storageProvider = new S3StorageProvider();
 
@@ -21,6 +22,10 @@ export const addSource = catchAsync(async (req: Request, res: Response, next: Ne
       filename,
       req.file.mimetype
     );
+    
+    if (req.file.mimetype === 'application/pdf') {
+      sourceData.text = await parsePdfBuffer(req.file.buffer);
+    }
   }
   const newSource = await processAndAddSource(sourceData, req.userId as string);
   res.status(201).json({ source: newSource });

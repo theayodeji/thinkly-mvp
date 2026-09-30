@@ -95,7 +95,7 @@ Here is the note text and message history:
 
   chatSuggestions: `Generate 3 questions that the user can ask about his note text.
 
-1. **Output format.** Your response MUST be a valid JSON object with a single key "response". The value should be your message as a string. Do not include any markdown formatting or code blocks. NEVER EVER USE \` OR " FOR QUOTES, USE ONLY '.
+1. **Output format.** Your response MUST be a valid JSON object with a single key "questions". The value should be an array of exactly 3 string questions. Do not include any markdown formatting or code blocks. NEVER EVER USE \` OR " FOR QUOTES, USE ONLY '.
 2. Questions must be 6 words or less.
 
 IMPORTANT: The entire response must be valid JSON that will return a valid output using Javascript's JSON.parse(). Do not include any other text outside the JSON object. Do not use backticks or markdown code blocks.

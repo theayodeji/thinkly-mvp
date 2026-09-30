@@ -14,9 +14,18 @@ export const generateAndSaveFlashcards = async (spaceId: string, userId: string)
     const sources = await Source.find({ spaceId });
     const sourcesContext = sources.map(s => s.text).join('\n\n');
 
-    let createdFlashcards: any[] = [];
-    await withMongoTransaction(async (session) => {
-        const flashcardsData = await geminiService.generateFlashcards("Space Content: " + space.content + "\n\nSources:\n" + sourcesContext);
+    const contentContext = [
+    space.content ? `Space Content: ${space.content}` : '',
+    sourcesContext ? `Sources:\n${sourcesContext}` : ''
+  ].filter(Boolean).join('\n\n');
+
+  if (!contentContext) {
+    throw new AppError("Cannot generate flashcards: No content or sources found in this space", 400);
+  }
+
+  let createdFlashcards: any[] = [];
+  await withMongoTransaction(async (session) => {
+        const flashcardsData = await geminiService.generateFlashcards(contentContext);
         
         // Create flashcard documents
         createdFlashcards = await Flashcard.insertMany(

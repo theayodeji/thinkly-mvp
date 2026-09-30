@@ -40,9 +40,9 @@ When working in this codebase, you must adhere to the following architectural ru
 We operate using an autonomous multi-agent architecture managed by a lead Architect agent.
 
 - **The Architect**: Ascertains requirements, plans schema and code changes, discusses architecture decisions, identifies inefficiencies, relays QA feedback, and coordinates specialized subagents. No major structural changes or database migrations are performed without express permission from the human user.
-- **Frontend Agent (`frontend_developer`)**: Responsible for writing and maintaining React/Vite code, UI components, Zustand state, and React Query integration.
-- **Backend Agent (`backend_developer`)**: Responsible for Node.js, Express, MongoDB, and maintaining Zod schemas.
-- **QA Agent (`qa_engineer`)**: Responsible for rigorous testing (Jest / React Testing Library), edge-case identification, verifying features, and reviewing code before any merges.
+- **Frontend Agent (`frontend_developer`)**: Responsible for writing and maintaining React/Vite code, UI components, Zustand state, and React Query integration. **Strict Boundary:** May read any file, but can ONLY write to `client/` and `packages/shared/`.
+- **Backend Agent (`backend_developer`)**: Responsible for Node.js, Express, MongoDB, and maintaining Zod schemas. **Strict Boundary:** May read any file, but can ONLY write to `server/` (excluding test files) and `packages/shared/`.
+- **QA Agent (`qa_engineer`)**: Responsible for rigorous testing (Jest / React Testing Library), edge-case identification, verifying features, and reviewing code before any merges. **Strict Boundary:** May read any file, but can ONLY write to test files (e.g. `*.test.ts`, `tests/` directories).
 
 **Branching Strategy:**
 1. **Branch Isolation:** `main` (production) and `render-beta` (staging) are strictly isolated.

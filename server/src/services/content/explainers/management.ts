@@ -4,6 +4,7 @@ import { S3StorageProvider } from "../../storage/S3StorageProvider.js";
 import AudioExplainer from "../../../models/AudioExplainer.js";
 import geminiService from "../../../utils/genai.js";
 import Space from "../../../models/Space.js";
+import Source from "../../../models/Source.js";
 import { AppError } from "../../../utils/AppError.js";
 import { logger } from "../../../utils/logger.js";
 
@@ -22,6 +23,19 @@ export class AudioExplainerService {
     if (!space) {
       throw new AppError("Space not found", 404);
     }
+    
+    // Fetch sources to include in context
+    const sources = await Source.find({ spaceId });
+    const sourcesContext = sources.map(s => s.text).join('\n\n');
+    
+    const contentContext = [
+        space.content ? `Space Overview: ${space.content}` : '',
+        sourcesContext ? `Source Materials:\n${sourcesContext}` : ''
+    ].filter(Boolean).join('\n\n');
+
+    if (!contentContext) {
+      throw new AppError("Cannot generate explainer: No content or sources found in this space", 400);
+    }
 
     // 2. Create the initial record
     const explainer = await AudioExplainer.create({
@@ -35,7 +49,7 @@ export class AudioExplainerService {
     });
 
     // 3. Process asynchronously
-    this.processAudioExplainer(explainer._id.toString(), concept, space.content, explainer.voiceId).catch(
+    this.processAudioExplainer(explainer._id.toString(), concept, contentContext, explainer.voiceId).catch(
       (err) => logger.error(`[AudioExplainer] Error processing explainer ${explainer._id}: ${err}`)
     );
 

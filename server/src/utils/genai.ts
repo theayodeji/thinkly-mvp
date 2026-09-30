@@ -13,7 +13,7 @@ import type {
 } from "./prompts.js";
 import { PROMPT_TEMPLATES } from "./prompts.js";
 
-const DEFAULT_MODEL = "gemini-2.5-flash-lite";
+const DEFAULT_MODEL = "gemini-3.1-flash-lite";
 
 // Schemas for validation
 const SummarySchema = z.object({
@@ -77,6 +77,32 @@ class GeminiService {
     }
   }
 
+  private parseAndValidate<T>(response: string, schema: z.ZodType<T>): T {
+    let parsed;
+    try {
+      parsed = JSON.parse(response);
+    } catch {
+      try {
+        parsed = JSON.parse(response.replace(/\n/g, "\\n").replace(/\t/g, "\\t"));
+      } catch {
+        parsed = JSON.parse(response.replace(/[\n\r\t]/g, " "));
+      }
+    }
+
+    try {
+      return schema.parse(parsed);
+    } catch (validationError) {
+      if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+        const keys = Object.keys(parsed);
+        if (keys.length === 1) {
+          const unwrapped = schema.safeParse(parsed[keys[0]]);
+          if (unwrapped.success) return unwrapped.data;
+        }
+      }
+      throw validationError;
+    }
+  }
+
   public async processPrompt<T>(
     promptType: PromptType,
     content: string,
@@ -88,32 +114,11 @@ class GeminiService {
 
       if (schema) {
         try {
-          // Remove markdown code blocks if present
           response = response.replace(/^```(?:json)?\n|\n```$/g, "").trim();
-          let parsed;
-          try {
-            parsed = JSON.parse(response);
-          } catch (firstError) {
-            // Fallback: replace literal newlines and tabs which break JSON strings
-            const cleanedResponse = response.replace(/\n/g, "\\n").replace(/\t/g, "\\t");
-            try {
-              parsed = JSON.parse(cleanedResponse);
-            } catch (secondError) {
-              // If it still fails, replace all newlines with space just in case
-              const aggressiveClean = response.replace(/[\n\r\t]/g, " ");
-              parsed = JSON.parse(aggressiveClean);
-            }
-          }
-          return schema.parse(parsed);
+          return this.parseAndValidate(response, schema);
         } catch (e) {
-          console.error(
-            "Failed to parse or validate JSON response:",
-            response,
-            e,
-          );
-          throw new Error(
-            "Failed to parse or validate model response as expected JSON",
-          );
+          console.error("Failed to parse or validate JSON response:", response, e);
+          throw new Error("Failed to parse or validate model response as expected JSON");
         }
       }
 

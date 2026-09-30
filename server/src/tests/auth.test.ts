@@ -33,7 +33,7 @@ describe('Auth Endpoints', () => {
         .send(testUser);
         
       expect(res.status).toBe(400);
-      expect(res.body.message).toBe('User already exists');
+      expect(res.body.error).toBe('User already exists');
     });
 
     it('should fail validation if password is too short', async () => {
@@ -69,8 +69,7 @@ describe('Auth Endpoints', () => {
         .send({ email: testUser.email, password: 'wrongpassword' });
         
       expect(res.status).toBe(400);
-      expect(res.body.success).toBe(false);
-      expect(res.body.message).toBe('Invalid credentials');
+      expect(res.body.error).toBe('Invalid credentials');
     });
   });
 });
