@@ -56,6 +56,45 @@ export class AudioExplainerService {
     return explainer;
   }
 
+  async retryExplainer(userId: string, explainerId: string) {
+    const explainer = await AudioExplainer.findOne({ _id: explainerId, userId });
+    if (!explainer) {
+      throw new AppError("Explainer not found", 404);
+    }
+
+    if (explainer.status !== "error") {
+      throw new AppError("Only failed explainers can be retried", 400);
+    }
+
+    const space = await Space.findOne({ _id: explainer.spaceId, userId });
+    if (!space) {
+      throw new AppError("Space not found", 404);
+    }
+
+    const sources = await Source.find({ spaceId: explainer.spaceId });
+    const sourcesContext = sources.map(s => s.text).join('\n\n');
+
+    const contentContext = [
+        space.content ? `Space Overview: ${space.content}` : '',
+        sourcesContext ? `Source Materials:\n${sourcesContext}` : ''
+    ].filter(Boolean).join('\n\n');
+
+    if (!contentContext) {
+      throw new AppError("Cannot retry explainer: No content or sources found in this space", 400);
+    }
+
+    explainer.status = "processing";
+    explainer.script = "Generating script...";
+    explainer.audioUrl = "";
+    await explainer.save();
+
+    this.processAudioExplainer(explainer._id.toString(), explainer.concept, contentContext, explainer.voiceId).catch(
+      (err) => logger.error(`[AudioExplainer] Error processing explainer ${explainer._id}: ${err}`)
+    );
+
+    return explainer;
+  }
+
   private async processAudioExplainer(explainerId: string, concept: string, context: string, voiceId: string) {
     try {
       logger.debug(`[AudioExplainer] Started processing script for ${explainerId}`);

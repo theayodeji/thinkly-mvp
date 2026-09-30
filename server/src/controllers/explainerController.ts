@@ -67,3 +67,15 @@ export const deleteExplainer = catchAsync(async (req: Request, res: Response) =>
     data: null,
   });
 });
+
+export const retryExplainer = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id as string;
+  const userId = req.userId as string;
+
+  const explainer = await explainerService.retryExplainer(userId, id);
+
+  res.status(202).json({
+    status: "success",
+    data: explainer,
+  });
+});
