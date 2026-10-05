@@ -36,6 +36,6 @@ export interface User {
     loading: boolean;
     login: (email: string, password: string) => Promise<void>;
     logout: () => Promise<void>;
-    register: (email: string, password: string, name: string) => Promise<void>;
+    register: (email: string, password: string, name: string, otp: string) => Promise<void>;
   }
   

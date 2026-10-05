@@ -3,21 +3,44 @@ import passport from "../config/passport.js";
 import { setAuthTokens, setAccessTokenCookie, clearAuthCookies } from "../utils/auth.js";
 import { config } from "../config/env.js";
 import { catchAsync } from "../utils/catchAsync.js";
-import { registerUser, loginUser, requestPasswordReset, confirmPasswordReset } from "../services/identity/auth/credentials.js";
+import {
+  registerUser,
+  loginUser,
+  requestPasswordReset,
+  confirmPasswordResetWithOTP,
+  sendOTP,
+  verifyOTP,
+  changePassword,
+} from "../services/identity/auth/credentials.js";
 import { verifyUserAuth, refreshUserToken } from "../services/identity/auth/session.js";
 import { handleGoogleCallback } from "../services/identity/auth/oauth.js";
 
-export const forgotPassword = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+export const sendOTPHandler = catchAsync(async (req: Request, res: Response) => {
+  const result = await sendOTP(req.body.email, req.body.type);
+  res.status(200).json(result);
+});
+
+export const verifyOTPHandler = catchAsync(async (req: Request, res: Response) => {
+  const result = await verifyOTP(req.body.email, req.body.otp, req.body.type);
+  res.status(200).json(result);
+});
+
+export const forgotPassword = catchAsync(async (req: Request, res: Response) => {
   const result = await requestPasswordReset(req.body.email);
   res.status(200).json(result);
 });
 
-export const resetPassword = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-  const result = await confirmPasswordReset(req.body.token, req.body.newPassword);
+export const resetPassword = catchAsync(async (req: Request, res: Response) => {
+  const result = await confirmPasswordResetWithOTP(req.body);
   res.status(200).json(result);
 });
 
-export const register = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+export const changePasswordHandler = catchAsync(async (req: Request, res: Response) => {
+  const result = await changePassword(req.userId as string, req.body);
+  res.status(200).json(result);
+});
+
+export const register = catchAsync(async (req: Request, res: Response) => {
   const result = await registerUser(req.body);
   const tokens = setAuthTokens(res, result.accessToken, result.refreshToken);
 
@@ -33,7 +56,7 @@ export const register = catchAsync(async (req: Request, res: Response, next: Nex
   });
 });
 
-export const login = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+export const login = catchAsync(async (req: Request, res: Response) => {
   const result = await loginUser(req.body);
   const tokens = setAuthTokens(res, result.accessToken, result.refreshToken);
 
@@ -49,18 +72,18 @@ export const login = catchAsync(async (req: Request, res: Response, next: NextFu
   });
 });
 
-export const checkAuth = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+export const checkAuth = catchAsync(async (req: Request, res: Response) => {
   const updatedUser = await verifyUserAuth(req.userId as string);
   res.status(200).json(updatedUser);
 });
 
-export const refreshToken = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+export const refreshToken = catchAsync(async (req: Request, res: Response) => {
   const newAccessToken = await refreshUserToken(req.cookies?.refreshToken);
   setAccessTokenCookie(res, newAccessToken);
   return res.json({});
 });
 
-export const logout = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+export const logout = catchAsync(async (req: Request, res: Response) => {
   clearAuthCookies(res);
   return res.status(200).json({ message: "Logged out successfully" });
 });

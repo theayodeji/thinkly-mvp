@@ -54,7 +54,7 @@ describe('Content Endpoints (Spaces)', () => {
         .set('Cookie', [`accessToken=${token}`]);
         
       expect(res.status).toBe(200);
-      expect(res.body.space.title).toMatch(/Untitled Space/);
+      expect(res.body.space.title).toMatch(/New Study Space/);
       expect(res.body.space.userId.toString()).toBe(userId);
     });
   });

@@ -37,6 +37,11 @@ export interface IUser {
     quizDifficulty: "beginner" | "intermediate" | "advanced";
     emailReminders: boolean;
   };
+  plan?: "free" | "pro";
+  dailyAIActionsCount?: number;
+  lastAIActionDate?: Date;
+  dailyAudioActionsCount?: number;
+  lastAudioActionDate?: Date;
   resetPasswordToken?: string;
   resetPasswordExpires?: Date;
   createdAt: Date;
@@ -154,3 +159,20 @@ export interface ILearningPath {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export enum OTPType {
+  EMAIL_VERIFICATION = "email_verification",
+  PASSWORD_RESET = "password_reset",
+  SECURITY_ACTION = "security_action",
+}
+
+export interface IOTPRecord {
+  _id?: string;
+  email: string;
+  code: string;
+  type: OTPType;
+  attempts: number;
+  expiresAt: Date;
+  createdAt?: Date;
+}
+

@@ -35,16 +35,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     fetchUser();
   }, []);
 
-  const register = useCallback(async (email: string, password: string, name: string) => {
+  const register = useCallback(async (email: string, password: string, name: string, otp: string) => {
     setIsLoggingIn(true);
     try {
-      const { data: { user } } = await api.post("/auth/register", { email, password, name });
+      const { data: { user } } = await api.post("/auth/register", { email, password, name, otp });
       setUser(user);
-      navigate("/spaces");
+      navigate("/dashboard");
       toast.success("Registered successfully");
     } catch (error: unknown) {
       const axiosError = error as AxiosErrorWithResponse;
-      toast.error(axiosError.response?.data.message || "Registration failed");
+      toast.error(axiosError.response?.data.message || axiosError.response?.data.error || "Registration failed");
+      throw error;
     } finally {
       setIsLoggingIn(false);
     }
@@ -59,7 +60,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         localStorage.setItem('theme-preference', `"${user.preferences.theme}"`);
         window.dispatchEvent(new Event('storage'));
       }
-      navigate("/spaces");
+      navigate("/dashboard");
       toast.success("Logged in successfully");
     } catch (error: unknown) {
       const axiosError = error as AxiosErrorWithResponse;

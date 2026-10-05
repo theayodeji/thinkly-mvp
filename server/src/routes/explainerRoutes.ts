@@ -8,7 +8,8 @@ import {
   deleteExplainer,
   retryExplainer,
 } from "../controllers/explainerController.js";
-import { paramsSpaceIdSchema, generateExplainerSchema } from "@thinkly/shared";
+import { paramsSpaceIdSchema, generateExplainerSchema, FeatureFlag } from "@thinkly/shared";
+import { checkDailyAIActionsLimit } from "../middleware/usageLimit.js";
 
 const router = Router();
 
@@ -16,6 +17,7 @@ router.use(authenticateJWT);
 
 router.post(
   "/space/:spaceId",
+  checkDailyAIActionsLimit(FeatureFlag.GENERATE_AUDIO),
   validateRequest(paramsSpaceIdSchema),
   validateRequest(generateExplainerSchema),
   generateExplainer

@@ -15,6 +15,7 @@ import flashcardRoutes from './routes/flashcardRoutes.js';
 import explainerRoutes from './routes/explainerRoutes.js';
 import learningPathRoutes from './routes/learningPathRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import billingRoutes from './routes/billingRoutes.js';
 
 const app = express();
 
@@ -54,6 +55,7 @@ app.use('/api/quiz', quizRoutes);
 app.use('/api/flashcards', flashcardRoutes);
 app.use('/api/explainers', explainerRoutes);
 app.use('/api/spaces/:spaceId/learning-paths', learningPathRoutes);
+app.use('/api/billing', billingRoutes);
 
 app.use(errorHandler);
 

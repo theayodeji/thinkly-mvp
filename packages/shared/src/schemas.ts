@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { SourceType } from "./types.js";
+import { SourceType, OTPType } from "./types.js";
 
 export const objectIdSchema = z.string().regex(/^[0-9a-fA-F]{24}$/, "Invalid ID format");
 
@@ -226,3 +226,36 @@ export const AudioExplainerSchema = z.object({
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
 }).passthrough();
+
+export const sendOtpSchema = z.object({
+  body: z.object({
+    email: z.string().email("Invalid email address"),
+    type: z.nativeEnum(OTPType),
+  }),
+});
+
+export const verifyOtpSchema = z.object({
+  body: z.object({
+    email: z.string().email("Invalid email address"),
+    otp: z.string().length(6, "OTP must be 6 digits"),
+    type: z.nativeEnum(OTPType),
+  }),
+});
+
+export const registerWithOtpSchema = z.object({
+  body: z.object({
+    name: z.string().min(2, "Name must be at least 2 characters"),
+    email: z.string().email("Invalid email address"),
+    password: z.string().min(6, "Password must be at least 6 characters"),
+    otp: z.string().length(6, "OTP must be 6 digits"),
+  }),
+});
+
+export const resetPasswordWithOtpSchema = z.object({
+  body: z.object({
+    email: z.string().email("Invalid email address"),
+    otp: z.string().length(6, "OTP must be 6 digits"),
+    newPassword: z.string().min(6, "Password must be at least 6 characters"),
+  }),
+});
+

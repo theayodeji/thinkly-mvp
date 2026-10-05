@@ -12,13 +12,13 @@
     "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": false,
-    "isolatedModules": true
-    // "baseUrl": "."
+    "isolatedModules": true,
+    "jsx": "react-jsx"
   },
   "ts-node": {
     "esm": true,
     "experimentalSpecifierResolution": "node"
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
   "exclude": ["node_modules", "src/**/*.test.ts", "src/**/*.spec.ts", "src/tests/**/*"]
 }

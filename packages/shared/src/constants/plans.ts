@@ -1,0 +1,72 @@
+export enum PlanTier {
+  FREE = "free",
+  PRO = "pro",
+}
+
+export enum FeatureFlag {
+  CREATE_SPACE = "create_space",
+  GENERATE_QUIZ = "generate_quiz",
+  GENERATE_AUDIO = "generate_audio",
+  GENERATE_LEARNING_PATH = "generate_learning_path",
+  AI_CHAT = "ai_chat",
+}
+
+export interface PlanLimits {
+  maxActiveSpaces: number;
+  maxDailyAIActions: number;
+  maxDailyAudioGenerations: number;
+  maxUploadSizeBytes: number;
+}
+
+export interface PlanConfig {
+  id: PlanTier;
+  name: string;
+  description: string;
+  priceNGN: number;
+  priceUSD: number;
+  limits: PlanLimits;
+  allowedFeatures: FeatureFlag[];
+}
+
+export const PLAN_CONFIGS: Record<PlanTier, PlanConfig> = {
+  [PlanTier.FREE]: {
+    id: PlanTier.FREE,
+    name: "Free Scholar",
+    description: "Essential study tools for everyday learning.",
+    priceNGN: 0,
+    priceUSD: 0,
+    limits: {
+      maxActiveSpaces: 3,
+      maxDailyAIActions: 5,
+      maxDailyAudioGenerations: 1,
+      maxUploadSizeBytes: 10 * 1024 * 1024, // 10 MB
+    },
+    allowedFeatures: [
+      FeatureFlag.CREATE_SPACE,
+      FeatureFlag.GENERATE_QUIZ,
+      FeatureFlag.GENERATE_AUDIO,
+      FeatureFlag.GENERATE_LEARNING_PATH,
+      FeatureFlag.AI_CHAT,
+    ],
+  },
+  [PlanTier.PRO]: {
+    id: PlanTier.PRO,
+    name: "Thinkly PRO",
+    description: "Unlimited study spaces, unlimited AI generations, and priority TTS voice rendering.",
+    priceNGN: 3500, // ₦3,500/month
+    priceUSD: 5, // $5/month
+    limits: {
+      maxActiveSpaces: Infinity,
+      maxDailyAIActions: Infinity,
+      maxDailyAudioGenerations: 10,
+      maxUploadSizeBytes: 50 * 1024 * 1024, // 50 MB
+    },
+    allowedFeatures: [
+      FeatureFlag.CREATE_SPACE,
+      FeatureFlag.GENERATE_QUIZ,
+      FeatureFlag.GENERATE_AUDIO,
+      FeatureFlag.GENERATE_LEARNING_PATH,
+      FeatureFlag.AI_CHAT,
+    ],
+  },
+};
