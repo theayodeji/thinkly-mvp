@@ -8,6 +8,8 @@ import {
   refreshToken,
   googleLogin,
   googleCallback,
+  forgotPassword,
+  resetPassword,
 } from "../controllers/authController.js";
 import { authenticateJWT } from "../middleware/auth.js";
 import { catchAsync } from "../utils/catchAsync.js";
@@ -21,6 +23,8 @@ const router = express.Router();
 // Regular email/password auth
 router.post("/register", authLimiter, validateRequest(registerSchema), register);
 router.post("/login", authLimiter, validateRequest(loginSchema), login);
+router.post("/forgot-password", authLimiter, forgotPassword);
+router.post("/reset-password", authLimiter, resetPassword);
 router.post("/logout", logout);
 router.get("/me", authenticateJWT, checkAuth);
 router.post("/refresh-token", refreshToken);

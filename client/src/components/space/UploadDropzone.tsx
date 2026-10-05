@@ -68,16 +68,16 @@ const UploadDropzone = ({
       <div
         {...getRootProps()}
         className={clsx(
-          "border-2 border-dashed border-neutral rounded-md text-center px-4 py-6 w-full flex flex-col items-center justify-center transition-colors duration-300 cursor-pointer",
-          isDragActive || isUploading ? "bg-neutral/20" : "",
+          "border-2 border-dashed border-primary-300 dark:border-slate-600 bg-white/40 dark:bg-slate-800/40 rounded-xl text-center px-6 py-10 w-full flex flex-col items-center justify-center transition-all duration-300 cursor-pointer hover:bg-primary-50 dark:hover:bg-slate-700/50 hover:border-primary-400",
+          isDragActive || isUploading ? "bg-primary-100 dark:bg-slate-700 border-primary-500" : "",
         )}
       >
-        <UploadCloud size={64} strokeWidth={1} className="text-neutral mb-4" />
-        <p className="text-md">
-          Drag and drop a file here, or click to select a file
+        <UploadCloud size={48} strokeWidth={1.5} className="text-primary-500 mb-4" />
+        <p className="text-base font-medium text-text mb-1">
+          Drag and drop a file here, or click to select
         </p>
-        <p className="text-xs text-neutral">
-          Supported formats: PDF, DOC, DOCX
+        <p className="text-sm text-text-secondary">
+          Supported formats: PDF, DOC, DOCX (Max 5MB)
         </p>
         <input {...getInputProps()} disabled={isUploading} />
 

@@ -61,3 +61,53 @@ export const loginUser = async (data: any) => {
     refreshToken
   };
 };
+
+import crypto from "crypto";
+import { emailService } from "../../email/EmailService.js";
+
+export const requestPasswordReset = async (email: string) => {
+  const user = await UserModel.findOne({ email });
+  if (!user) {
+    // Return success to prevent email enumeration
+    return { message: "If an account exists, a reset link was sent" };
+  }
+
+  const token = crypto.randomBytes(32).toString("hex");
+  const hashedToken = await bcrypt.hash(token, 10);
+
+  user.resetPasswordToken = hashedToken;
+  user.resetPasswordExpires = new Date(Date.now() + 3600000); // 1 hour
+  await user.save();
+
+  await emailService.sendPasswordReset(email, token);
+
+  return { message: "If an account exists, a reset link was sent" };
+};
+
+export const confirmPasswordReset = async (token: string, newPassword: string) => {
+  const users = await UserModel.find({
+    resetPasswordExpires: { $gt: new Date() }
+  });
+
+  let targetUser = null;
+  for (const user of users) {
+    if (user.resetPasswordToken && await bcrypt.compare(token, user.resetPasswordToken)) {
+      targetUser = user;
+      break;
+    }
+  }
+
+  if (!targetUser) {
+    throw new AppError("Invalid or expired password reset token", 400);
+  }
+
+  const salt = await bcrypt.genSalt(10);
+  targetUser.password = await bcrypt.hash(newPassword, salt);
+  
+  targetUser.resetPasswordToken = undefined;
+  targetUser.resetPasswordExpires = undefined;
+  
+  await targetUser.save();
+  return { message: "Password has been successfully reset" };
+};
+

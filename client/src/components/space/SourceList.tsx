@@ -6,20 +6,20 @@ import { useSpaceSources } from "../../hooks/queries/useSpaces";
 
 const SourceList = memo(({ setIsSourceModalOpen }: { setIsSourceModalOpen: (isOpen: boolean) => void }) => {
   const { id } = useParams<{ id: string }>();
-  const { data: sources, isFetching: isActionLoading } = useSpaceSources(id || "");
-
-  if (!sources || sources.length === 0) {
-    return <NoSource setIsSourceModalOpen={setIsSourceModalOpen} />;
-  }
+  const { data: sources, isLoading: isActionLoading } = useSpaceSources(id || "");
 
   if (isActionLoading) {
     return (
       <div className="space-y-2">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="h-16 bg-gray-100 rounded-md animate-pulse" />
+          <div key={i} className="h-16 bg-neutral-200 dark:bg-neutral-800 rounded-xl animate-pulse" />
         ))}
       </div>
     );
+  }
+
+  if (!sources || sources.length === 0) {
+    return <NoSource setIsSourceModalOpen={setIsSourceModalOpen} />;
   }
 
   return (

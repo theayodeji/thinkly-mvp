@@ -12,6 +12,7 @@ export interface PromptTemplates {
   chat: string;
   chatSuggestions: string;
   flashcards: string;
+  learningPath: string;
 }
 
 export interface SummaryResponse {
@@ -24,6 +25,19 @@ export interface TitleResponse {
 
 export interface ChatSuggestionsResponse {
   questions: string[];
+}
+
+export interface LearningPathNode {
+  id: string;
+  title: string;
+  description: string;
+  difficulty: "beginner" | "intermediate" | "advanced";
+  topicsCovered: string[];
+}
+
+export interface LearningPathResponse {
+  topic: string;
+  nodes: LearningPathNode[];
 }
 
 export const PROMPT_TEMPLATES: PromptTemplates = {
@@ -93,7 +107,7 @@ YOUR GOAL IS TO HELP THE USER UNDERSTAND SEEMINGLY DIFFICULT NOTES, CONCEPTS OR 
     - Ask a foundational question or provide a hint to prompt the student to recall existing knowledge.
     - Guide the student into finding the answer themselves.
     - If, after a few conversational steps (based on chat history), the student still doesn't get it, provide the correct answer, but ALWAYS follow up with another question that makes the student think deeper about the concept.
-11. **Output format.** Your response MUST be plain text formatted with Markdown. DO NOT output a JSON object. Just provide your response directly.
+11. **Output format.** Your response MUST be heavily formatted with Markdown to communicate importance and hierarchy. Use H2 (##) and H3 (###) headers to break up sections. Use bold text (**bold**) for key terms, blockquotes (>) for definitions, and bulleted lists for multiple points. Ensure your response is highly structured so it looks great when rendered in React Markdown. DO NOT output a JSON object.
 
 Here is the note text and message history:
 `,
@@ -146,6 +160,37 @@ Example of valid response:
 IMPORTANT: The response must be valid JSON that can be directly parsed by JavaScript's JSON.parse() function. Do not include any markdown code blocks or additional text.
 
 Here are the notes to create flashcards from:
+`,
+  learningPath: `You are an expert curriculum designer. The user wants to learn a specific topic or concept based on their notes.
+Your task is to break down this topic into a highly structured, sequential Learning Path, progressing logically from the most basic, foundational concepts up to the most difficult or advanced aspects.
+
+**Guidelines:**
+1. **Validation**: Before generating the path, analyze if the requested topic is actually covered (even partially) in the provided notes. If the topic is completely unrelated to the notes, return an error object: {"error": "The topic '...' is not covered in your current notes."}
+2. **Structure**: If valid, generate a path of 3 to 7 sequential steps (nodes).
+3. **Progression**: Start with 'beginner' difficulty, move to 'intermediate', and end with 'advanced'.
+4. **Context**: Ground the learning path strictly in the content provided in the notes. Do not hallucinate external syllabus topics that aren't represented in the source material.
+
+**Format Requirements:**
+Respond ONLY with a valid JSON object matching this schema:
+{
+  "topic": "The standardized name of the topic",
+  "nodes": [
+    {
+      "id": "step-1",
+      "title": "A single concept or keyword (e.g. 'Internet', 'HTML'). MAX 3 WORDS.",
+      "description": "Keep it to 1 short sentence.",
+      "difficulty": "beginner" | "intermediate" | "advanced",
+      "topicsCovered": ["Very short keyword", "Another keyword"]
+    }
+  ]
+}
+
+Or, if the topic is unrelated:
+{
+  "error": "Reason why it is unrelated"
+}
+
+Here is the requested topic and the source notes:
 `
 };
 

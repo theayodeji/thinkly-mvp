@@ -1,40 +1,53 @@
 @import url("https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap");
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
   /* Light theme (default) */
-  --color-primary-600: #08550a;
-  --color-primary-500: #0b700d;
-  --color-primary-400: #0e902e;
-  --color-secondary-500: #64f757;
-  --color-secondary-400: #50c848;
-  --color-neutral: #909090;
-  --color-tertiary: #f15025;
-  --color-danger: #ff4d4d;
-  --color-dark: #191919;
+  --color-primary-600: #1d4ed8; /* blue-700 */
+  --color-primary-500: #2563eb; /* blue-600 */
+  --color-primary-400: #3b82f6; /* blue-500 */
+  --color-primary-300: #60a5fa;
+  --color-primary-100: #dbeafe;
+  --color-secondary-500: #0ea5e9; /* sky-500 */
+  --color-secondary-400: #38bdf8;
+  --color-neutral: #9ca3af;
+  --color-tertiary: #8b5cf6;
+  --color-danger: #ef4444;
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-dark: #0f172a;
   --color-white: #ffffff;
-  --color-bg: #ffffff;
-  --color-bg-secondary: rgb(230, 230, 230);
-  --color-text: #191919;
-  --color-text-secondary: #4b5563;
-  --color-border: #e5e7eb;
+  --color-bg: #f4f7f9; /* Soft cool gray for better glass contrast */
+  --color-bg-secondary: rgba(255, 255, 255, 0.7); /* Translucent white for glass */
+  --color-text: #0f172a;
+  --color-text-secondary: #475569;
+  --color-border: rgba(255, 255, 255, 0.6); /* Lighter border */
 }
 /* Dark theme overrides */
 .dark {
-  --color-bg: #0b0b0b;
-  --color-bg-secondary: #212121;
+  --color-bg: #0f172a;
+  --color-bg-secondary: rgba(30, 41, 59, 0.65);
   --color-text: #f8fafc;
-  --color-text-secondary: #b9b9b9;
-  --color-border: #7a7a7a;
+  --color-text-secondary: #94a3b8;
+  --color-border: rgba(255, 255, 255, 0.1);
 }
 
 body,
 pre {
   font-family: "Figtree", sans-serif;
   background-color: var(--color-bg);
+  background-image: radial-gradient(at 0% 0%, rgba(219, 234, 254, 0.5) 0px, transparent 50%),
+                    radial-gradient(at 100% 100%, rgba(224, 231, 255, 0.5) 0px, transparent 50%);
   color: var(--color-text);
+  min-height: 100vh;
+}
+.dark body,
+.dark pre {
+  background-image: radial-gradient(at 0% 0%, rgba(30, 58, 138, 0.2) 0px, transparent 50%),
+                    radial-gradient(at 100% 100%, rgba(49, 46, 129, 0.2) 0px, transparent 50%);
 }
 
 body,
@@ -47,7 +60,25 @@ html {
 }
 
 .bg-gradient-primary {
-  @apply bg-gradient-to-br from-primary-500 to-primary-600 hover:from-primary-400 hover:to-primary-500 transition-colors duration-300;
+  @apply bg-gradient-to-br from-primary-400 to-primary-600 hover:from-primary-300 hover:to-primary-500 transition-colors duration-300;
+}
+
+/* Glassmorphism & 3D Utilities */
+.glass-panel {
+  @apply bg-white/60 dark:bg-slate-800/60 backdrop-blur-md border border-white/60 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.04)] rounded-2xl;
+}
+
+.btn-3d-primary {
+  @apply bg-primary-500 text-white font-medium rounded-xl px-5 py-2.5 transition-all duration-200 inline-flex items-center justify-center;
+  box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.3), 0 6px 16px rgba(37, 99, 235, 0.35);
+}
+.btn-3d-primary:hover {
+  @apply bg-primary-400 -translate-y-0.5;
+  box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.4), 0 8px 20px rgba(37, 99, 235, 0.45);
+}
+.btn-3d-primary:active {
+  @apply translate-y-0;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.2), 0 3px 8px rgba(37, 99, 235, 0.4);
 }
 
 .color-transition {

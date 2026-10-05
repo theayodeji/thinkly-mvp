@@ -2,7 +2,7 @@ import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import { motion } from 'framer-motion';
 import { cn } from '../../shared/utils/cn';
-import { Bot } from 'lucide-react';
+import { WandSparkles } from 'lucide-react';
 
 interface ChatMessageProps {
   message: {
@@ -36,8 +36,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   return (
     <div className={cn("flex w-full", isUser ? "justify-end" : "justify-start gap-2")}>
       {!isUser && (
-        <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center shrink-0 mt-1">
-          <Bot className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+        <div className="w-8 h-8 rounded-full bg-primary-600 flex items-center justify-center shrink-0 mt-1 shadow-md">
+          <WandSparkles className="h-4 w-4 text-white" />
         </div>
       )}
       <motion.div
@@ -52,9 +52,9 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
             damping: 20
           }
         }}
-        className={cn(`prose prose-neutral max-w-[85%] px-3 py-2 rounded-lg text-sm text-wrap`, {
+        className={cn(`px-4 py-3 rounded-2xl text-sm text-wrap`, {
           'bg-primary-500 text-white self-end origin-right': isUser,
-          'bg-bg text-text self-start origin-left max-w-[95%]': !isUser,
+          'text-text self-start origin-left max-w-[85%]': !isUser,
         })}
       >
         {isStreaming && !isUser && !streamedText ? (
@@ -67,18 +67,26 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
             </div>
           </div>
         ) : (
-          <ReactMarkdown
-            components={{
-              strong: ({ ...props }) => (
-                <strong className="font-bold text-primary-500 dark:text-secondary-400 text-md" {...props} />
-              ),
-              li: ({ ...props }) => (
-                <li className="list-disc ml-6" {...props} />
-              ),
-            }}
-          >
-            {isStreaming && !isUser ? streamedText : content}
-          </ReactMarkdown>
+          <div className={cn(
+            isUser ? "text-white" : "prose prose-sm prose-neutral dark:prose-invert prose-primary max-w-none text-text/90"
+          )}>
+            <ReactMarkdown
+              components={!isUser ? {
+                strong: ({ ...props }) => (
+                  <strong className="font-semibold text-primary-600 dark:text-primary-400" {...props} />
+                ),
+                ul: ({ ...props }) => <ul className="list-disc ml-5 space-y-1 my-2" {...props} />,
+                ol: ({ ...props }) => <ol className="list-decimal ml-5 space-y-1 my-2" {...props} />,
+                li: ({ ...props }) => <li {...props} />,
+                p: ({ ...props }) => <p className="mb-3 last:mb-0 leading-relaxed" {...props} />,
+                h2: ({ ...props }) => <h2 className="text-lg font-bold mt-4 mb-2 text-text" {...props} />,
+                h3: ({ ...props }) => <h3 className="text-base font-bold mt-3 mb-2 text-text" {...props} />,
+                blockquote: ({ ...props }) => <blockquote className="border-l-4 border-primary-500 pl-4 py-1 my-3 italic bg-neutral-100/50 dark:bg-neutral-800/30 rounded-r-lg text-text-secondary" {...props} />
+              } : undefined}
+            >
+              {isStreaming && !isUser ? streamedText : content}
+            </ReactMarkdown>
+          </div>
         )}
       </motion.div>
     </div>

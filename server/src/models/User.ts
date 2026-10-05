@@ -40,11 +40,19 @@ const userSchema = new Schema<IUser, IUserModel>(
       },
     ],
     pomodoros: {
-      total: Number,
-      completed: Number,
+      total: { type: Number, default: 0 },
+      completed: { type: Number, default: 0 },
       lastCompletedAt: Date,
     },
-  } as any,
+    preferences: {
+      theme: { type: String, enum: ["light", "dark", "system"], default: "system" },
+      defaultVoice: { type: String, default: "hip" },
+      quizDifficulty: { type: String, enum: ["beginner", "intermediate", "advanced"], default: "intermediate" },
+      emailReminders: { type: Boolean, default: true },
+    },
+    resetPasswordToken: String,
+    resetPasswordExpires: Date,
+  },
   {
     timestamps: true,
   },

@@ -3,9 +3,19 @@ import passport from "../config/passport.js";
 import { setAuthTokens, setAccessTokenCookie, clearAuthCookies } from "../utils/auth.js";
 import { config } from "../config/env.js";
 import { catchAsync } from "../utils/catchAsync.js";
-import { registerUser, loginUser } from "../services/identity/auth/credentials.js";
+import { registerUser, loginUser, requestPasswordReset, confirmPasswordReset } from "../services/identity/auth/credentials.js";
 import { verifyUserAuth, refreshUserToken } from "../services/identity/auth/session.js";
 import { handleGoogleCallback } from "../services/identity/auth/oauth.js";
+
+export const forgotPassword = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  const result = await requestPasswordReset(req.body.email);
+  res.status(200).json(result);
+});
+
+export const resetPassword = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  const result = await confirmPasswordReset(req.body.token, req.body.newPassword);
+  res.status(200).json(result);
+});
 
 export const register = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const result = await registerUser(req.body);
@@ -66,7 +76,7 @@ export const googleCallback = async (req: Request, res: Response) => {
     const tokens = await handleGoogleCallback(req.user);
     setAuthTokens(res, tokens.accessToken, tokens.refreshToken);
 
-    const frontendUrl = new URL(config.FRONTEND_URL + "/oauth/callback");
+    const frontendUrl = new URL(config.FRONTEND_URL + "/dashboard");
     res.redirect(frontendUrl.toString());
   } catch (error) {
     console.error("Google OAuth error:", error);

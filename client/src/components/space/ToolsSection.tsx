@@ -5,35 +5,36 @@ import { useParams } from "react-router-dom";
 import { useGenerateQuiz } from "../../hooks/queries/useQuiz";
 import { useGenerateFlashcards } from "../../hooks/queries/useFlashcards";
 import { ExplainerModal } from "./ExplainerModal";
+import { LearningPathModal } from "./LearningPathModal";
 
 const tools = [
   {
     name: "Generate Quiz",
     description: "Create practice questions from your Spaces",
-    icon: <BadgeQuestionMark className="w-4 h-4" />,
+    icon: <BadgeQuestionMark className="w-5 h-5 text-primary-600 dark:text-primary-400" />,
     action: "quiz",
     isReady: true,
   },
   { 
     name: "Flashcards", 
     description: "Turn your Spaces into flashcards",
-    icon: <IdCard className="w-4 h-4" />, 
+    icon: <IdCard className="w-5 h-5 text-primary-600 dark:text-primary-400" />, 
     action: "flashcards", 
     isReady: true 
   },
   { 
     name: "Audio Explainer", 
     description: "Generate a quick audio explanation",
-    icon: <Headphones className="w-4 h-4" />, 
+    icon: <Headphones className="w-5 h-5 text-primary-600 dark:text-primary-400" />, 
     action: "explainer", 
     isReady: true 
   },
   {
     name: "Learning Path",
     description: "Create a structured study guide",
-    icon: <MapPinPen className="w-4 h-4" />,
+    icon: <MapPinPen className="w-5 h-5 text-primary-600 dark:text-primary-400" />,
     action: "learningpath",
-    isReady: false,
+    isReady: true,
   },
 ];
 
@@ -58,7 +59,7 @@ const ToolsSection = () => {
   }
 
   return (
-    <div className="flex flex-col gap-6 pt-2 pb-8 pr-4">
+    <div className="flex flex-col gap-6 pt-2 pb-8 px-4 lg:pl-0 lg:pr-4">
       {/* Quick Tools */}
       <div>
         <div className="flex items-center justify-between mb-3">
@@ -71,13 +72,13 @@ const ToolsSection = () => {
         <div className="flex flex-col gap-2">
           {tools.map((tool, index) => {
             const buttonContent = (
-              <div className="bg-bg hover:bg-neutral-100 dark:bg-transparent dark:hover:bg-neutral-800/80 border border-border/50 rounded-xl p-3 flex items-start gap-3 text-left transition-colors cursor-pointer group">
-                <div className={`mt-0.5 w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${index === 0 ? 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400' : index === 1 ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : index === 2 ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400' : 'bg-blue-500/10 text-blue-600 dark:text-blue-400'}`}>
+              <div className="glass-panel border-none shadow-[0_2px_12px_rgba(0,0,0,0.04)] hover:shadow-lg hover:-translate-y-0.5 rounded-2xl p-3 flex items-start gap-3 text-left transition-all duration-300 cursor-pointer group">
+                <div className="mt-0.5 w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-gradient-to-br from-primary-400/10 to-primary-600/10 group-hover:scale-110 transition-transform shadow-inner">
                   {tool.icon}
                 </div>
-                <div className="flex-1 min-w-0">
+                <div className="flex-1 min-w-0 flex flex-col justify-center min-h-[40px]">
                   <h4 className="text-sm font-semibold text-text truncate group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">{tool.name}</h4>
-                  <p className="text-xs text-text-secondary mt-0.5 line-clamp-1">{tool.description}</p>
+                  <p className="text-xs text-text-secondary line-clamp-1">{tool.description}</p>
                 </div>
               </div>
             );
@@ -85,6 +86,20 @@ const ToolsSection = () => {
             if (tool.action === "explainer" && id) {
               return (
                 <ExplainerModal
+                  key={index}
+                  spaceId={id}
+                  trigger={
+                    <button className="w-full text-left">
+                      {buttonContent}
+                    </button>
+                  }
+                />
+              );
+            }
+
+            if (tool.action === "learningpath" && id) {
+              return (
+                <LearningPathModal
                   key={index}
                   spaceId={id}
                   trigger={

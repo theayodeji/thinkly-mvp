@@ -24,7 +24,7 @@ const testimonials = [
 const TestimonialsSection = () => {
   return (
     <motion.section 
-      className="px-10 py-20 bg-bg-secondary" 
+      className="px-10 py-20" 
       id="testimonials"
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ 
@@ -74,7 +74,7 @@ const TestimonialsSection = () => {
           {testimonials.map((testimonial, index) => (
             <motion.div 
               key={index} 
-              className="flex flex-col gap-6 rounded-2xl bg-bg border border-border p-8 shadow-lg hover:shadow-xl transition-shadow duration-300"
+              className="flex flex-col gap-6 rounded-2xl glass-panel p-8 shadow-lg hover:shadow-xl transition-shadow duration-300"
               initial={{ opacity: 0, y: 30, scale: 0.98 }}
               whileInView={{ 
                 opacity: 1, 

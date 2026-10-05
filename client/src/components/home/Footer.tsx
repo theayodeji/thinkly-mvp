@@ -30,25 +30,26 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="bg-neutral-900 border border-top border-neutral-600 text-white">
+    <footer className="glass-panel border-t border-border mt-20">
       <div className="max-w-6xl mx-auto px-10 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="md:col-span-1">
-            <div className="flex items-center gap-3 text-2xl font-bold text-white w-30">
-              <img src="/thinkly-light.png" alt="Thinkly" className="w-64" />
+            <div className="flex items-center gap-3 text-2xl font-bold text-text w-30">
+              <img src="/thinkly-light.png" alt="Thinkly" className="w-64 dark:hidden" />
+              <img src="/thinkly-dark.png" alt="Thinkly" className="w-64 hidden dark:block" />
             </div>
-            <p className="mt-4 text-gray-400 text-sm">Your AI Study Buddy.</p>
+            <p className="mt-4 text-text-secondary text-sm">Your AI Study Buddy.</p>
           </div>
           
           {footerLinks.map((section, index) => (
             <div key={index}>
-              <h3 className="font-bold text-lg text-white">{section.title}</h3>
+              <h3 className="font-bold text-lg text-text">{section.title}</h3>
               <ul className="mt-4 space-y-2">
                 {section.links.map((link, linkIndex) => (
                   <li key={linkIndex}>
                     <Link
                       to={link.href}
-                      className="text-gray-400 hover:text-white transition"
+                      className="text-text-secondary hover:text-primary-500 transition"
                     >
                       {link.name}
                     </Link>
@@ -59,8 +60,8 @@ const Footer = () => {
           ))}
         </div>
         
-        <div className="mt-12 border-t border-gray-700 pt-8 flex flex-col sm:flex-row justify-between items-center">
-          <p className="text-gray-400 text-sm">
+        <div className="mt-12 border-t border-border pt-8 flex flex-col sm:flex-row justify-between items-center">
+          <p className="text-text-secondary text-sm">
             © {currentYear} Thinkly. All rights reserved.
           </p>
           <div className="flex gap-4 mt-4 sm:mt-0">
@@ -98,7 +99,7 @@ const Footer = () => {
               <a
                 key={index}
                 href={social.href}
-                className="text-gray-400 hover:text-white transition"
+                className="text-text-secondary hover:text-primary-500 transition"
                 aria-label={social.name}
               >
                 {social.icon}

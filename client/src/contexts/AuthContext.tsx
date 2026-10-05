@@ -19,6 +19,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       try {
         const user = await api.get("/auth/me").then(response => response.data);
         setUser(user);
+        if (user.preferences?.theme) {
+          const storedTheme = localStorage.getItem('theme-preference');
+          if (!storedTheme || storedTheme.replace(/"/g, '') !== user.preferences.theme) {
+            localStorage.setItem('theme-preference', `"${user.preferences.theme}"`);
+            window.dispatchEvent(new Event('storage'));
+          }
+        }
       } catch (error) {
         console.error("Error fetching user:", error);
       } finally {
@@ -48,6 +55,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const { data: { user} } = await api.post("/auth/login", { email, password });
       setUser(user);
+      if (user.preferences?.theme) {
+        localStorage.setItem('theme-preference', `"${user.preferences.theme}"`);
+        window.dispatchEvent(new Event('storage'));
+      }
       navigate("/spaces");
       toast.success("Logged in successfully");
     } catch (error: unknown) {

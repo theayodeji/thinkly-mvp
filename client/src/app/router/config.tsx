@@ -14,6 +14,9 @@ import SpacesList from "../../pages/SpacesList";
 import SpaceDetail from "../../pages/SpaceDetail";
 import Home from "../../pages/Home";
 import InDevelopment from "../../pages/InDevelopment";
+import Settings from "../../pages/Settings";
+import ForgotPassword from "../../pages/Auth/ForgotPassword";
+import ResetPassword from "../../pages/Auth/ResetPassword";
 
 export const routeConfig: RouteConfig[] = [
   {
@@ -33,6 +36,7 @@ export const routeConfig: RouteConfig[] = [
         element: <SpaceDetail />,
         protected: true,
       },
+      { path: routes.settings, element: <Settings />, protected: true },
     ],
   },
   {
@@ -40,6 +44,8 @@ export const routeConfig: RouteConfig[] = [
     children: [
       { path: routes.auth.login, element: <Login />, protected: false },
       { path: routes.auth.register, element: <Register />, protected: false },
+      { path: routes.auth.forgotPassword, element: <ForgotPassword />, protected: false },
+      { path: routes.auth.resetPassword, element: <ResetPassword />, protected: false },
     ],
   },
 ];

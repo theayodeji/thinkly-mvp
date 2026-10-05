@@ -71,16 +71,23 @@ const QuizBox = () => {
 
   return (
     <div className="px-2 max-w-md">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">
+      <div className="flex justify-between items-center mb-2">
+        <h2 className="text-xl font-bold">
           Question {currentQuestion + 1} of {quiz.questions.length}
         </h2>
         {timeLeft > 0 && (
-          <div className="text-lg font-medium">
-            Time Left: {Math.floor(timeLeft / 60)}:
+          <div className="text-base font-medium text-text-secondary">
+            {Math.floor(timeLeft / 60)}:
             {(timeLeft % 60).toString().padStart(2, "0")}
           </div>
         )}
+      </div>
+
+      <div className="w-full h-2 bg-neutral-200 dark:bg-neutral-800 rounded-full mb-6 overflow-hidden">
+        <div 
+          className="h-full bg-primary-500 transition-all duration-300"
+          style={{ width: `${((currentQuestion + 1) / quiz.questions.length) * 100}%` }}
+        />
       </div>
 
       <p className="text-lg font-medium mb-6">{currentQ.question}</p>

@@ -23,7 +23,7 @@ const HeroSection = () => {
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true, margin: "-100px" }}
-      className="px-10 py-10 flex justify-center items-center bg-bg"
+      className="px-10 py-10 flex justify-center items-center"
       id="hero"
     >
       <motion.div
@@ -51,12 +51,12 @@ const HeroSection = () => {
             and achieve academic success with our innovative tools.
           </motion.p>
           <motion.div className="flex gap-4 mt-4" variants={item}>
-            <Button size="lg">
-              <Link to="/auth/register" className="w-full h-full">
+            <Button size="lg" className="btn-3d-primary">
+              <Link to="/auth/register" className="w-full h-full flex items-center justify-center">
                 Get Started Free
               </Link>
             </Button>
-            <Button variant="neutral">Learn More</Button>
+            <Button variant="neutral" className="glass-panel border-none hover:bg-white/10">Learn More</Button>
           </motion.div>
         </motion.div>
         <motion.div
@@ -70,7 +70,7 @@ const HeroSection = () => {
           viewport={{ once: true, margin: "-100px" }}
         >
           <motion.div
-            className="w-full h-auto aspect-square bg-cover rounded-2xl shadow-2xl bg-center"
+            className="w-full h-auto aspect-square bg-cover rounded-2xl shadow-2xl bg-center glass-panel"
             style={{
               backgroundImage: "url('/hero-study.jpg')",
             }}

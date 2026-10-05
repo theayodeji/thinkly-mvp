@@ -37,7 +37,7 @@ function ChatInput({
         handleSendMessage();
       }
     },
-    [handleSendMessage]
+    [handleSendMessage],
   );
 
   const handleChange = useCallback(
@@ -48,13 +48,13 @@ function ChatInput({
         e.target.style.height = `${Math.min(e.target.scrollHeight, 150)}px`;
       }
     },
-    []
+    [],
   );
 
   return (
     <div className="flex flex-col gap-3 relative pb-4 px-4 shrink-0">
-      <div className="flex items-center gap-3 bg-neutral-100 dark:bg-neutral-800/80 rounded-full px-2 py-2 ring-1 ring-border/50">
-        <button className="text-text-secondary hover:text-text transition-colors">
+      <div className="flex items-center gap-3 bg-white/70 dark:bg-slate-800/70 backdrop-blur-md rounded-3xl px-3 py-2 border border-white/50 dark:border-white/10 shadow-[0_4px_16px_rgba(0,0,0,0.05)] transition-all focus-within:shadow-[0_4px_20px_rgba(37,99,235,0.1)] focus-within:border-primary-400/50">
+        <button className="text-text-secondary hover:text-text transition-colors p-1">
           <Paperclip className="h-5 w-5" />
         </button>
         <textarea
@@ -69,7 +69,7 @@ function ChatInput({
         {isActionLoading ? (
           <button
             onClick={onStop}
-            className="bg-red-500 hover:bg-red-600 text-white rounded-full p-2.5 transition-all flex items-center justify-center"
+            className="bg-red-500 hover:bg-red-400 text-white rounded-full p-2.5 transition-all flex items-center justify-center shadow-[0_4px_12px_rgba(239,68,68,0.3)] hover:-translate-y-0.5 active:translate-y-0"
           >
             <Square className="h-4 w-4 fill-current" />
           </button>
@@ -77,7 +77,7 @@ function ChatInput({
           <button
             onClick={handleSendMessage}
             disabled={!input.trim() || !currentSpaceId}
-            className="bg-primary-600 hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-full p-2.5 transition-all flex items-center justify-center"
+            className="btn-3d-primary rounded-full p-2.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none min-w-[36px] min-h-[36px]"
           >
             <SendIcon className="h-4 w-4 ml-0.5" />
           </button>

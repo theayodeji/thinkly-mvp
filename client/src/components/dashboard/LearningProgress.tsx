@@ -9,38 +9,28 @@ const LearningProgress: React.FC = () => {
     { 
       id: 'streak', 
       icon: <Flame className="h-6 w-6 text-red-500" />, 
-      bg: "bg-red-100 dark:bg-red-900/30",
       value: user?.streaks?.current || 0, 
       label: 'Current Streak',
       valueSuffix: user?.streaks?.current === 1 ? ' day' : ' days'
     },
     { 
       id: 'achievements', 
-      icon: <Trophy className="h-6 w-6 text-amber-600 dark:text-amber-500" />, 
-      bg: "bg-amber-100 dark:bg-amber-900/30",
+      icon: <Trophy className="h-6 w-6 text-amber-500" />, 
       value: user?.badges?.length || 0, 
       label: 'Achievements',
       valueSuffix: ''
-    },
-    { 
-      id: 'medals', 
-      icon: <Medal className="h-6 w-6 text-emerald-500" />, 
-      bg: "bg-emerald-100 dark:bg-emerald-900/30",
-      value: user?.badges?.length || 0, 
-      label: 'Medals earned',
-      valueSuffix: ''
-    },
+    }
   ];
 
   return (
     <div>
       <h3 className="text-xl font-bold mb-4">
-        Learning progress — <span className="text-primary-600 dark:text-primary-400">Keep it going!</span>
+        Learning progress
       </h3>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {progressItems.map((item) => (
-          <div key={item.id} className="p-6 text-center rounded-xl border border-border/50 bg-bg shadow-sm flex flex-col items-center justify-center gap-3">
-            <div className={`p-4 rounded-full ${item.bg}`}>
+          <div key={item.id} className="p-6 text-center glass-panel flex flex-col items-center justify-center gap-3">
+            <div className={`p-4 rounded-full bg-bg border border-border/50`}>
               {item.icon}
             </div>
             <div>

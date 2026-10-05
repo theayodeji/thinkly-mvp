@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 const CTASection = () => {
   return (
     <motion.section 
-      className="px-10 py-20 bg-bg" 
+      className="px-10 py-20" 
       id="cta"
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ 
@@ -18,7 +18,7 @@ const CTASection = () => {
       viewport={{ once: true, margin: "-80px 0px -100px 0px" }}
     >
       <motion.div 
-        className="max-w-4xl mx-auto text-center bg-gradient-to-r from-primary-600 to-primary-500 rounded-2xl p-12 shadow-2xl"
+        className="max-w-4xl mx-auto text-center glass-panel rounded-2xl p-12 shadow-2xl"
         initial={{ opacity: 0, scale: 0.98 }}
         whileInView={{ 
           opacity: 1, 
@@ -50,11 +50,11 @@ const CTASection = () => {
           }}
           viewport={{ once: true }}
         >
-          <h2 className="text-4xl md:text-5xl font-bold text-white tracking-tight">
+          <h2 className="text-4xl md:text-5xl font-bold text-text tracking-tight">
             Ready to Transform Your Study Habits?
           </h2>
           <motion.p 
-            className="text-lg text-white/90 mt-4 max-w-2xl mx-auto"
+            className="text-lg text-text-secondary mt-4 max-w-2xl mx-auto"
             initial={{ opacity: 0, y: 5 }}
             whileInView={{ 
               opacity: 1, 
@@ -91,9 +91,8 @@ const CTASection = () => {
           }}
         >
           <Button 
-            className="mt-8 min-w-[84px] max-w-[480px] h-14 px-8 bg-white hover:bg-gray-100 text-primary-500 text-lg font-bold leading-normal tracking-wide shadow-lg hover:shadow-xl transition-all duration-300 mx-auto transform hover:-translate-y-1"
+            className="mt-8 min-w-[84px] max-w-[480px] h-14 px-8 btn-3d-primary text-white text-lg font-bold leading-normal tracking-wide transition-all duration-300 mx-auto transform hover:-translate-y-1"
             size="lg"
-            variant="neutral"
           >
             Sign Up for Free
           </Button>

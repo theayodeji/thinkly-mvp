@@ -4,14 +4,26 @@ import { Moon, Sun } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
 import { Button } from './Button';
 
+import { useUpdatePreferences } from '../../hooks/queries/useUpdatePreferences';
+import { useAuth } from '../../hooks/useAuth';
+
 const ThemeToggle = () => {
   const { theme, toggleTheme } = useTheme();
+  const { user } = useAuth();
+  const updatePreferences = useUpdatePreferences();
   
+  const handleToggle = () => {
+    toggleTheme();
+    if (user) {
+      updatePreferences.mutate({ theme: theme === 'dark' ? 'light' : 'dark' });
+    }
+  };
+
   return (
     <Button
       variant="ghost"
       size="icon"
-      onClick={toggleTheme}
+      onClick={handleToggle}
       className="h-9 w-9 rounded-full hover:bg-background-secondary transition-colors duration-200"
       aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
     >

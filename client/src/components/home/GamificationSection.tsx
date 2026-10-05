@@ -22,7 +22,7 @@ const stats = [
 const GamificationSection = () => {
   return (
     <motion.section 
-      className="px-10 py-20 bg-bg" 
+      className="px-10 py-20" 
       id="gamification"
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ 
@@ -75,11 +75,7 @@ const GamificationSection = () => {
           {stats.map((stat, index) => (
             <motion.div 
               key={index}
-              className={`flex flex-col items-center gap-4 rounded-2xl p-8 ${
-                index % 2 === 0 
-                  ? 'bg-gradient-to-br from-secondary-400 to-secondary-500'
-                  : 'bg-gradient-to-br from-primary-400 to-primary-500'
-              } text-white shadow-lg`}
+              className="flex flex-col items-center gap-4 rounded-2xl p-8 glass-panel text-text shadow-lg"
               initial={{ opacity: 0, y: 30, scale: 0.95 }}
               whileInView={{ 
                 opacity: 1, 
@@ -101,6 +97,7 @@ const GamificationSection = () => {
               viewport={{ once: true }}
             >
               <motion.div
+                className="text-primary-500 dark:text-primary-400"
                 initial={{ scale: 0.8, rotate: -10 }}
                 whileInView={{ 
                   scale: 1, 
@@ -117,7 +114,7 @@ const GamificationSection = () => {
                 {stat.icon}
               </motion.div>
               <p className="text-2xl font-bold">{stat.title}</p>
-              <p className="text-5xl font-black">{stat.value}</p>
+              <p className="text-5xl font-black bg-gradient-to-br from-primary-400 to-primary-600 bg-clip-text text-transparent">{stat.value}</p>
             </motion.div>
           ))}
         </motion.div>

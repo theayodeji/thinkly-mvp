@@ -12,12 +12,12 @@ const AudioExplainerCard = ({ explainer }: Props) => {
   const { mutate: retryExplainer, isPending: isRetrying } = useRetryExplainer();
 
   return (
-    <div className="bg-bg hover:bg-neutral-100 dark:bg-transparent dark:hover:bg-neutral-800/80 border border-border/50 rounded-xl p-3 flex items-start gap-3 text-left transition-colors group">
-      <div className="mt-0.5 w-8 h-8 rounded-lg flex items-center justify-center shrink-0 bg-amber-500/10 text-amber-600 dark:text-amber-400">
-        <Headphones className="w-4 h-4" />
+    <div className="glass-panel border-none shadow-[0_2px_12px_rgba(0,0,0,0.04)] hover:shadow-lg rounded-2xl p-3 flex items-start gap-3 text-left transition-all duration-300 group">
+      <div className="mt-0.5 w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-gradient-to-br from-primary-400/10 to-primary-600/10">
+        <Headphones className="w-5 h-5 text-primary-600 dark:text-primary-400" />
       </div>
       
-      <div className="flex-1 min-w-0 flex flex-col justify-center min-h-[2rem]">
+      <div className="flex-1 min-w-0 flex flex-col justify-center min-h-[40px]">
         <div className="flex items-center justify-between gap-2 w-full">
           <h4 className="text-sm font-semibold text-text truncate">
             {explainer.concept}

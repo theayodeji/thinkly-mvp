@@ -14,7 +14,7 @@ import SourcesAside from "../space/SourcesSection";
 import { useSpaceUIStore } from "../../store/spaceUIStore";
 
 const Navbar = () => {
-  const { logout, user } = useAuth();
+  const { logout, user, loading } = useAuth();
   const { theme } = useTheme();
   const { isOpen, open, close } = useDisclosure(false);
   const location = useLocation();
@@ -36,10 +36,10 @@ const Navbar = () => {
         <div className={`w-full px-6 flex items-center justify-between`}>
           {/* Left Side: Space Header OR Spacer */}
           {isSpaceDetail ? (
-            <div className="flex items-center gap-4">
-              <BackNavigator label="" className="p-2 text-text" />
-              <div className="flex flex-col">
-                <h2 className="text-xl md:text-2xl font-bold text-text truncate max-w-lg">
+            <div className="flex items-center gap-2 md:gap-4 flex-1 min-w-0 pr-2">
+              <BackNavigator label="" className="p-1 md:p-2 text-text shrink-0" />
+              <div className="flex flex-col flex-1 min-w-0">
+                <h2 className="text-lg md:text-2xl font-bold text-text truncate">
                   {currentSpace?.title || "Untitled Space"}
                 </h2>
                 <div className="hidden lg:flex items-center mt-1">
@@ -61,26 +61,34 @@ const Navbar = () => {
               </div>
             </div>
           ) : (
-            <div />
+            <div className="flex-1" />
           )}
 
           {/* Right Side: User Stats & Settings */}
-          <div className="flex items-center gap-4 shrink-0">
+          <div className="flex items-center gap-2 md:gap-4 shrink-0">
             {isSpaceDetail && (
               <>
-                <Button size="icon" variant="ghost" className="hidden md:flex">
+                <Button size="icon" variant="ghost" className="hidden md:flex shrink-0">
                   <Search className="h-5 w-5 text-text-secondary" />
                 </Button>
-                <Button size="icon" variant="neutral" className="p-1.5 bg-neutral-200 dark:bg-neutral-800 border-none text-text">
+                <Button size="icon" variant="neutral" className="hidden md:flex p-1.5 bg-neutral-200 dark:bg-neutral-800 border-none text-text shrink-0">
                   <Grip className="h-5 w-5" />
                 </Button>
-                <Button size="icon" variant="neutral" className="p-1.5 bg-neutral-200 dark:bg-neutral-800 border-none text-text">
+                <Button size="icon" variant="neutral" className="hidden md:flex p-1.5 bg-neutral-200 dark:bg-neutral-800 border-none text-text shrink-0">
                   <LucideShare2 className="h-5 w-5" />
                 </Button>
               </>
             )}
             
-            {user ? (
+            {loading ? (
+              <>
+                <ThemeToggle />
+                <div className="flex items-center gap-2">
+                  <div className="w-16 h-8 bg-neutral-200 dark:bg-neutral-800 rounded-md animate-pulse"></div>
+                  <div className="w-24 h-8 bg-neutral-200 dark:bg-neutral-800 rounded-md animate-pulse"></div>
+                </div>
+              </>
+            ) : user ? (
               <>
                 {!isSpaceDetail && (
                   <div className="hidden items-center gap-4 md:flex bg-neutral-100 dark:bg-neutral-800 px-4 py-2 rounded-full text-text-secondary cursor-pointer" onClick={open}>

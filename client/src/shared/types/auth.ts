@@ -22,6 +22,12 @@ export interface User {
         level: string; // bronze, silver, gold, platinum
         earnedAt: Date;
     }[];
+    preferences?: {
+        theme: "light" | "dark" | "system";
+        defaultVoice: string;
+        quizDifficulty: "beginner" | "intermediate" | "advanced";
+        emailReminders: boolean;
+    };
   }
   
   export interface AuthContextType {

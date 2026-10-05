@@ -31,6 +31,14 @@ export interface IUser {
     completed: number;
     lastCompletedAt: Date;
   };
+  preferences: {
+    theme: "light" | "dark" | "system";
+    defaultVoice: string;
+    quizDifficulty: "beginner" | "intermediate" | "advanced";
+    emailReminders: boolean;
+  };
+  resetPasswordToken?: string;
+  resetPasswordExpires?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -127,9 +135,22 @@ export interface IAudioExplainer {
   updatedAt: Date;
 }
 
-export const VOICE_PERSONAS = [
-  { id: "hip", name: "Chloe (Hip)", description: "Casual, modern & energetic" },
-  { id: "robotty", name: "Nova (Robotty)", description: "Precise, clear & technical" }
-] as const;
 
-export type VoicePersonaId = typeof VOICE_PERSONAS[number]["id"];
+
+export interface ILearningPathNode {
+  id: string;
+  title: string;
+  description: string;
+  difficulty: "beginner" | "intermediate" | "advanced";
+  topicsCovered: string[];
+}
+
+export interface ILearningPath {
+  _id: string;
+  spaceId: string;
+  userId: string;
+  topic: string;
+  nodes: ILearningPathNode[];
+  createdAt: Date;
+  updatedAt: Date;
+}

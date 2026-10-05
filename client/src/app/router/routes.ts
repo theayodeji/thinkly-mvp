@@ -3,6 +3,8 @@ export const routes = {
   auth: {
     login: "/auth/login",
     register: "/auth/register",
+    forgotPassword: "/auth/forgot-password",
+    resetPassword: "/auth/reset-password",
   },
   dashboard: "/dashboard",
   Spaces: {
@@ -10,4 +12,5 @@ export const routes = {
     Space: (id: string) => `/spaces/${id}`,
   },
   inDevelopment: "/in-development",
+  settings: "/settings",
 } as const;

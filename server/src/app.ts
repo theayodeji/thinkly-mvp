@@ -13,6 +13,8 @@ import sourceRoutes from './routes/sourceRoutes.js';
 import quizRoutes from './routes/quizRoutes.js';
 import flashcardRoutes from './routes/flashcardRoutes.js';
 import explainerRoutes from './routes/explainerRoutes.js';
+import learningPathRoutes from './routes/learningPathRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 
 const app = express();
 
@@ -45,11 +47,13 @@ app.get('/', (req, res) => {
 app.use('/api', apiLimiter);
 
 app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
 app.use('/api/spaces', spaceRoutes);
 app.use('/api/sources', sourceRoutes);
 app.use('/api/quiz', quizRoutes);
 app.use('/api/flashcards', flashcardRoutes);
 app.use('/api/explainers', explainerRoutes);
+app.use('/api/spaces/:spaceId/learning-paths', learningPathRoutes);
 
 app.use(errorHandler);
 

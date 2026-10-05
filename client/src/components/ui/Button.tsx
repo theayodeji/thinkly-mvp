@@ -28,14 +28,14 @@ export function Button({
   type = "button",
 }: ButtonProps) {
   const baseStyles =
-    "inline-flex items-center rounded-lg justify-center font-medium transition-colors duration-300 outline-none focus:outline-none cursor-pointer";
+    "inline-flex items-center rounded-xl justify-center font-medium outline-none focus:outline-none cursor-pointer";
 
   const variantStyles = {
-    primary: `text-white hover:from-primary-400 hover:to-primary-500 focus:ring-primary-500 ${loading || disabled ? "bg-neutral-400 disabled:cursor-not-allowed" : "bg-gradient-to-br from-primary-500 to-primary-400"} `,
-    neutral: `bg-neutral-300 text-dark hover:bg-neutral-400 ${loading ? "bg-neutral-300" : ""} disabled:bg-neutral-500`,
-    ghost: `bg-transparent text-dark hover:bg-neutral/50 ${loading ? "bg-neutral-100" : ""} ${disabled ? "cursor-not-allowed" : ""} disabled:text-dark`,
-    dark: `bg-dark text-white hover:bg-dark/80 focus:ring-border ${loading ? "bg-neutral-700" : ""} disabled:text-white`,
-    outline: `border-2 border-border/60 bg-transparent text-text hover:bg-neutral-100 dark:hover:bg-neutral-800 focus:ring-border ${loading ? "opacity-70" : ""} disabled:opacity-50 disabled:cursor-not-allowed`,
+    primary: `${loading || disabled ? "bg-slate-300 dark:bg-slate-700 text-slate-500 disabled:cursor-not-allowed" : "btn-3d-primary"} `,
+    neutral: `glass-panel text-text hover:bg-white/80 dark:hover:bg-slate-700/80 ${loading ? "opacity-70" : ""} disabled:opacity-50 disabled:cursor-not-allowed`,
+    ghost: `bg-transparent text-text hover:bg-slate-100 dark:hover:bg-slate-800 ${loading ? "opacity-70" : ""} ${disabled ? "cursor-not-allowed opacity-50" : ""}`,
+    dark: `bg-dark text-white hover:bg-dark/80 focus:ring-border ${loading ? "opacity-70" : ""} disabled:opacity-50`,
+    outline: `border border-border bg-transparent text-text hover:bg-slate-50 dark:hover:bg-slate-800 ${loading ? "opacity-70" : ""} disabled:opacity-50 disabled:cursor-not-allowed`,
   };
 
   const sizeStyles = {

@@ -61,7 +61,7 @@ const steps = [
 const HowItWorksSection = () => {
   return (
     <motion.section 
-      className="px-10 py-20 bg-bg-secondary" 
+      className="px-10 py-20" 
       id="how-it-works"
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ 

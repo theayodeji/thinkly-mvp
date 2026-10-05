@@ -1,4 +1,5 @@
 import { Copy, WandSparkles } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 import { useParams } from "react-router-dom";
 import { useSpace } from "../../hooks/queries/useSpaces";
 import toast from "react-hot-toast";
@@ -34,8 +35,22 @@ const SummaryBlock = () => {
         <div className="flex items-center justify-between">
           <span className="font-semibold text-text text-sm">Thinkly Summary</span>
         </div>
-        <div className="text-text/90 leading-relaxed text-sm">
-          {currentSpace.summary}
+        <div className="prose prose-sm prose-neutral dark:prose-invert prose-primary max-w-none text-text/90 leading-relaxed text-sm">
+          <ReactMarkdown
+            components={{
+              strong: ({ ...props }) => (
+                <strong className="font-semibold text-primary-600 dark:text-primary-400" {...props} />
+              ),
+              ul: ({ ...props }) => <ul className="list-disc ml-4 space-y-1 my-2" {...props} />,
+              li: ({ ...props }) => <li {...props} />,
+              p: ({ ...props }) => <p className="mb-3 last:mb-0" {...props} />,
+              h2: ({ ...props }) => <h2 className="text-lg font-bold mt-4 mb-2 text-text" {...props} />,
+              h3: ({ ...props }) => <h3 className="text-md font-bold mt-3 mb-2 text-text" {...props} />,
+              blockquote: ({ ...props }) => <blockquote className="border-l-4 border-primary-500 pl-4 py-1 italic bg-neutral-100 dark:bg-neutral-800/50 rounded-r-lg my-3" {...props} />
+            }}
+          >
+            {currentSpace.summary}
+          </ReactMarkdown>
         </div>
         <div className="flex items-center gap-4 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
           <button

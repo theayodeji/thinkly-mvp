@@ -33,7 +33,7 @@ const RecentSpaces = () => {
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-xl font-bold">Recent Spaces</h3>
+        <h3 className="text-xl font-bold">Continue studying</h3>
         <Link
           to={"/spaces"}
           className="flex items-center gap-1 group hover:underline font-medium text-primary-600 dark:text-primary-400"

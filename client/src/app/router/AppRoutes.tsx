@@ -1,31 +1,35 @@
+import React from "react";
 import { useRoutes, Navigate } from "react-router-dom";
 import { routeConfig } from "./config";
 import type { RouteConfig } from "../../shared/types/route";
 import { useAuth } from "../../hooks/useAuth";
 
 const AppRouter = () => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
 
-  const wrapRoutes = (routes: RouteConfig[]): RouteConfig[] =>
-    routes.map((r) => {
-      if (r.children) {
+  const wrappedRoutes = React.useMemo(() => {
+    const wrapRoutes = (routes: RouteConfig[]): RouteConfig[] =>
+      routes.map((r) => {
+        if (r.children) {
+          return {
+            ...r,
+            children: wrapRoutes(r.children),
+          };
+        }
         return {
           ...r,
-          children: wrapRoutes(r.children),
+          element:
+            r.protected ? (
+              loading ? null : !user ? <Navigate to="/auth/login" /> : r.element
+            ) : r.element,
         };
-      }
-      return {
-        ...r,
-        element:
-          r.protected && !user ? <Navigate to="/auth/login" /> : r.element,
-      };
-    });
+      });
+    return wrapRoutes(routeConfig);
+  }, [user, loading]);
 
-  return useRoutes(wrapRoutes(routeConfig));
+  return useRoutes(wrappedRoutes);
 };
 
 export function AppRoutes() {
-  const { loading } = useAuth();
-
-  return !loading && <AppRouter />;
+  return <AppRouter />;
 }

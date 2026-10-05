@@ -31,7 +31,7 @@ const SpacePageHeader = ({ onOpenSources }: SpacePageHeaderProps) => {
             className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-neutral-200/50 dark:bg-neutral-800/50 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors text-sm text-text-secondary font-medium"
           >
             <FileText className="h-4 w-4" />
-            <span>{sourcesCount} sources</span>
+            <span>{sourcesCount} source{sourcesCount !== 1 ? 's' : ''}</span>
           </button>
         </div>
       </div>

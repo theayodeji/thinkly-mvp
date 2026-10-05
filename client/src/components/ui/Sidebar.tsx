@@ -51,11 +51,11 @@ export const Sidebar = ({ isOpen, toggle }: { isOpen: boolean; toggle: () => voi
 
   return (
     <aside
-      className={`relative transition-all duration-300 ease-in-out border-r-2 border-border/50 bg-bg text-text h-screen hidden md:flex flex-col ${
+      className={`relative transition-all duration-300 ease-in-out border-r border-white/50 dark:border-white/10 bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl shadow-lg text-text h-screen hidden md:flex flex-col z-[60] ${
         isOpen ? "w-64" : "w-20"
       }`}
     >
-      <div className="flex items-center justify-center h-20 border-b-2 border-border/10">
+      <div className="flex items-center justify-center h-20 border-b border-white/30 dark:border-white/5">
         {isOpen ? (
           <Link to="/dashboard" className="flex items-center gap-2">
             <img
@@ -79,9 +79,9 @@ export const Sidebar = ({ isOpen, toggle }: { isOpen: boolean; toggle: () => voi
         <Button
           onClick={handleCreateSpace}
           loading={isCreating}
-          className={`w-full flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 text-white border-none ${!isOpen && 'px-0'}`}
+          className={`w-full flex items-center justify-center gap-2 btn-3d-primary ${!isOpen && 'px-0 min-w-[40px]'}`}
         >
-          <PlusCircle className="h-5 w-5" />
+          <PlusCircle className="h-5 w-5 shrink-0" />
           {isOpen && <span>Create Space</span>}
         </Button>
       </div>
@@ -93,45 +93,18 @@ export const Sidebar = ({ isOpen, toggle }: { isOpen: boolean; toggle: () => voi
             <Link
               key={item.name}
               to={item.path}
-              className={`flex items-center gap-3 px-3 py-3 rounded-lg transition-colors ${
+              className={`flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 ${
                 isActive
-                  ? "bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 font-medium"
-                  : "text-text-secondary hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                  ? "bg-white/80 dark:bg-slate-800/80 shadow-sm text-primary-600 dark:text-primary-400 font-semibold"
+                  : "text-text-secondary hover:bg-white/50 dark:hover:bg-slate-800/50 hover:text-text"
               } ${!isOpen && 'justify-center'}`}
               title={!isOpen ? item.name : undefined}
             >
-              <item.icon className="h-5 w-5 shrink-0" />
-              {isOpen && <span className="font-semibold">{item.name}</span>}
+              <item.icon className={`h-5 w-5 shrink-0 ${isActive ? "text-primary-500" : ""}`} />
+              {isOpen && <span>{item.name}</span>}
             </Link>
           );
         })}
-
-        {isOpen && recentSpaces.length > 0 && (
-          <div className="mt-8 mb-2">
-            <div className="flex items-center justify-between px-2 mb-2">
-              <span className="text-xs font-semibold text-text-secondary uppercase tracking-wider">Recent</span>
-            </div>
-            <div className="space-y-1">
-              {recentSpaces.map((Space: any) => {
-                const isActive = location.pathname === `/spaces/${Space._id}`;
-                return (
-                  <Link
-                    key={Space._id}
-                    to={`/spaces/${Space._id}`}
-                    className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
-                      isActive 
-                        ? "bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 font-medium" 
-                        : "text-text-secondary hover:bg-neutral-100 dark:hover:bg-neutral-800"
-                    }`}
-                  >
-                    <MessageSquare className="h-4 w-4 shrink-0" />
-                    <span className="truncate text-sm">{Space.title || "Untitled Space"}</span>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        )}
       </nav>
 
       <div className="p-4 border-t-2 border-border/10 space-y-2">
@@ -155,7 +128,7 @@ export const Sidebar = ({ isOpen, toggle }: { isOpen: boolean; toggle: () => voi
 
       <button
         onClick={toggle}
-        className="absolute -right-3 top-24 bg-bg border-2 border-border rounded-full p-1 text-text-secondary hover:text-primary-600 shadow-md"
+        className="absolute -right-3 top-7 z-50 bg-white dark:bg-slate-800 border border-white/50 dark:border-white/10 rounded-full p-1 text-text-secondary hover:text-primary-600 shadow-[0_2px_8px_rgba(0,0,0,0.1)] transition-colors"
       >
         {isOpen ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
       </button>

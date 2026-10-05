@@ -31,7 +31,7 @@ export const UserMenu = ({ onLogout }: UserMenuProps) => {
         leaveTo="opacity-0 scale-95"
       >
         <PopoverPanel
-          className="w-48 absolute z-10 bg-bg-secondary/80 dark:bg-dark backdrop-blur-sm shadow-xl drop-shadow-lg rounded-md border border-border dark:border-neutral/40"
+          className="w-48 absolute z-[100] bg-bg-secondary/80 dark:bg-dark backdrop-blur-sm shadow-xl drop-shadow-lg rounded-md border border-border dark:border-neutral/40"
           anchor={"bottom end"}
         >
           {({ close }) => (
@@ -51,7 +51,7 @@ export const UserMenu = ({ onLogout }: UserMenuProps) => {
                 Spaces
               </Link>
               <Link
-                to="/in-development"
+                to="/settings"
                 className="p-3 hover:bg-neutral/70 color-transition dark:text-white text-black"
                 onClick={() => close()}
               >

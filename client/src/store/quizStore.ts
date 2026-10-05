@@ -44,7 +44,7 @@ export const useQuizStore = create<QuizState>((set, get) => ({
 
     set({
       status: "started",
-      timeLeft: 15 * 60, // 5 minutes in seconds
+      timeLeft: 5 * 60, // 5 minutes in seconds
       currentQuestion: 0,
       answers: new Array(quiz.questions.length).fill(null), // pre-fill with nulls
       score: null,

@@ -16,23 +16,20 @@ const PomodoroTimer: React.FC = () => {
   } = usePomodoro();
 
   return (
-    <div className="p-6 bg-bg border border-border/50 rounded-xl shadow-sm relative">
-      <div className="flex justify-between items-start mb-6">
-        <h3 className="text-xl font-bold">Pomodoro Timer</h3>
+    <div className="p-4 glass-panel border-none shadow-none relative">
+      <div className="flex justify-between items-start mb-4">
+        <h3 className="text-lg font-bold">Pomodoro</h3>
         <div className="relative">
-          <Clock className="h-6 w-6 text-primary-600 dark:text-primary-400" />
-          <div className="absolute -top-3 -right-8 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded-full whitespace-nowrap">
-            {formatTime(timeLeft)}
-          </div>
+          <Clock className="h-5 w-5 text-primary-600 dark:text-primary-400" />
         </div>
       </div>
 
       <div className="text-center">
-        <div className="relative w-48 h-48 mx-auto mb-8">
-          <svg className="w-full h-full drop-shadow-md" viewBox="0 0 100 100">
+        <div className="relative w-24 h-24 mx-auto mb-4">
+          <svg className="w-full h-full drop-shadow-sm" viewBox="0 0 100 100">
             <circle
               className="text-neutral-100 dark:text-neutral-800"
-              strokeWidth="10"
+              strokeWidth="8"
               stroke="currentColor"
               fill="transparent"
               r="40"
@@ -41,7 +38,7 @@ const PomodoroTimer: React.FC = () => {
             />
             <circle
               className="text-primary-500 dark:text-primary-500 transition-all duration-1000 ease-linear"
-              strokeWidth="10"
+              strokeWidth="8"
               strokeLinecap="round"
               stroke="currentColor"
               fill="transparent"
@@ -54,11 +51,11 @@ const PomodoroTimer: React.FC = () => {
             />
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <div className="text-4xl font-extrabold tracking-tight">
+            <div className="text-xl font-extrabold tracking-tight">
               {formatTime(timeLeft)}
             </div>
-            <div className="text-xs font-bold text-text-secondary mt-1 uppercase tracking-widest">
-              {mode === "work" ? "Focus Time" : "Break Time"}
+            <div className="text-[10px] font-bold text-text-secondary mt-0.5 uppercase tracking-wider">
+              {mode === "work" ? "Focus" : "Break"}
             </div>
           </div>
         </div>

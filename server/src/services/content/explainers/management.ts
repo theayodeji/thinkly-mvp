@@ -1,4 +1,4 @@
-import { IAudioProvider, IStorageProvider } from "@thinkly/shared";
+import { IAudioProvider, IStorageProvider, FISH_AUDIO_VOICES } from "@thinkly/shared";
 import { FishAudioProvider } from "../../audio/FishAudioProvider.js";
 import { S3StorageProvider } from "../../storage/S3StorageProvider.js";
 import AudioExplainer from "../../../models/AudioExplainer.js";
@@ -44,7 +44,7 @@ export class AudioExplainerService {
       concept,
       script: "Generating script...",
       audioUrl: "",
-      voiceId: voiceId || process.env.HIP_MODEL_ID || "default",
+      voiceId: voiceId || FISH_AUDIO_VOICES[0].id,
       status: "processing",
     });
 

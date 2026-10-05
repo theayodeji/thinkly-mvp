@@ -34,7 +34,7 @@ const SpaceDetail: React.FC = () => {
         {/* Mobile Sources Tab (Desktop uses Drawer in Navbar) */}
         <div
           className={clsx(
-            "rounded-md h-full overflow-y-auto lg:hidden",
+            "rounded-md h-full overflow-y-auto lg:hidden px-4 sm:px-6 pb-6",
             activeTab === "sources" ? "block w-full" : "hidden",
           )}
         >

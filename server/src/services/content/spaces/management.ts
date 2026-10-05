@@ -51,7 +51,7 @@ export const getSpaceByIdAndUserId = async (id: string, userId: string) => {
 export const createNewSpace = async (userId: string) => {
     const space = new SpaceModel({
         userId,
-        title: `Untitled Space ${Date.now().toString().slice(-5)}`,
+        title: `New Study Space`,
     });
     return await space.save();
 };
