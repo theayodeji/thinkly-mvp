@@ -108,6 +108,16 @@ export const Sidebar = ({ isOpen, toggle }: { isOpen: boolean; toggle: () => voi
       </nav>
 
       <div className="p-4 border-t-2 border-border/10 space-y-2">
+        {import.meta.env.VITE_APP_MODE === "launch" && (
+          <button
+            onClick={() => window.dispatchEvent(new CustomEvent("thinkly:upgrade-modal"))}
+            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl bg-gradient-to-r from-primary-600 to-amber-500 text-white font-bold shadow-md hover:opacity-90 transition-all text-xs ${!isOpen && 'justify-center'}`}
+            title={!isOpen ? "Upgrade to PRO" : undefined}
+          >
+            <span className="text-base">✨</span>
+            {isOpen && <span>Upgrade to PRO</span>}
+          </button>
+        )}
         <Link
           to="/help"
           className={`flex items-center gap-3 px-3 py-3 rounded-lg text-text-secondary hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors ${!isOpen && 'justify-center'}`}

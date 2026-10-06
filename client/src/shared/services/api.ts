@@ -1,5 +1,6 @@
 import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from "axios";
 import { getOrCreateGuestDeviceId } from "../utils/guest";
+import toast from "react-hot-toast";
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? "http://localhost:4000/api",
@@ -27,6 +28,7 @@ api.interceptors.response.use(
   (response) => response,
   async (error: AxiosErrorWithResponse) => {
     const originalRequest = error.config;
+    const isLaunchMode = import.meta.env.VITE_APP_MODE === "launch";
 
     // Guest Auth / Limit Reached Prompt Trigger
     const errorCode = error.response?.data?.code;
@@ -38,6 +40,24 @@ api.interceptors.response.use(
         },
       });
       window.dispatchEvent(customEvent);
+      return Promise.reject(error);
+    }
+
+    // Account Limit Reached (403)
+    if (error.response?.status === 403) {
+      const errorMsg = error.response?.data?.error || error.response?.data?.message || "Limit reached.";
+
+      if (isLaunchMode) {
+        // Full Launch Mode: Open Paystack Upgrade Modal
+        const customEvent = new CustomEvent("thinkly:upgrade-modal", {
+          detail: { reason: errorMsg },
+        });
+        window.dispatchEvent(customEvent);
+      } else {
+        // Beta Mode: Show clean Toast notification informing user higher limits are coming soon
+        toast.error(errorMsg);
+      }
+      return Promise.reject(error);
     }
 
     if (error.response?.status === 401 && !originalRequest._retry) {

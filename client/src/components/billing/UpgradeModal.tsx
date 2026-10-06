@@ -1,26 +1,49 @@
-import React, { useState } from "react";
-import { PLAN_CONFIGS, PlanTier } from "@thinkly/shared";
+import React, { useState, useEffect } from "react";
+import { LAUNCH_PLAN_CONFIGS, PlanTier } from "@thinkly/shared";
 import { billingService } from "../../shared/services/billingService";
 import { Button } from "../ui/Button";
 import toast from "react-hot-toast";
 
 interface UpgradeModalProps {
-  isOpen: boolean;
-  onClose: () => void;
+  isOpen?: boolean;
+  onClose?: () => void;
   reason?: string;
 }
 
 export const UpgradeModal: React.FC<UpgradeModalProps> = ({
-  isOpen,
-  onClose,
-  reason = "Unlock unlimited study spaces and AI generations with Thinkly PRO.",
+  isOpen: propIsOpen,
+  onClose: propOnClose,
+  reason: propReason,
 }) => {
+  const [internalIsOpen, setInternalIsOpen] = useState(false);
+  const [reason, setReason] = useState(propReason || "Unlock unlimited study spaces and AI generations with Thinkly PRO.");
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const handleUpgradeModal = (event: Event) => {
+      const customEvent = event as CustomEvent;
+      if (customEvent.detail?.reason) {
+        setReason(customEvent.detail.reason);
+      }
+      setInternalIsOpen(true);
+    };
+
+    window.addEventListener("thinkly:upgrade-modal", handleUpgradeModal);
+    return () => {
+      window.removeEventListener("thinkly:upgrade-modal", handleUpgradeModal);
+    };
+  }, []);
+
+  const isOpen = propIsOpen !== undefined ? propIsOpen : internalIsOpen;
+  const handleClose = () => {
+    setInternalIsOpen(false);
+    if (propOnClose) propOnClose();
+  };
 
   if (!isOpen) return null;
 
-  const freeConfig = PLAN_CONFIGS[PlanTier.FREE];
-  const proConfig = PLAN_CONFIGS[PlanTier.PRO];
+  const freeConfig = LAUNCH_PLAN_CONFIGS[PlanTier.FREE];
+  const proConfig = LAUNCH_PLAN_CONFIGS[PlanTier.PRO];
 
   const handleUpgradeClick = async () => {
     try {
@@ -43,7 +66,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-fade-in">
       <div className="glass-panel w-full max-w-2xl p-6 sm:p-8 bg-background border border-border rounded-3xl shadow-2xl relative overflow-hidden">
         <button
-          onClick={onClose}
+          onClick={handleClose}
           disabled={isLoading}
           className="absolute top-4 right-4 text-text-secondary hover:text-text-primary p-2 text-2xl font-bold"
         >
@@ -88,7 +111,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
               <p className="text-xs text-text-secondary mb-4">{proConfig.description}</p>
               <ul className="space-y-2 text-xs font-medium text-text-primary">
                 <li className="flex items-center gap-2 text-primary-600 dark:text-primary-400">✨ <strong>Unlimited</strong> Study Spaces</li>
-                <li className="flex items-center gap-2 text-primary-600 dark:text-primary-400">✨ <strong>Unlimited</strong> AI Generations (Quizzes, Paths, Audio)</li>
+                <li className="flex items-center gap-2 text-primary-600 dark:text-primary-400">✨ <strong>Unlimited</strong> AI Generations</li>
                 <li className="flex items-center gap-2 text-primary-600 dark:text-primary-400">✨ Priority Audio TTS & Higher Upload Limits</li>
               </ul>
             </div>

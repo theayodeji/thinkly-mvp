@@ -8,6 +8,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/react-query";
 
 import { AuthPromptModal } from "./components/auth/AuthPromptModal";
+import { UpgradeModal } from "./components/billing/UpgradeModal";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
             <div className="app min-h-screen bg-background text-foreground">
               <AppRoutes />
               <AuthPromptModal />
+              <UpgradeModal />
               <Toaster position="top-right" />
             </div>
           </AuthProvider>

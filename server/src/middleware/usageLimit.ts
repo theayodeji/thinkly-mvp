@@ -1,12 +1,14 @@
 import type { Request, Response, NextFunction } from "express";
-import { PLAN_CONFIGS, PlanTier, FeatureFlag } from "@thinkly/shared";
+import { getPlanConfigs, getAppMode, PlanTier, FeatureFlag } from "@thinkly/shared";
 import SpaceModel from "../models/Space.js";
 import UserModel from "../models/User.js";
 import { AppError } from "../utils/AppError.js";
 
 export const getUserPlanConfig = (plan?: string) => {
+  const mode = getAppMode(process.env.APP_MODE);
+  const configs = getPlanConfigs(mode);
   const tier = (plan as PlanTier) || PlanTier.FREE;
-  return PLAN_CONFIGS[tier] || PLAN_CONFIGS[PlanTier.FREE];
+  return configs[tier] || configs[PlanTier.FREE];
 };
 
 export const checkSpaceCreationLimit = async (req: Request, res: Response, next: NextFunction) => {
@@ -20,19 +22,21 @@ export const checkSpaceCreationLimit = async (req: Request, res: Response, next:
 
     const user = await UserModel.findById(userId);
     const planConfig = getUserPlanConfig(user?.plan);
+    const mode = getAppMode(process.env.APP_MODE);
 
     if (!planConfig.allowedFeatures.includes(FeatureFlag.CREATE_SPACE)) {
-      return next(new AppError("Creating study spaces is locked on your current plan. Upgrade to PRO to unlock!", 403));
+      const errorMsg = mode === "beta"
+        ? "Thinkly Beta limit reached. A full version is coming soon with higher limits!"
+        : "Creating study spaces is locked on your current plan. Upgrade to PRO to unlock!";
+      return next(new AppError(errorMsg, 403));
     }
 
     const activeSpacesCount = await SpaceModel.countDocuments({ userId });
     if (activeSpacesCount >= planConfig.limits.maxActiveSpaces) {
-      return next(
-        new AppError(
-          `You have reached the maximum limit of ${planConfig.limits.maxActiveSpaces} active study spaces on the ${planConfig.name} plan. Upgrade to PRO for unlimited spaces!`,
-          403
-        )
-      );
+      const errorMsg = mode === "beta"
+        ? "Thinkly Beta limit reached. A full version is coming soon with higher limits!"
+        : `You have reached the maximum limit of ${planConfig.limits.maxActiveSpaces} active study spaces on the ${planConfig.name} plan. Upgrade to PRO for unlimited spaces!`;
+      return next(new AppError(errorMsg, 403));
     }
 
     next();
@@ -55,9 +59,13 @@ export const checkDailyAIActionsLimit = (feature: FeatureFlag) => {
       if (!user) return next(new AppError("User not found", 404));
 
       const planConfig = getUserPlanConfig(user.plan);
+      const mode = getAppMode(process.env.APP_MODE);
 
       if (!planConfig.allowedFeatures.includes(feature)) {
-        return next(new AppError("This feature is locked on your current plan. Upgrade to PRO to unlock!", 403));
+        const errorMsg = mode === "beta"
+          ? "Thinkly Beta limit reached. A full version is coming soon with higher limits!"
+          : "This feature is locked on your current plan. Upgrade to PRO to unlock!";
+        return next(new AppError(errorMsg, 403));
       }
 
       const todayStr = new Date().toISOString().slice(0, 10);
@@ -72,12 +80,10 @@ export const checkDailyAIActionsLimit = (feature: FeatureFlag) => {
 
         const maxAudio = planConfig.limits.maxDailyAudioGenerations ?? 1;
         if (currentAudioCount >= maxAudio) {
-          return next(
-            new AppError(
-              `Daily voice generation limit reached (${maxAudio}/day). Upgrade to PRO for higher limits!`,
-              403
-            )
-          );
+          const errorMsg = mode === "beta"
+            ? "Thinkly Beta limit reached. A full version is coming soon with higher limits!"
+            : `Daily voice generation limit reached (${maxAudio}/day). Upgrade to PRO for higher limits!`;
+          return next(new AppError(errorMsg, 403));
         }
 
         user.dailyAudioActionsCount = currentAudioCount + 1;
@@ -90,12 +96,10 @@ export const checkDailyAIActionsLimit = (feature: FeatureFlag) => {
         }
 
         if (currentDailyCount >= planConfig.limits.maxDailyAIActions) {
-          return next(
-            new AppError(
-              `Daily AI generation limit reached (${planConfig.limits.maxDailyAIActions}/day) on the ${planConfig.name} plan. Upgrade to PRO for unlimited AI generations!`,
-              403
-            )
-          );
+          const errorMsg = mode === "beta"
+            ? "Thinkly Beta limit reached. A full version is coming soon with higher limits!"
+            : `Daily AI generation limit reached (${planConfig.limits.maxDailyAIActions}/day) on the ${planConfig.name} plan. Upgrade to PRO for unlimited AI generations!`;
+          return next(new AppError(errorMsg, 403));
         }
 
         user.dailyAIActionsCount = currentDailyCount + 1;
