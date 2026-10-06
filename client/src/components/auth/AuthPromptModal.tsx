@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../ui/Button";
-import { Lock, Sparkles, UserPlus, LogIn } from "lucide-react";
+import { Lock, Sparkles, UserPlus, LogIn, X } from "lucide-react";
 
 export const AuthPromptModal: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [reason, setReason] = useState(
-    "Sign in or create a free account to continue learning.",
-  );
+  const [reason, setReason] = useState("Sign in or create a free account to continue learning.");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -19,13 +17,25 @@ export const AuthPromptModal: React.FC = () => {
       setIsOpen(true);
     };
 
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setIsOpen(false);
+      }
+    };
+
     window.addEventListener("thinkly:auth-prompt-modal", handleAuthPrompt);
+    window.addEventListener("keydown", handleKeyDown);
     return () => {
       window.removeEventListener("thinkly:auth-prompt-modal", handleAuthPrompt);
+      window.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
 
   if (!isOpen) return null;
+
+  const handleClose = () => {
+    setIsOpen(false);
+  };
 
   const handleGoToLogin = () => {
     setIsOpen(false);
@@ -38,8 +48,22 @@ export const AuthPromptModal: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
-      <div className="glass-panel w-full max-w-md p-6 sm:p-8 bg-background border border-border rounded-3xl shadow-2xl text-center relative overflow-hidden">
+    <div
+      onClick={handleClose}
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 animate-fade-in transition-opacity"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-md p-6 sm:p-8 bg-white dark:bg-slate-900 border border-neutral-200 dark:border-slate-800 rounded-3xl shadow-2xl text-center relative overflow-hidden"
+      >
+        <button
+          onClick={handleClose}
+          className="absolute top-4 right-4 text-neutral-400 hover:text-neutral-700 dark:hover:text-white p-2 rounded-full hover:bg-neutral-100 dark:hover:bg-slate-800 transition-colors"
+          aria-label="Close modal"
+        >
+          <X className="w-5 h-5" />
+        </button>
+
         <div className="mx-auto w-14 h-14 rounded-2xl bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400 flex items-center justify-center mb-4 shadow-inner">
           <Lock className="w-7 h-7" />
         </div>

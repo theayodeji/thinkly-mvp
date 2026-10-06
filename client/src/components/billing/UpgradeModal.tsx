@@ -3,6 +3,7 @@ import { LAUNCH_PLAN_CONFIGS, PlanTier } from "@thinkly/shared";
 import { billingService } from "../../shared/services/billingService";
 import { Button } from "../ui/Button";
 import toast from "react-hot-toast";
+import { X } from "lucide-react";
 
 interface UpgradeModalProps {
   isOpen?: boolean;
@@ -28,9 +29,17 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
       setInternalIsOpen(true);
     };
 
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        handleClose();
+      }
+    };
+
     window.addEventListener("thinkly:upgrade-modal", handleUpgradeModal);
+    window.addEventListener("keydown", handleKeyDown);
     return () => {
       window.removeEventListener("thinkly:upgrade-modal", handleUpgradeModal);
+      window.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
 
@@ -63,28 +72,35 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-fade-in">
-      <div className="glass-panel w-full max-w-2xl p-6 sm:p-8 bg-background border border-border rounded-3xl shadow-2xl relative overflow-hidden">
+    <div
+      onClick={handleClose}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 animate-fade-in transition-opacity"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-2xl p-6 sm:p-8 bg-white dark:bg-slate-900 border border-neutral-200 dark:border-slate-800 rounded-3xl shadow-2xl relative overflow-hidden"
+      >
         <button
           onClick={handleClose}
           disabled={isLoading}
-          className="absolute top-4 right-4 text-text-secondary hover:text-text-primary p-2 text-2xl font-bold"
+          className="absolute top-4 right-4 text-neutral-400 hover:text-neutral-700 dark:hover:text-white p-2 rounded-full hover:bg-neutral-100 dark:hover:bg-slate-800 transition-colors"
+          aria-label="Close modal"
         >
-          &times;
+          <X className="w-5 h-5" />
         </button>
 
         <div className="text-center mb-6">
           <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-primary-100 text-primary-600 dark:bg-primary-900/40 dark:text-primary-400 mb-2">
             Thinkly PRO
           </span>
-          <h2 className="text-3xl font-extrabold">Supercharge Your Learning</h2>
+          <h2 className="text-3xl font-extrabold text-text-primary">Supercharge Your Learning</h2>
           <p className="text-sm text-text-secondary mt-1">{reason}</p>
         </div>
 
         {/* Pricing Cards Comparison */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           {/* Free Tier Card */}
-          <div className="p-5 rounded-2xl border border-border bg-white/40 dark:bg-black/40 flex flex-col justify-between">
+          <div className="p-5 rounded-2xl border border-neutral-200 dark:border-slate-800 bg-neutral-50 dark:bg-slate-800/40 flex flex-col justify-between">
             <div>
               <h3 className="text-lg font-bold">{freeConfig.name}</h3>
               <p className="text-2xl font-black mt-2">Free</p>
@@ -98,7 +114,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
           </div>
 
           {/* PRO Tier Card */}
-          <div className="p-5 rounded-2xl border-2 border-primary-500 bg-primary-50/30 dark:bg-primary-950/20 relative flex flex-col justify-between shadow-lg">
+          <div className="p-5 rounded-2xl border-2 border-primary-500 bg-primary-50/40 dark:bg-primary-950/30 relative flex flex-col justify-between shadow-lg">
             <span className="absolute -top-3 right-4 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-primary-500 text-white uppercase tracking-wider">
               Recommended
             </span>
