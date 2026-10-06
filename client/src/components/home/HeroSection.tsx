@@ -1,6 +1,8 @@
+import React, { useState } from "react";
 import { Button } from "../../components/ui/Button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { spaceService } from "../../shared/services/spaceService";
 
 const container = {
   hidden: { opacity: 0 },
@@ -18,6 +20,21 @@ const item = {
 };
 
 const HeroSection = () => {
+  const navigate = useNavigate();
+  const [isCreating, setIsCreating] = useState(false);
+
+  const handleStartGuestTrial = async () => {
+    try {
+      setIsCreating(true);
+      const newSpace = await spaceService.createSpace();
+      navigate(`/spaces/${newSpace._id}`);
+    } catch (error) {
+      console.error("Failed to start guest trial:", error);
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
   return (
     <motion.section
       initial={{ opacity: 0 }}
@@ -50,13 +67,28 @@ const HeroSection = () => {
             subjects efficiently and effectively. Transform your study habits
             and achieve academic success with our innovative tools.
           </motion.p>
-          <motion.div className="flex gap-4 mt-4" variants={item}>
-            <Button size="lg" className="btn-3d-primary">
-              <Link to="/auth/register" className="w-full h-full flex items-center justify-center">
-                Get Started Free
+          <motion.div className="flex flex-wrap gap-4 mt-4" variants={item}>
+            <Button
+              size="lg"
+              onClick={handleStartGuestTrial}
+              loading={isCreating}
+              disabled={isCreating}
+              className="btn-3d-primary font-bold px-6"
+            >
+              Try Now (No Sign-in)
+            </Button>
+            <Button
+              size="lg"
+              variant="neutral"
+              className="glass-panel hover:bg-white/10 font-semibold"
+            >
+              <Link
+                to="/auth/register"
+                className="w-full h-full flex items-center justify-center px-4"
+              >
+                Sign Up Free
               </Link>
             </Button>
-            <Button variant="neutral" className="glass-panel border-none hover:bg-white/10">Learn More</Button>
           </motion.div>
         </motion.div>
         <motion.div

@@ -1,4 +1,5 @@
 import { Button } from "../../components/ui/Button";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
 const CTASection = () => {
@@ -94,7 +95,9 @@ const CTASection = () => {
             className="mt-8 min-w-[84px] max-w-[480px] h-14 px-8 btn-3d-primary text-white text-lg font-bold leading-normal tracking-wide transition-all duration-300 mx-auto transform hover:-translate-y-1"
             size="lg"
           >
-            Sign Up for Free
+            <Link to="/spaces" className="w-full h-full flex items-center justify-center">
+              Try Thinkly Free Now
+            </Link>
           </Button>
         </motion.div>
       </motion.div>

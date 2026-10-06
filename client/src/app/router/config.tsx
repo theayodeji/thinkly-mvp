@@ -29,12 +29,12 @@ export const routeConfig: RouteConfig[] = [
   {
     element: <MainLayout />,
     children: [
-      { path: routes.dashboard, element: <Dashboard />, protected: true, },
+      { path: routes.dashboard, element: <Dashboard />, protected: true },
       { path: routes.Spaces.root, element: <SpacesList />, protected: true },
       {
         path: routes.Spaces.Space(":id"),
         element: <SpaceDetail />,
-        protected: true,
+        protected: false,
       },
       { path: routes.settings, element: <Settings />, protected: true },
     ],
