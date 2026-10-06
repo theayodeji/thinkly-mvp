@@ -48,10 +48,13 @@ export const getSpaceByIdAndUserId = async (id: string, userId: string) => {
     return spaceWithSources;
 };
 
-export const createNewSpace = async (userId: string) => {
+export const createNewSpace = async (userId: string, isGuest: boolean = false) => {
+    const expiresAt = isGuest ? new Date(Date.now() + 24 * 60 * 60 * 1000) : undefined;
     const space = new SpaceModel({
         userId,
         title: `New Study Space`,
+        isGuest,
+        expiresAt,
     });
     return await space.save();
 };

@@ -24,6 +24,7 @@ export const processAndAddSource = async (source: ISource, userId: string) => {
     // Create the source
     newSource = new SourceModel({
       ...source,
+      expiresAt: space.expiresAt || (space.isGuest ? new Date(Date.now() + 24 * 60 * 60 * 1000) : undefined),
       status: source.type === SourceType.TEXT ? "parsed" : "parsing", // Set initial status
     });
     await newSource.save({ session });

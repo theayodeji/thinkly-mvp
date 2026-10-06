@@ -4,19 +4,21 @@ import { authenticateJWT } from "../middleware/auth.js";
 import { validateRequest } from "../middleware/validate.js";
 import { addSourceSchema, paramsIdSchema, paramsSpaceIdSchema } from "@thinkly/shared";
 
+import { allowGuestOrAuth, restrictGuestAccess } from "../middleware/guest.js";
+
 const router = express.Router();
 
-router.get("/:spaceId", authenticateJWT, validateRequest(paramsSpaceIdSchema), getSources);
+router.get("/:spaceId", allowGuestOrAuth, validateRequest(paramsSpaceIdSchema), getSources);
 
 import { upload } from "../middleware/upload.js";
 
 router.post(
   "/add",
-  authenticateJWT,
+  allowGuestOrAuth,
   upload.single("file"),
   validateRequest(addSourceSchema),
   addSource,
 );
-router.delete("/delete/:id", authenticateJWT, validateRequest(paramsIdSchema), deleteSource);
+router.delete("/delete/:id", authenticateJWT, restrictGuestAccess, validateRequest(paramsIdSchema), deleteSource);
 
 export default router;

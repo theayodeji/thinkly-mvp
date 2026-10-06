@@ -9,6 +9,7 @@ const SourceSchema = new mongoose.Schema<ISource>(
     text: { type: String },
     spaceId: { type: mongoose.Schema.Types.ObjectId, ref: "Space", required: true },
     status: { type: String, enum: ["parsing", "parsed", "error"], default: "parsing" },
+    expiresAt: { type: Date, expires: 0 },
   } as any,
   { timestamps: true }
 );

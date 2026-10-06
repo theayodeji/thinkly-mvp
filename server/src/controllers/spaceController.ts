@@ -22,7 +22,7 @@ export const getSpace = catchAsync(async (req: Request, res: Response, next: Nex
 });
 
 export const createSpace = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const space = await createNewSpace(req.userId as string);
+    const space = await createNewSpace(req.userId as string, req.isGuest);
     res.status(200).json({ space });
 });
 

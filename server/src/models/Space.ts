@@ -7,6 +7,8 @@ const SpaceSchema = new mongoose.Schema<ISpace>(
     content: { type: String },
     summary: { type: String },
     userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    isGuest: { type: Boolean, default: false },
+    expiresAt: { type: Date, expires: 0 },
   } as any,
   { timestamps: true }
 );

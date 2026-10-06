@@ -55,6 +55,8 @@ export interface ISpace {
   userId: string;
   summary: string;
   sourcesCount?: number;
+  isGuest?: boolean;
+  expiresAt?: Date;
   createdAt: Date;
   updatedAt: Date;
 }

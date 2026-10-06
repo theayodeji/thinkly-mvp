@@ -18,6 +18,7 @@ const LearningPathSchema = new mongoose.Schema<ILearningPath>(
     userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     topic: { type: String, required: true },
     nodes: [LearningPathNodeSchema],
+    expiresAt: { type: Date, expires: 0 },
   } as any,
   { timestamps: true }
 );

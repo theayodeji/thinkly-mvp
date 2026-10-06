@@ -5,7 +5,9 @@ import { Lock, Sparkles, UserPlus, LogIn } from "lucide-react";
 
 export const AuthPromptModal: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [reason, setReason] = useState("Sign in or create a free account to continue learning.");
+  const [reason, setReason] = useState(
+    "Sign in or create a free account to continue learning.",
+  );
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,12 +29,12 @@ export const AuthPromptModal: React.FC = () => {
 
   const handleGoToLogin = () => {
     setIsOpen(false);
-    navigate("/login");
+    navigate("/auth/login");
   };
 
   const handleGoToRegister = () => {
     setIsOpen(false);
-    navigate("/register");
+    navigate("/auth/register");
   };
 
   return (
