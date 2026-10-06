@@ -7,6 +7,8 @@ import { Toaster } from "react-hot-toast";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/react-query";
 
+import { AuthPromptModal } from "./components/auth/AuthPromptModal";
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -15,6 +17,7 @@ function App() {
           <AuthProvider>
             <div className="app min-h-screen bg-background text-foreground">
               <AppRoutes />
+              <AuthPromptModal />
               <Toaster position="top-right" />
             </div>
           </AuthProvider>

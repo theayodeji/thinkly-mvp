@@ -15,14 +15,16 @@ import { updateSpaceSchema, chatSchema, paramsIdSchema } from "@thinkly/shared";
 
 import { aiLimiter } from "../middleware/rateLimiter.js";
 
+import { allowGuestOrAuth, checkGuestLimit, restrictGuestAccess } from "../middleware/guest.js";
+
 const router = express.Router();
 
 router.get("/", authenticateJWT, getSpaces);
-router.get("/:id", authenticateJWT, validateRequest(paramsIdSchema), getSpace);
-router.get("/:id/chat", authenticateJWT, validateRequest(paramsIdSchema), getChatHistory);
-router.post("/create", authenticateJWT, checkSpaceCreationLimit, createSpace);
-router.post("/chat", authenticateJWT, aiLimiter, validateRequest(chatSchema), chat);
-router.delete("/delete/:id", authenticateJWT, validateRequest(paramsIdSchema), deleteSpace);
-router.put("/rename/:id", authenticateJWT, validateRequest(updateSpaceSchema), updateSpace);
+router.get("/:id", allowGuestOrAuth, validateRequest(paramsIdSchema), getSpace);
+router.get("/:id/chat", allowGuestOrAuth, validateRequest(paramsIdSchema), getChatHistory);
+router.post("/create", allowGuestOrAuth, checkGuestLimit("create_space"), checkSpaceCreationLimit, createSpace);
+router.post("/chat", allowGuestOrAuth, aiLimiter, checkGuestLimit("chat"), validateRequest(chatSchema), chat);
+router.delete("/delete/:id", authenticateJWT, restrictGuestAccess, validateRequest(paramsIdSchema), deleteSpace);
+router.put("/rename/:id", authenticateJWT, restrictGuestAccess, validateRequest(updateSpaceSchema), updateSpace);
 
 export default router;

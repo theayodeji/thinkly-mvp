@@ -1,10 +1,19 @@
 import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from "axios";
-import toast from "react-hot-toast";
+import { getOrCreateGuestDeviceId } from "../utils/guest";
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? "http://localhost:4000/api",
   withCredentials: true,
   headers: { "Content-Type": "application/json" },
+});
+
+// Request interceptor: Attach Guest Device ID
+api.interceptors.request.use((config) => {
+  const guestDeviceId = getOrCreateGuestDeviceId();
+  if (guestDeviceId) {
+    config.headers["X-Guest-Device-Id"] = guestDeviceId;
+  }
+  return config;
 });
 
 // Defined error type
@@ -19,6 +28,18 @@ api.interceptors.response.use(
   async (error: AxiosErrorWithResponse) => {
     const originalRequest = error.config;
 
+    // Guest Auth / Limit Reached Prompt Trigger
+    const errorCode = error.response?.data?.code;
+    if (errorCode === "GUEST_LIMIT_REACHED" || errorCode === "GUEST_AUTH_REQUIRED") {
+      const customEvent = new CustomEvent("thinkly:auth-prompt-modal", {
+        detail: {
+          reason: error.response?.data?.error || "Sign in or register to continue learning on Thinkly.",
+          limitType: error.response?.data?.limitType,
+        },
+      });
+      window.dispatchEvent(customEvent);
+    }
+
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
@@ -32,10 +53,7 @@ api.interceptors.response.use(
         console.error("Token refresh failed:", refreshError);
       }
     }
-    // if (error.code === "ERR_NETWORK") {
-    //   toast.error("Network error, please try again");
-    // }
+
     return Promise.reject(error);
   }
 );
-

@@ -14,6 +14,10 @@ export const checkSpaceCreationLimit = async (req: Request, res: Response, next:
     const userId = req.userId;
     if (!userId) return next(new AppError("Unauthorized", 401));
 
+    if (req.isGuest) {
+      return next();
+    }
+
     const user = await UserModel.findById(userId);
     const planConfig = getUserPlanConfig(user?.plan);
 
@@ -42,6 +46,10 @@ export const checkDailyAIActionsLimit = (feature: FeatureFlag) => {
     try {
       const userId = req.userId;
       if (!userId) return next(new AppError("Unauthorized", 401));
+
+      if (req.isGuest) {
+        return next();
+      }
 
       const user = await UserModel.findById(userId);
       if (!user) return next(new AppError("User not found", 404));

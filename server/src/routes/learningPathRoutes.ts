@@ -5,9 +5,11 @@ import { aiLimiter } from '../middleware/rateLimiter.js';
 import { checkDailyAIActionsLimit } from '../middleware/usageLimit.js';
 import { FeatureFlag } from '@thinkly/shared';
 
+import { allowGuestOrAuth, checkGuestLimit } from '../middleware/guest.js';
+
 const router = express.Router({ mergeParams: true });
 
-router.post('/', authenticateJWT, aiLimiter, checkDailyAIActionsLimit(FeatureFlag.GENERATE_LEARNING_PATH), generateLearningPath);
-router.get('/', authenticateJWT, getLearningPaths);
+router.post('/', allowGuestOrAuth, aiLimiter, checkGuestLimit("generate_learning_path"), checkDailyAIActionsLimit(FeatureFlag.GENERATE_LEARNING_PATH), generateLearningPath);
+router.get('/', allowGuestOrAuth, getLearningPaths);
 
 export default router;
