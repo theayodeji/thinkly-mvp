@@ -309,7 +309,13 @@ function ChatInterface() {
         currentSpaceId={spaceId}
         hasSources={sources ? sources.length > 0 : false}
         isDisabled={chatLimitStatus.isReached || chatLimitStatus.isLocked}
-        disabledReason={chatLimitStatus.isLocked ? "Chat is locked" : `Limit reached (${chatLimitStatus.max}/${chatLimitStatus.max})`}
+        disabledReason={
+          chatLimitStatus.isLocked 
+            ? "Chat is locked" 
+            : chatLimitStatus.isReached 
+              ? `Limit reached (${chatLimitStatus.max}/${chatLimitStatus.max})` 
+              : undefined
+        }
       />
     </div>
   );
