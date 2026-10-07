@@ -1,0 +1,881 @@
+openapi: 3.0.3
+info:
+  title: Thinkly MVP API Specification
+  description: |
+    Comprehensive OpenAPI 3.0 specification for Thinkly MVP backend services.
+    Includes authentication, study spaces, document sources, AI chat, study tools (quizzes, flashcards, audio explainers, learning paths), and billing/quotas management.
+  version: 1.0.0
+servers:
+  - url: http://localhost:5000/api
+    description: Local Development Server
+  - url: https://api.thinkly.app/api
+    description: Staging / Production Server
+
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user account
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterInput'
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+
+  /auth/login:
+    post:
+      summary: Authenticate user credentials
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginInput'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /auth/logout:
+    post:
+      summary: Logout user session
+      tags:
+        - Authentication
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Logged out successfully
+
+  /auth/me:
+    get:
+      summary: Fetch current authenticated user profile
+      tags:
+        - Authentication
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Current user profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /auth/verify-email:
+    post:
+      summary: Verify account email with OTP code
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, code]
+              properties:
+                email:
+                  type: string
+                  format: email
+                code:
+                  type: string
+                  example: "123456"
+      responses:
+        '200':
+          description: Email verified successfully
+
+  /auth/forgot-password:
+    post:
+      summary: Send password reset OTP
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email:
+                  type: string
+                  format: email
+      responses:
+        '200':
+          description: Password reset email sent
+
+  /auth/reset-password:
+    post:
+      summary: Reset password using OTP code
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, code, newPassword]
+              properties:
+                email:
+                  type: string
+                  format: email
+                code:
+                  type: string
+                newPassword:
+                  type: string
+                  minLength: 6
+      responses:
+        '200':
+          description: Password reset successfully
+
+  /spaces:
+    get:
+      summary: List active study spaces for authenticated user
+      tags:
+        - Spaces
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Array of study spaces
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Space'
+
+  /spaces/create:
+    post:
+      summary: Create a new study space
+      tags:
+        - Spaces
+      security:
+        - bearerAuth: []
+        - guestCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSpaceInput'
+      responses:
+        '201':
+          description: Space created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Space'
+        '403':
+          $ref: '#/components/responses/QuotaExceededError'
+
+  /spaces/{id}:
+    get:
+      summary: Get study space details by ID
+      tags:
+        - Spaces
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Space'
+
+  /spaces/rename/{id}:
+    put:
+      summary: Rename study space
+      tags:
+        - Spaces
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title]
+              properties:
+                title:
+                  type: string
+      responses:
+        '200':
+          description: Space renamed successfully
+
+  /spaces/delete/{id}:
+    delete:
+      summary: Delete study space permanently
+      tags:
+        - Spaces
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Space deleted successfully
+
+  /spaces/chat:
+    post:
+      summary: Stream AI Chat response for space
+      tags:
+        - Spaces
+        - AI Generation
+      security:
+        - bearerAuth: []
+        - guestCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatInput'
+      responses:
+        '200':
+          description: Text stream chunk response (text/plain)
+        '403':
+          $ref: '#/components/responses/QuotaExceededError'
+
+  /spaces/{id}/chat:
+    get:
+      summary: Get paginated chat history for space
+      tags:
+        - Spaces
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: cursor
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedChatHistory'
+
+  /sources/{spaceId}:
+    get:
+      summary: List all sources attached to a space
+      tags:
+        - Sources
+      parameters:
+        - name: spaceId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Source'
+
+  /sources/add:
+    post:
+      summary: Upload document or link source to space
+      tags:
+        - Sources
+      security:
+        - bearerAuth: []
+        - guestCookie: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [spaceId, type]
+              properties:
+                spaceId:
+                  type: string
+                type:
+                  type: string
+                  enum: [text, file_pdf, link]
+                file:
+                  type: string
+                  format: binary
+                text:
+                  type: string
+                name:
+                  type: string
+      responses:
+        '201':
+          description: Source added and parsed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Source'
+
+  /sources/delete/{id}:
+    delete:
+      summary: Delete document source
+      tags:
+        - Sources
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Source deleted
+
+  /quizzes/{spaceId}/generate:
+    get:
+      summary: Generate AI practice quiz
+      tags:
+        - Quizzes
+        - AI Generation
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: spaceId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quiz'
+        '403':
+          $ref: '#/components/responses/QuotaExceededError'
+
+  /quizzes/{spaceId}:
+    get:
+      summary: Get generated quiz for space
+      tags:
+        - Quizzes
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: spaceId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quiz'
+
+  /quizzes/{quizId}/submit:
+    post:
+      summary: Submit quiz answers for score evaluation
+      tags:
+        - Quizzes
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: quizId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [answers]
+              properties:
+                answers:
+                  type: array
+                  items:
+                    type: integer
+      responses:
+        '200':
+          description: Quiz evaluated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  score:
+                    type: number
+                  total:
+                    type: integer
+                  percentage:
+                    type: number
+
+  /flashcards/{spaceId}/generate:
+    post:
+      summary: Generate flashcard set
+      tags:
+        - Flashcards
+        - AI Generation
+      security:
+        - bearerAuth: []
+        - guestCookie: []
+      parameters:
+        - name: spaceId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Flashcard'
+        '403':
+          $ref: '#/components/responses/QuotaExceededError'
+
+  /flashcards/{spaceId}:
+    get:
+      summary: Get flashcard set for space
+      tags:
+        - Flashcards
+      parameters:
+        - name: spaceId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Flashcard'
+
+  /explainers/space/{spaceId}:
+    post:
+      summary: Generate TTS Audio Explainer
+      tags:
+        - Audio Explainers
+        - AI Generation
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: spaceId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [concept]
+              properties:
+                concept:
+                  type: string
+                voiceId:
+                  type: string
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AudioExplainer'
+        '403':
+          $ref: '#/components/responses/QuotaExceededError'
+
+    get:
+      summary: Get audio explainers for space
+      tags:
+        - Audio Explainers
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: spaceId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AudioExplainer'
+
+  /learning-paths:
+    post:
+      summary: Generate AI Learning Path
+      tags:
+        - Learning Paths
+        - AI Generation
+      security:
+        - bearerAuth: []
+        - guestCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [spaceId, topic]
+              properties:
+                spaceId:
+                  type: string
+                topic:
+                  type: string
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LearningPath'
+        '403':
+          $ref: '#/components/responses/QuotaExceededError'
+
+  /billing/plan:
+    get:
+      summary: Get current user plan details and metered usages map
+      tags:
+        - Billing & Quotas
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPlanStatus'
+
+  /billing/initialize:
+    post:
+      summary: Initialize Paystack checkout for PRO plan
+      tags:
+        - Billing & Quotas
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  authorization_url:
+                    type: string
+                  access_code:
+                    type: string
+                  reference:
+                    type: string
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    guestCookie:
+      type: apiKey
+      in: cookie
+      name: thinkly_guest_id
+
+  schemas:
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        subscription_tier:
+          type: string
+          enum: [free, pro]
+        streaks:
+          type: object
+          properties:
+            current:
+              type: integer
+            longest:
+              type: integer
+
+    Space:
+      type: object
+      properties:
+        _id:
+          type: string
+        title:
+          type: string
+        summary:
+          type: string
+        userId:
+          type: string
+        sourcesCount:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+
+    Source:
+      type: object
+      properties:
+        _id:
+          type: string
+        spaceId:
+          type: string
+        type:
+          type: string
+          enum: [text, file_pdf, link]
+        name:
+          type: string
+        status:
+          type: string
+          enum: [parsing, parsed, error]
+
+    Quiz:
+      type: object
+      properties:
+        _id:
+          type: string
+        spaceId:
+          type: string
+        questions:
+          type: array
+          items:
+            type: object
+            properties:
+              question:
+                type: string
+              options:
+                type: array
+                items:
+                  type: string
+              correctAnswer:
+                type: integer
+              explanation:
+                type: string
+
+    Flashcard:
+      type: object
+      properties:
+        _id:
+          type: string
+        spaceId:
+          type: string
+        question:
+          type: string
+        answer:
+          type: string
+
+    AudioExplainer:
+      type: object
+      properties:
+        _id:
+          type: string
+        spaceId:
+          type: string
+        concept:
+          type: string
+        audioUrl:
+          type: string
+        status:
+          type: string
+
+    LearningPath:
+      type: object
+      properties:
+        _id:
+          type: string
+        spaceId:
+          type: string
+        topic:
+          type: string
+        nodes:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              title:
+                type: string
+              description:
+                type: string
+
+    UserPlanStatus:
+      type: object
+      properties:
+        planId:
+          type: string
+        name:
+          type: string
+        config:
+          type: object
+        usagesMap:
+          type: object
+          additionalProperties:
+            type: integer
+
+    RegisterInput:
+      type: object
+      required: [name, email, password]
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 6
+
+    LoginInput:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+
+    CreateSpaceInput:
+      type: object
+      required: [title]
+      properties:
+        title:
+          type: string
+
+    ChatInput:
+      type: object
+      required: [spaceId, message]
+      properties:
+        spaceId:
+          type: string
+        message:
+          type: string
+
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        user:
+          $ref: '#/components/schemas/User'
+
+    PaginatedChatHistory:
+      type: object
+      properties:
+        history:
+          type: array
+          items:
+            type: object
+            properties:
+              role:
+                type: string
+                enum: [user, assistant]
+              content:
+                type: string
+        hasMore:
+          type: boolean
+        nextCursor:
+          type: string
+
+  responses:
+    ValidationError:
+      description: Bad Request - Validation Failure
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              errors:
+                type: array
+                items:
+                  type: object
+
+    UnauthorizedError:
+      description: Unauthorized - Authentication required
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+
+    QuotaExceededError:
+      description: Forbidden - Quota or Limit Exceeded
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: fail
+              code:
+                type: string
+                example: LIMIT_REACHED
+              message:
+                type: string
+                example: You have reached the limit for this feature.
