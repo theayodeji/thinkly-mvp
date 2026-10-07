@@ -39,13 +39,13 @@ const Navbar = () => {
   return (
     <>
       <header
-        className={`sticky top-0 z-50 flex items-center h-20 transition-all ${
+        className={`sticky top-0 z-50 flex items-center h-16 md:h-20 shrink-0 transition-all ${
           isSpaceDetail
             ? "bg-bg border-b-2 border-border/50"
             : "border-b-2 border-border/50 bg-bg/80 backdrop-blur-sm"
         }`}
       >
-        <div className={`w-full px-6 flex items-center justify-between`}>
+        <div className={`w-full px-4 md:px-6 flex items-center justify-between`}>
           {/* Left Side: Space Header OR Spacer */}
           {isSpaceDetail ? (
             <div className="flex items-center gap-2 md:gap-4 flex-1 min-w-0 pr-2">

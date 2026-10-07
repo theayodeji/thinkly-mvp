@@ -50,21 +50,21 @@ const SpaceDetail: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col h-full lg:h-[calc(100vh-5rem)]">
+    <div className="flex-1 min-h-0 h-full flex flex-col overflow-hidden w-full max-w-full">
       <AddSourceModal 
         isOpen={isAddSourceModalOpen}
         setIsOpen={setAddSourceModalOpen}
       />
       {/* Mobile Top Nav/Tabs */}
-      <div className="lg:hidden">
+      <div className="lg:hidden shrink-0">
         <TabSelect activeTab={activeTab} onTabChange={setActiveTab} />
       </div>
 
-      <div className="flex px-0 pt-0 lg:pt-0 h-full overflow-hidden max-w-screen">
+      <div className="flex px-0 pt-0 lg:pt-0 flex-1 min-h-0 overflow-hidden w-full max-w-full">
         {/* Mobile Sources Tab (Desktop uses Drawer in Navbar) */}
         <div
           className={clsx(
-            "rounded-md h-full overflow-y-auto lg:hidden px-4 sm:px-6 pb-6",
+            "rounded-md h-full min-h-0 overflow-y-auto lg:hidden px-4 sm:px-6 pb-6",
             activeTab === "sources" ? "block w-full" : "hidden",
           )}
         >
@@ -74,7 +74,7 @@ const SpaceDetail: React.FC = () => {
         {/* Center Main Area: Chat */}
         <div
           className={clsx(
-            "flex-1 bg-neutral-200 dark:bg-neutral-800/80 lg:bg-transparent lg:dark:bg-transparent rounded-2xl h-full overflow-hidden flex flex-col relative",
+            "flex-1 bg-neutral-200 dark:bg-neutral-800/80 lg:bg-transparent lg:dark:bg-transparent rounded-2xl h-full min-h-0 overflow-hidden flex flex-col relative",
             activeTab === "chat" ? "flex w-full" : "hidden lg:flex",
           )}
         >
@@ -84,7 +84,7 @@ const SpaceDetail: React.FC = () => {
         {/* Right Area: Tools */}
         <div
           className={clsx(
-            "lg:w-90 shrink-0 rounded-md h-full overflow-y-auto lg:border-l lg:border-border/50 lg:pl-6",
+            "lg:w-90 shrink-0 rounded-md h-full min-h-0 overflow-y-auto lg:border-l lg:border-border/50 lg:pl-6",
             activeTab === "tools" ? "block w-full" : "hidden lg:block",
           )}
         >
