@@ -1,8 +1,11 @@
 import React from "react";
 import ReactMarkdown from "react-markdown";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
 import { motion } from "framer-motion";
 import { cn } from "../../shared/utils/cn";
 import { WandSparkles } from "lucide-react";
+import { preprocessMath } from "../../shared/utils/math";
 
 interface ChatMessageProps {
   message: {
@@ -20,6 +23,9 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 }) => {
   const { content, role } = message;
   const isUser = role === "user";
+
+  const rawText = isStreaming && !isUser ? streamedText : content;
+  const processedText = React.useMemo(() => preprocessMath(rawText), [rawText]);
 
   const thinkingMessage = React.useMemo(() => {
     const messages = [
@@ -92,6 +98,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
             )}
           >
             <ReactMarkdown
+              remarkPlugins={[remarkMath]}
+              rehypePlugins={[rehypeKatex]}
               components={
                 !isUser
                   ? {
@@ -147,7 +155,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                   : undefined
               }
             >
-              {isStreaming && !isUser ? streamedText : content}
+              {processedText}
             </ReactMarkdown>
           </div>
         )}

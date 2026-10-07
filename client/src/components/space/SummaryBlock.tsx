@@ -1,8 +1,12 @@
+import React from "react";
 import { Copy, WandSparkles } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
 import { useParams } from "react-router-dom";
 import { useSpace } from "../../hooks/queries/useSpaces";
 import toast from "react-hot-toast";
+import { preprocessMath } from "../../shared/utils/math";
 
 const copySummary = (summary: string) => {
   navigator.clipboard.writeText(summary);
@@ -12,6 +16,11 @@ const copySummary = (summary: string) => {
 const SummaryBlock = () => {
   const { id } = useParams<{ id: string }>();
   const { data: currentSpace, isLoading: isActionLoading } = useSpace(id || "");
+
+  const processedSummary = React.useMemo(
+    () => preprocessMath(currentSpace?.summary || ""),
+    [currentSpace?.summary]
+  );
 
   if (isActionLoading)
     return (
@@ -39,6 +48,8 @@ const SummaryBlock = () => {
         </div>
         <div className="prose prose-sm prose-neutral dark:prose-invert prose-primary max-w-none text-text/90 leading-relaxed text-sm">
           <ReactMarkdown
+            remarkPlugins={[remarkMath]}
+            rehypePlugins={[rehypeKatex]}
             components={{
               strong: ({ ...props }) => (
                 <strong
@@ -84,7 +95,7 @@ const SummaryBlock = () => {
               ),
             }}
           >
-            {currentSpace.summary}
+            {processedSummary}
           </ReactMarkdown>
         </div>
         <div className="flex items-center gap-4 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
