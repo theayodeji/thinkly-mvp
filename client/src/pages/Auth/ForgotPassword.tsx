@@ -4,7 +4,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TextInput } from "../../components/ui/TextInput";
 import { Button } from "../../components/ui/Button";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { authService } from "../../shared/services/authService";
 import toast from "react-hot-toast";
 
@@ -15,6 +15,9 @@ const forgotPasswordSchema = z.object({
 type ForgotPasswordSchema = z.infer<typeof forgotPasswordSchema>;
 
 const ForgotPassword = () => {
+  const [searchParams] = useSearchParams();
+  const emailParam = searchParams.get("email") || "";
+
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [sentEmail, setSentEmail] = useState("");
@@ -25,6 +28,7 @@ const ForgotPassword = () => {
     formState: { errors },
   } = useForm<ForgotPasswordSchema>({
     resolver: zodResolver(forgotPasswordSchema),
+    defaultValues: { email: emailParam },
   });
 
   const onSubmit = async (data: ForgotPasswordSchema) => {

@@ -16,7 +16,7 @@ export const EmailVerificationBanner = () => {
   const handleResend = async () => {
     try {
       setIsResending(true);
-      await authService.resendVerification();
+      await authService.resendVerification(user.email);
       toast.success("Verification link sent! Please check your inbox.");
     } catch (err: any) {
       const msg = err.response?.data?.error || err.response?.data?.message || err.message || "Failed to send verification email";

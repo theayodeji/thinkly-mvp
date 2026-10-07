@@ -43,7 +43,11 @@ export const spaceService = {
 
   uploadSource: async (formData: FormData): Promise<ISource> => {
     try {
-      const response = await api.post<{ source: ISource }>(`/sources/add`, formData);
+      const response = await api.post<{ source: ISource }>(`/sources/add`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       toast.success("Source added successfully");
       return SourceSchema.parse(response.data.source) as ISource;
     } catch (error: any) {

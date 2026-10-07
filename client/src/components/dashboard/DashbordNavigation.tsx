@@ -1,17 +1,35 @@
 import { PenLine, PlusCircle, BookDashed, Timer } from "lucide-react";
-import { useCreateSpace } from "../../hooks/queries/useSpaces";
+import { useCreateSpace, useSpaces } from "../../hooks/queries/useSpaces";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { usePermissionsAndLimits, MeteredMetric } from "../../hooks/usePermissionsAndLimits";
 
 const DashbordNavigation = () => {
   const navigate = useNavigate();
   const { mutateAsync: createSpace } = useCreateSpace();
+  const { data: spacesData } = useSpaces();
 
-  function createSpaceHandler() {
-    createSpace().then((space) => {
+  const { getLimitStatus, triggerLimitModal } = usePermissionsAndLimits();
+  const activeSpacesLimit = getLimitStatus(MeteredMetric.ACTIVE_SPACES);
+  const isSpaceLimitReached = (spacesData?.length || 0) >= activeSpacesLimit.max && activeSpacesLimit.max !== Infinity;
+
+  async function createSpaceHandler() {
+    if (isSpaceLimitReached) {
+      triggerLimitModal("You've reached your maximum limit for active study spaces.");
+      return;
+    }
+    
+    try {
+      const space = await createSpace();
       toast.success("Space created successfully");
       navigate(`/spaces/${space?._id}`);
-    });
+    } catch (error: any) {
+      if (error?.response?.status === 403) {
+        triggerLimitModal(error.response.data.message || "Space creation limit reached.");
+      } else {
+        console.error("Failed to create Space:", error);
+      }
+    }
   }
 
   return (

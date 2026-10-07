@@ -9,7 +9,7 @@ import { spaceService } from "../../shared/services/spaceService";
 
 const LandingNavbar = () => {
   const { logout, user } = useAuth();
-  const { theme } = useTheme();
+  const { isDark } = useTheme();
   const navigate = useNavigate();
   const [isCreating, setIsCreating] = useState(false);
 
@@ -33,12 +33,12 @@ const LandingNavbar = () => {
           className="w-max flex items-center gap-2 scale-75 md:scale-100"
         >
           <img
-            src={theme === "dark" ? "/thinkly-light.png" : "/thinkly-black.png"}
+            src={isDark ? "/thinkly-light.png" : "/thinkly-black.png"}
             className="h-10 md:block hidden"
             alt="Thinkly"
           />
           <img
-            src={theme === "dark" ? "/brain-light.png" : "/brain-dark.png"}
+            src={isDark ? "/brain-light.png" : "/brain-dark.png"}
             className="h-10 md:hidden block"
             alt="Thinkly"
           />

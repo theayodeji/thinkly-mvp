@@ -8,7 +8,10 @@ interface GlobalQuizModalProps {
   onClose: () => void;
 }
 
-const GlobalQuizModal: React.FC<GlobalQuizModalProps> = ({ isOpen, onClose }) => {
+const GlobalQuizModal: React.FC<GlobalQuizModalProps> = ({
+  isOpen,
+  onClose,
+}) => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape" && isOpen) {
@@ -47,7 +50,7 @@ const GlobalQuizModal: React.FC<GlobalQuizModalProps> = ({ isOpen, onClose }) =>
             </button>
 
             {/* Header Banner */}
-            <div className="relative h-24 sm:h-28 bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center px-6 overflow-hidden flex-shrink-0">
+            <div className="relative h-24 sm:h-28 bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center px-6 overflow-hidden flex-shrink-0">
               <Globe className="w-20 h-20 text-white/15 absolute right-2 -bottom-2 transform rotate-12 pointer-events-none" />
               <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white text-center tracking-tight z-10">
                 Global Quiz Event
@@ -61,29 +64,36 @@ const GlobalQuizModal: React.FC<GlobalQuizModalProps> = ({ isOpen, onClose }) =>
                   Coming Soon! Get ready to test your knowledge.
                 </p>
                 <p className="text-xs sm:text-sm text-text-secondary leading-relaxed">
-                  Join our weekly global event to compete with learners worldwide in various categories.
+                  Join our weekly global event to compete with learners
+                  worldwide in various categories.
                 </p>
               </div>
 
               {/* 3 Compact Feature Cards (3-column side-by-side even on mobile) */}
               <div className="grid grid-cols-3 gap-2 sm:gap-3 pt-1">
-                <div className="flex flex-col items-center text-center p-2.5 sm:p-3 rounded-xl bg-primary-500/10 dark:bg-primary-500/15 border border-primary-500/20">
+                <div className="flex flex-col items-center text-center p-2.5 sm:p-3 rounded-xl bg-primary-500/10 dark:bg-primary-500/15">
                   <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-primary-500 mb-1.5" />
-                  <h4 className="font-bold text-xs sm:text-sm text-text">Time Limit</h4>
+                  <h4 className="font-bold text-xs sm:text-sm text-text">
+                    Time Limit
+                  </h4>
                   <p className="text-[10px] sm:text-xs text-text-secondary mt-0.5 leading-tight">
                     Race against the clock
                   </p>
                 </div>
-                <div className="flex flex-col items-center text-center p-2.5 sm:p-3 rounded-xl bg-primary-500/10 dark:bg-primary-500/15 border border-primary-500/20">
+                <div className="flex flex-col items-center text-center p-2.5 sm:p-3 rounded-xl bg-primary-500/10 dark:bg-primary-500/15">
                   <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-primary-500 mb-1.5" />
-                  <h4 className="font-bold text-xs sm:text-sm text-text">Leaderboards</h4>
+                  <h4 className="font-bold text-xs sm:text-sm text-text">
+                    Leaderboards
+                  </h4>
                   <p className="text-[10px] sm:text-xs text-text-secondary mt-0.5 leading-tight">
                     Rank high globally
                   </p>
                 </div>
-                <div className="flex flex-col items-center text-center p-2.5 sm:p-3 rounded-xl bg-primary-500/10 dark:bg-primary-500/15 border border-primary-500/20">
+                <div className="flex flex-col items-center text-center p-2.5 sm:p-3 rounded-xl bg-primary-500/10 dark:bg-primary-500/15">
                   <Medal className="w-5 h-5 sm:w-6 sm:h-6 text-primary-500 mb-1.5" />
-                  <h4 className="font-bold text-xs sm:text-sm text-text">Earn Perks</h4>
+                  <h4 className="font-bold text-xs sm:text-sm text-text">
+                    Earn Perks
+                  </h4>
                   <p className="text-[10px] sm:text-xs text-text-secondary mt-0.5 leading-tight">
                     Win profile badges
                   </p>

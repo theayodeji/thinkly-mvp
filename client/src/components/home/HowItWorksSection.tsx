@@ -141,7 +141,7 @@ const HowItWorksSection = () => {
                     </div>
                   ) : (
                     /* Step 1 & 3 Large Graphic Illustration on Left */
-                    <div className="p-7 rounded-3xl bg-primary-50/60 dark:bg-primary-950/30 border-2 border-primary-200/50 dark:border-primary-800/40 text-primary-400 shadow-sm group-hover:scale-105 transition-transform duration-300">
+                    <div className="p-7 rounded-3xl bg-primary-50/60 dark:bg-primary-950/30 text-primary-400 shadow-sm group-hover:scale-105 transition-transform duration-300">
                       <IllustrationComponent className="w-16 h-16 stroke-[1.25]" />
                     </div>
                   )}

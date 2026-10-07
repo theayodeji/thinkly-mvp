@@ -2,9 +2,8 @@ import React from "react";
 import { LoaderCircle } from "lucide-react";
 import { cn } from "../../shared/utils/cn";
 
-type ButtonProps = {
-  children: React.ReactNode;
-  onClick?: () => void;
+export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
+  children?: React.ReactNode;
   variant?: "primary" | "neutral" | "ghost" | "dark" | "outline";
   size?: "sm" | "md" | "lg" | "icon";
   disabled?: boolean;
@@ -12,7 +11,6 @@ type ButtonProps = {
   icon?: React.ReactNode;
   iconPosition?: "left" | "right";
   className?: string;
-  type?: "button" | "submit" | "reset";
 };
 
 export function Button({
@@ -26,6 +24,7 @@ export function Button({
   iconPosition = "left",
   className,
   type = "button",
+  ...props
 }: ButtonProps) {
   const baseStyles =
     "inline-flex items-center rounded-xl justify-center font-medium outline-none focus:outline-none cursor-pointer";
@@ -57,6 +56,7 @@ export function Button({
         "disabled:cursor-not-allowed",
         className,
       )}
+      {...props}
     >
       {loading && <LoaderCircle className="w-4 h-4 animate-spin" />}
       {!loading && icon && iconPosition === "left" && (

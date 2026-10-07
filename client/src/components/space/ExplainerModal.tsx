@@ -13,6 +13,8 @@ import { useAuth } from "../../hooks/useAuth";
 import toast from "react-hot-toast";
 import { FISH_AUDIO_VOICES, VoicePersonaId } from "@thinkly/shared";
 
+import { usePermissionsAndLimits, MeteredMetric } from "../../hooks/usePermissionsAndLimits";
+
 interface ExplainerModalProps {
   spaceId: string;
   trigger: React.ReactNode;
@@ -28,6 +30,9 @@ export const ExplainerModal = ({ spaceId, trigger }: ExplainerModalProps) => {
   
   const { mutateAsync: generateExplainer, isPending } = useGenerateExplainer();
 
+  const { getLimitStatus, triggerLimitModal } = usePermissionsAndLimits();
+  const explainerLimitStatus = getLimitStatus(MeteredMetric.AUDIO_EXPLAINERS);
+
   // Sync default voice preference when modal opens or user preferences update
   useEffect(() => {
     if (open && user?.preferences?.defaultVoice) {
@@ -36,6 +41,12 @@ export const ExplainerModal = ({ spaceId, trigger }: ExplainerModalProps) => {
   }, [open, user?.preferences?.defaultVoice]);
 
   const handleGenerate = async () => {
+    if (explainerLimitStatus.isReached || explainerLimitStatus.isLocked) {
+      triggerLimitModal("You've reached your daily limit for Audio Explainers.");
+      setOpen(false);
+      return;
+    }
+
     if (!concept.trim()) {
       toast.error("Please enter a concept");
       return;
@@ -46,8 +57,15 @@ export const ExplainerModal = ({ spaceId, trigger }: ExplainerModalProps) => {
       toast.success("Audio explainer is generating!");
       setConcept("");
       setOpen(false);
-    } catch (error) {
-      toast.error("Failed to generate explainer");
+    } catch (error: any) {
+      const isLimitError = error?.response?.status === 403;
+      if (isLimitError) {
+        triggerLimitModal(error?.response?.data?.message || "Audio limit reached.");
+        setOpen(false);
+      } else {
+        // Keep modal open on network or other errors so the user can retry
+        toast.error(error?.response?.data?.error || "Failed to generate explainer. Please try again.");
+      }
     }
   };
 

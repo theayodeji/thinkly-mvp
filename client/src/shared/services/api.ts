@@ -5,14 +5,18 @@ import toast from "react-hot-toast";
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? "http://localhost:4000/api",
   withCredentials: true,
-  headers: { "Content-Type": "application/json" },
 });
 
-// Request interceptor: Attach Guest Device ID
+// Request interceptor: Attach Guest Device ID and set Content-Type
 api.interceptors.request.use((config) => {
   const guestDeviceId = getOrCreateGuestDeviceId();
   if (guestDeviceId) {
     config.headers["X-Guest-Device-Id"] = guestDeviceId;
+  }
+  if (config.data instanceof FormData) {
+    delete config.headers["Content-Type"];
+  } else if (!config.headers["Content-Type"]) {
+    config.headers["Content-Type"] = "application/json";
   }
   return config;
 });
@@ -29,6 +33,7 @@ api.interceptors.response.use(
   async (error: AxiosErrorWithResponse) => {
     const originalRequest = error.config;
     const isLaunchMode = import.meta.env.VITE_APP_MODE === "launch";
+    const requestUrl = originalRequest?.url || "";
 
     // Guest Auth / Limit Reached Prompt Trigger
     const errorCode = error.response?.data?.code;
@@ -43,24 +48,38 @@ api.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    // Account Limit Reached (403)
-    if (error.response?.status === 403) {
-      const errorMsg = error.response?.data?.error || error.response?.data?.message || "Limit reached.";
+    const errorMsg = error.response?.data?.error || error.response?.data?.message || "";
+    const isTokenOrAuthError =
+      errorMsg.toLowerCase().includes("token") ||
+      errorMsg.toLowerCase().includes("unauthorized") ||
+      requestUrl.includes("/auth/");
 
+    // Account Limit Reached (403) - ignore token/auth 403s
+    if (error.response?.status === 403 && !isTokenOrAuthError) {
       if (isLaunchMode) {
         // Full Launch Mode: Open Paystack Upgrade Modal
         const customEvent = new CustomEvent("thinkly:upgrade-modal", {
-          detail: { reason: errorMsg },
+          detail: { reason: errorMsg || "Limit reached." },
         });
         window.dispatchEvent(customEvent);
       } else {
-        // Beta Mode: Show clean Toast notification informing user higher limits are coming soon
-        toast.error(errorMsg);
+        // Beta Mode: Open Beta Limit Modal
+        const customEvent = new CustomEvent("thinkly:beta-limit-modal", {
+          detail: { reason: errorMsg || "Thinkly Beta limit reached. Higher limits are coming soon!" },
+        });
+        window.dispatchEvent(customEvent);
       }
       return Promise.reject(error);
     }
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // Do not attempt token refresh for auth endpoints or if already retried
+    const isAuthEndpoint =
+      requestUrl.includes("/auth/login") ||
+      requestUrl.includes("/auth/register") ||
+      requestUrl.includes("/auth/refresh-token") ||
+      requestUrl.includes("/auth/me");
+
+    if (error.response?.status === 401 && !originalRequest?._retry && !isAuthEndpoint) {
       originalRequest._retry = true;
 
       try {
@@ -70,7 +89,7 @@ api.interceptors.response.use(
         // Retry the original request if refresh is successful
         return api(originalRequest);
       } catch (refreshError) {
-        console.error("Token refresh failed:", refreshError);
+        // Silent catch: token refresh failed for non-auth endpoint
       }
     }
 

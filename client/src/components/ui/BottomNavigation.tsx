@@ -1,14 +1,16 @@
 import { Link, useLocation } from "react-router-dom";
 import { Home, FileText, BarChart2, Settings } from "lucide-react";
+import { useAuth } from "../../hooks/useAuth";
 
 export const BottomNavigation = () => {
   const location = useLocation();
+  const { user } = useAuth();
 
-  // Hide BottomNavigation on Space Detail view (/spaces/:id) so it never covers the chat input or action bar
+  // Hide BottomNavigation on Space Detail view (/spaces/:id) or for unauthenticated/guest trial users
   const isSpaceDetail =
     location.pathname.startsWith("/spaces/") && location.pathname !== "/spaces";
 
-  if (isSpaceDetail) {
+  if (!user || user.isGuest || isSpaceDetail) {
     return null;
   }
 

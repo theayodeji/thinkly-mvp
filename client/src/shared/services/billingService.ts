@@ -4,6 +4,7 @@ import { PlanConfig, PlanTier } from "@thinkly/shared";
 export interface UserPlanStatus {
   userPlan: PlanTier;
   config: PlanConfig;
+  usagesMap?: Record<string, number>;
   dailyAIActionsCount: number;
   lastAIActionDate: string | null;
 }

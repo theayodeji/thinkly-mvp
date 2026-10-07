@@ -82,10 +82,16 @@ export const getCurrentUserPlan = catchAsync(async (req: Request, res: Response)
   
   // Aggregate total AI actions for backward compatibility if needed
   const dailyAIActionsCount = usages.reduce((sum, u) => sum + u.consumedAmount, 0);
+  
+  const usagesMap = usages.reduce((acc, u) => {
+    acc[u.feature] = u.consumedAmount;
+    return acc;
+  }, {} as Record<string, number>);
 
   res.status(200).json({
     userPlan: mappedTier,
     config: planConfig,
+    usagesMap,
     dailyAIActionsCount,
     lastAIActionDate: today,
   });

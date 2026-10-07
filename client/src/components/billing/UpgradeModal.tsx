@@ -107,7 +107,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
               <p className="text-xs text-text-secondary mb-4">{freeConfig.description}</p>
               <ul className="space-y-2 text-xs text-text-secondary">
                 <li className="flex items-center gap-2">✓ Up to {freeConfig.limits.maxActiveSpaces} Active Study Spaces</li>
-                <li className="flex items-center gap-2">✓ Up to {freeConfig.limits.maxDailyAIActions} AI Generations/day</li>
+                <li className="flex items-center gap-2">✓ Up to {freeConfig.limits.maxDailyQuizGenerations} AI Quizzes/day</li>
                 <li className="flex items-center gap-2">✓ Standard TTS Voices</li>
               </ul>
             </div>

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { X, Timer, Play, RotateCcw, Coffee } from "lucide-react";
+import { X, Timer, Play } from "lucide-react";
 import { Button } from "../ui/Button";
 import { AnimatePresence, motion } from "framer-motion";
 import { usePomodoro } from "../../contexts/PomodoroContext";
@@ -9,8 +9,19 @@ interface PomodoroCycleModalProps {
   onClose: () => void;
 }
 
-const PomodoroCycleModal: React.FC<PomodoroCycleModalProps> = ({ isOpen, onClose }) => {
-  const { toggleTimer, resetTimer, switchMode, isActive, formatTime, timeLeft, mode } = usePomodoro();
+const PomodoroCycleModal: React.FC<PomodoroCycleModalProps> = ({
+  isOpen,
+  onClose,
+}) => {
+  const {
+    toggleTimer,
+    resetTimer,
+    switchMode,
+    isActive,
+    formatTime,
+    timeLeft,
+    mode,
+  } = usePomodoro();
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -71,13 +82,14 @@ const PomodoroCycleModal: React.FC<PomodoroCycleModalProps> = ({ isOpen, onClose
             <div className="p-6 space-y-6 text-center">
               {/* Header Icon & Title */}
               <div className="flex flex-col items-center gap-3 pt-2">
-                <div className="w-16 h-16 rounded-2xl bg-primary-100 dark:bg-primary-950/60 border border-primary-200 dark:border-primary-800 text-primary-500 flex items-center justify-center shadow-inner">
-                  <Timer className="w-8 h-8 stroke-[1.75]" />
-                </div>
+                <Timer className="w-16 h-16 text-primary-500" />
                 <div>
-                  <h3 className="text-2xl font-bold text-text">Start a Pomodoro Cycle?</h3>
+                  <h3 className="text-2xl font-bold text-text">
+                    Start a Pomodoro Cycle?
+                  </h3>
                   <p className="text-sm text-text-secondary mt-1 max-w-xs mx-auto">
-                    Supercharge your productivity with a 25-minute study sprint followed by a 5-minute break.
+                    Supercharge your productivity with a 25-minute study sprint
+                    followed by a 5-minute break.
                   </p>
                 </div>
               </div>
@@ -85,9 +97,13 @@ const PomodoroCycleModal: React.FC<PomodoroCycleModalProps> = ({ isOpen, onClose
               {/* Current Timer Status Card */}
               <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-text/10 flex items-center justify-between">
                 <div className="text-left">
-                  <p className="text-xs font-semibold text-text-secondary uppercase tracking-wider">Current Session</p>
+                  <p className="text-xs font-semibold text-text-secondary uppercase tracking-wider">
+                    Current Session
+                  </p>
                   <p className="text-sm font-bold text-text capitalize">
-                    {mode === "work" ? "Focus Session (25m)" : "Break Session (5m)"}
+                    {mode === "work"
+                      ? "Focus Session (25m)"
+                      : "Break Session (5m)"}
                   </p>
                 </div>
                 <div className="text-right">
@@ -104,26 +120,16 @@ const PomodoroCycleModal: React.FC<PomodoroCycleModalProps> = ({ isOpen, onClose
                   className="w-full btn-3d-primary py-3 text-base font-bold flex items-center justify-center gap-2 rounded-xl"
                 >
                   <Play className="w-5 h-5 fill-current" />
-                  Start New 25m Cycle
+                  Start New Cycle
                 </Button>
 
-                <div className="grid grid-cols-2 gap-3">
-                  <Button
-                    variant="neutral"
-                    onClick={handleStartBreak}
-                    className="glass-panel hover:bg-white/20 dark:hover:bg-slate-800/40 py-2.5 text-sm font-semibold flex items-center justify-center gap-1.5 rounded-xl border border-text/10"
-                  >
-                    <Coffee className="w-4 h-4 text-emerald-500" />
-                    5m Break
-                  </Button>
-                  <Button
-                    variant="neutral"
-                    onClick={onClose}
-                    className="glass-panel hover:bg-white/20 dark:hover:bg-slate-800/40 py-2.5 text-sm font-semibold flex items-center justify-center gap-1.5 rounded-xl border border-text/10"
-                  >
-                    Cancel
-                  </Button>
-                </div>
+                <Button
+                  variant="ghost"
+                  onClick={onClose}
+                  className="text-primary-600 font-bold"
+                >
+                  Cancel
+                </Button>
               </div>
             </div>
           </motion.div>

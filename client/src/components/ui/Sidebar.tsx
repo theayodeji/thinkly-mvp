@@ -17,26 +17,49 @@ import {
 import { useAuth } from "../../hooks/useAuth";
 import { Button } from "./Button";
 import { useCreateSpace, useSpaces } from "../../hooks/queries/useSpaces";
+import { usePermissionsAndLimits, MeteredMetric } from "../../hooks/usePermissionsAndLimits";
 
 export const Sidebar = ({ isOpen, toggle }: { isOpen: boolean; toggle: () => void }) => {
-  const { theme } = useTheme();
-  const { logout } = useAuth();
+  const { isDark } = useTheme();
+  const { user, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const { mutateAsync: createSpace } = useCreateSpace();
   const { data: recentSpacesData } = useSpaces();
   const [isCreating, setIsCreating] = useState(false);
 
+  const { getLimitStatus, triggerLimitModal } = usePermissionsAndLimits();
+  // We can't determine current spaces count exactly from here without tracking all spaces, 
+  // but if the limit max is 1, and we have 1 recent space, we know we've reached it.
+  const activeSpacesLimit = getLimitStatus(MeteredMetric.ACTIVE_SPACES);
+
+  // Hide Sidebar completely for unauthenticated or guest trial users
+  if (!user || user.isGuest) {
+    return null;
+  }
+
+  const allSpacesCount = recentSpacesData?.length || 0;
+  const isSpaceLimitReached = allSpacesCount >= activeSpacesLimit.max && activeSpacesLimit.max !== Infinity;
+
   // Take the 4 most recently updated Spaces
   const recentSpaces: any[] = (recentSpacesData || []).slice(0, 4);
 
   const handleCreateSpace = async () => {
+    if (isSpaceLimitReached) {
+      triggerLimitModal("You've reached your maximum limit for active study spaces.");
+      return;
+    }
+
     setIsCreating(true);
     try {
       const newSpace = await createSpace();
       navigate(`/spaces/${newSpace._id}`);
-    } catch (error) {
-      console.error("Failed to create Space:", error);
+    } catch (error: any) {
+      if (error?.response?.status === 403) {
+        triggerLimitModal(error.response.data.message || "Space creation limit reached.");
+      } else {
+        console.error("Failed to create Space:", error);
+      }
     } finally {
       setIsCreating(false);
     }
@@ -59,7 +82,7 @@ export const Sidebar = ({ isOpen, toggle }: { isOpen: boolean; toggle: () => voi
         {isOpen ? (
           <Link to="/dashboard" className="flex items-center gap-2">
             <img
-              src={theme === "dark" ? "/thinkly-light.png" : "/thinkly-black.png"}
+              src={isDark ? "/thinkly-light.png" : "/thinkly-black.png"}
               className="h-10"
               alt="Thinkly Logo"
             />
@@ -67,7 +90,7 @@ export const Sidebar = ({ isOpen, toggle }: { isOpen: boolean; toggle: () => voi
         ) : (
           <Link to="/dashboard">
             <img
-              src={theme === "dark" ? "/brain-light.png" : "/brain-dark.png"}
+              src={isDark ? "/brain-light.png" : "/brain-dark.png"}
               className="h-10"
               alt="Brain Icon"
             />

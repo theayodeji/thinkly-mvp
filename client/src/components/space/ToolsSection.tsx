@@ -6,6 +6,7 @@ import { useGenerateQuiz } from "../../hooks/queries/useQuiz";
 import { useGenerateFlashcards } from "../../hooks/queries/useFlashcards";
 import { ExplainerModal } from "./ExplainerModal";
 import { LearningPathModal } from "./LearningPathModal";
+import { usePermissionsAndLimits, MeteredMetric } from "../../hooks/usePermissionsAndLimits";
 
 const tools = [
   {
@@ -45,16 +46,36 @@ const ToolsSection = () => {
   const { mutateAsync: generateFlashcards, isPending: isFlashcardsLoading } =
     useGenerateFlashcards();
 
-  function handleToolAction(action: string) {
-    switch (action) {
-      case "quiz":
-        if (id) generateQuiz(id);
-        break;
-      case "flashcards":
-        if (id) generateFlashcards(id);
-        return;
-      default:
-        return null;
+  const { getLimitStatus, triggerLimitModal } = usePermissionsAndLimits();
+  const quizLimitStatus = getLimitStatus(MeteredMetric.QUIZZES);
+  const flashcardLimitStatus = getLimitStatus(MeteredMetric.FLASHCARDS);
+
+  async function handleToolAction(action: string) {
+    try {
+      switch (action) {
+        case "quiz":
+          if (quizLimitStatus.isReached || quizLimitStatus.isLocked) {
+            triggerLimitModal("You've reached your daily limit for AI Practice Quizzes.");
+            return;
+          }
+          if (id) await generateQuiz(id);
+          break;
+        case "flashcards":
+          if (flashcardLimitStatus.isReached || flashcardLimitStatus.isLocked) {
+            triggerLimitModal("You've reached your daily limit for Flashcards.");
+            return;
+          }
+          if (id) await generateFlashcards(id);
+          break;
+        default:
+          return null;
+      }
+    } catch (error: any) {
+      if (error?.response?.status === 403) {
+        triggerLimitModal(error?.response?.data?.message || "Limit reached.");
+      } else {
+        console.error(`Failed to generate ${action}:`, error);
+      }
     }
   }
 

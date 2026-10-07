@@ -1,27 +1,42 @@
 import React, { useState } from "react";
 import { FilePlus, Globe, FileQuestion, Timer } from "lucide-react";
 import { Button } from "../ui/Button";
-import { useCreateSpace } from "../../hooks/queries/useSpaces";
+import { useCreateSpace, useSpaces } from "../../hooks/queries/useSpaces";
 import { useNavigate } from "react-router-dom";
 import GlobalQuizModal from "./GlobalQuizModal";
 import PracticeQuizModal from "./PracticeQuizModal";
 import PomodoroCycleModal from "./PomodoroCycleModal";
+import { usePermissionsAndLimits, MeteredMetric } from "../../hooks/usePermissionsAndLimits";
 
 const QuickActions = () => {
   const { mutateAsync: createSpace } = useCreateSpace();
+  const { data: spacesData } = useSpaces();
   const navigate = useNavigate();
   const [isCreating, setIsCreating] = useState(false);
   const [showGlobalQuizModal, setShowGlobalQuizModal] = useState(false);
   const [showPracticeQuizModal, setShowPracticeQuizModal] = useState(false);
   const [showPomodoroModal, setShowPomodoroModal] = useState(false);
 
+  const { getLimitStatus, triggerLimitModal } = usePermissionsAndLimits();
+  const activeSpacesLimit = getLimitStatus(MeteredMetric.ACTIVE_SPACES);
+  const isSpaceLimitReached = (spacesData?.length || 0) >= activeSpacesLimit.max && activeSpacesLimit.max !== Infinity;
+
   const handleCreateSpace = async () => {
+    if (isSpaceLimitReached) {
+      triggerLimitModal("You've reached your maximum limit for active study spaces.");
+      return;
+    }
+    
     setIsCreating(true);
     try {
       const newSpace = await createSpace();
       navigate(`/spaces/${newSpace._id}`);
-    } catch (error) {
-      console.error("Failed to create Space:", error);
+    } catch (error: any) {
+      if (error?.response?.status === 403) {
+        triggerLimitModal(error.response.data.message || "Space creation limit reached.");
+      } else {
+        console.error("Failed to create Space:", error);
+      }
     } finally {
       setIsCreating(false);
     }

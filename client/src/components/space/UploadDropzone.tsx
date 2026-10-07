@@ -7,6 +7,7 @@ import { useParams } from "react-router-dom";
 import { useUploadSource } from "../../hooks/queries/useSpaces";
 import toast from "react-hot-toast";
 import { SourceType } from "../../shared/types/source";
+import { getMaxUploadSizeBytes } from "@thinkly/shared";
 
 const UploadDropzone = ({
   setIsOpen,
@@ -17,6 +18,8 @@ const UploadDropzone = ({
   const { id } = useParams<{ id: string }>();
   const { mutateAsync: uploadSource } = useUploadSource();
   const [isUploading, setIsUploading] = useState(false);
+  const maxUploadBytes = getMaxUploadSizeBytes();
+  const maxUploadMB = Math.round(maxUploadBytes / (1024 * 1024));
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     setAcceptedFiles(acceptedFiles);
@@ -30,11 +33,11 @@ const UploadDropzone = ({
         [".docx"],
     },
     maxFiles: 1,
-    maxSize: 5 * 1024 * 1024, // 5MB limit on the client side
+    maxSize: maxUploadBytes,
     onDropRejected: (fileRejections) => {
       const error = fileRejections[0]?.errors[0];
       if (error?.code === "file-too-large") {
-        toast.error("File is larger than 5MB");
+        toast.error(`File is larger than ${maxUploadMB}MB`);
       } else {
         toast.error("Invalid file");
       }

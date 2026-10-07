@@ -6,6 +6,8 @@ import { useGenerateLearningPath } from "../../hooks/queries/useLearningPath";
 import toast from "react-hot-toast";
 import LearningPathView from "./LearningPathView";
 
+import { usePermissionsAndLimits, MeteredMetric } from "../../hooks/usePermissionsAndLimits";
+
 interface LearningPathModalProps {
   spaceId: string;
   trigger: React.ReactNode;
@@ -16,7 +18,16 @@ export const LearningPathModal = ({ spaceId, trigger }: LearningPathModalProps) 
   const [topic, setTopic] = useState("");
   const { mutateAsync: generatePath, isPending } = useGenerateLearningPath();
 
+  const { getLimitStatus, triggerLimitModal } = usePermissionsAndLimits();
+  const pathLimitStatus = getLimitStatus(MeteredMetric.LEARNING_PATHS);
+
   const handleGenerate = async () => {
+    if (pathLimitStatus.isReached || pathLimitStatus.isLocked) {
+      triggerLimitModal("You've reached your daily limit for Learning Paths.");
+      setOpen(false);
+      return;
+    }
+
     if (!topic.trim()) {
       toast.error("Please enter a topic");
       return;
@@ -26,9 +37,15 @@ export const LearningPathModal = ({ spaceId, trigger }: LearningPathModalProps) 
       await generatePath({ spaceId, topic });
       toast.success("Learning path generated!");
       setTopic("");
-      setOpen(false); // Can optionally stay open to show it, or we show it somewhere else.
-    } catch (error) {
-      toast.error("Failed to generate learning path");
+      setOpen(false);
+    } catch (error: any) {
+      const isLimitError = error?.response?.status === 403;
+      if (isLimitError) {
+        triggerLimitModal(error?.response?.data?.message || "Learning Path limit reached.");
+        setOpen(false);
+      } else {
+        toast.error("Failed to generate learning path");
+      }
     }
   };
 
@@ -75,7 +92,7 @@ export const LearningPathModal = ({ spaceId, trigger }: LearningPathModalProps) 
                     {/* Body */}
                     <div className="p-6 flex flex-col gap-5">
                       <p className="text-sm text-text-secondary leading-relaxed">
-                        What topic would you like to learn? We'll create a structured, step-by-step roadmap from beginner to advanced based on this space.
+                        What topic would you like to learn? We&apos;ll create a structured, step-by-step roadmap from beginner to advanced based on this space.
                       </p>
                       <input
                         value={topic}

@@ -1,11 +1,13 @@
 'use client';
 
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { Theme, THEME_KEY } from './theme.types';
+import { Theme, ResolvedTheme, THEME_KEY } from './theme.types';
 import { useLocalStorage } from '../hooks/utils/useLocalStorage';
 
 type ThemeContextType = {
   theme: Theme;
+  resolvedTheme: ResolvedTheme;
+  isDark: boolean;
   setTheme: (theme: Theme) => void;
   toggleTheme: () => void;
 };
@@ -14,23 +16,26 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useLocalStorage<Theme>(THEME_KEY, 'system');
+  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>('light');
   const [mounted, setMounted] = useState(false);
 
-  // Update the theme class on the HTML element
+  // Update the theme class on the HTML element and calculate resolvedTheme
   const updateThemeClass = useCallback((theme: Theme) => {
     const root = window.document.documentElement;
+    let isDarkMode = false;
     
     if (theme === 'system') {
-      const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      if (isDark) {
-        root.classList.add('dark');
-      } else {
-        root.classList.remove('dark');
-      }
-    } else if (theme === 'dark') {
+      isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    } else {
+      isDarkMode = theme === 'dark';
+    }
+
+    if (isDarkMode) {
       root.classList.add('dark');
+      setResolvedTheme('dark');
     } else {
       root.classList.remove('dark');
+      setResolvedTheme('light');
     }
   }, []);
 
@@ -49,8 +54,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       const root = window.document.documentElement;
       if (e.matches) {
         root.classList.add('dark');
+        setResolvedTheme('dark');
       } else {
         root.classList.remove('dark');
+        setResolvedTheme('light');
       }
     };
     
@@ -64,9 +71,15 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     updateThemeClass(newTheme);
   }, [updateThemeClass, setThemeState]);
 
-  // Toggle between light and dark (skips system theme)
+  // Toggle through themes: light -> dark -> system -> light
   const toggleTheme = useCallback(() => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
+    if (theme === 'light') {
+      setTheme('dark');
+    } else if (theme === 'dark') {
+      setTheme('system');
+    } else {
+      setTheme('light');
+    }
   }, [theme, setTheme]);
 
   // Prevent flash of wrong theme on initial render
@@ -78,6 +91,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     <ThemeContext.Provider 
       value={{ 
         theme, 
+        resolvedTheme,
+        isDark: resolvedTheme === 'dark',
         setTheme, 
         toggleTheme 
       }}
