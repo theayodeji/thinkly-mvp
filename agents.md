@@ -44,7 +44,10 @@ We operate using an autonomous multi-agent architecture managed by a lead Archit
 - **Backend Agent (`backend_developer`)**: Responsible for Node.js, Express, MongoDB, and maintaining Zod schemas. **Strict Boundary:** May read any file, but can ONLY write to `server/` (excluding test files) and `packages/shared/`.
 - **QA Agent (`qa_engineer`)**: Responsible for rigorous testing (Jest / React Testing Library), edge-case identification, verifying features, and reviewing code before any merges. **Strict Boundary:** May read any file, but can ONLY write to test files (e.g. `*.test.ts`, `tests/` directories).
 
-**Branching Strategy:**
-1. **Branch Isolation:** `main` (production) and `render-beta` (staging) are strictly isolated.
-2. **Feature Branches:** All new development must occur on dedicated feature branches (e.g., `feature/user-auth`) branched off `main`.
-3. **Test Merging:** Since we do not use traditional PRs, code must be verified and "test merged" locally to guarantee no conflicts or breakages before officially merging to `main` or `render-beta`.
+**Branching & Environment Strategy:**
+1. **Single Source of Truth (`main`):** All new features, bug fixes, and development land on `main`. We do NOT maintain long-lived divergent application code across different branches.
+2. **Feature Branches:** Short-lived feature branches (e.g., `feature/user-auth`) branch off `main` and merge back into `main` after verification.
+3. **Environment-Driven Configuration:**
+   - **Staging / Render Beta:** Deploys `main` (or a synced `staging` branch) with `APP_MODE=beta`.
+   - **Production / Launch:** Deploys `main` with `APP_MODE=launch`.
+   - Differences between environments (e.g., generous beta limits vs. tiered pricing limits) are controlled purely via environment configuration (`packages/shared/src/constants/plans.ts`), not divergent code bases.

@@ -6,6 +6,8 @@ import FloatingTimer from '../../components/ui/FloatingTimer';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useUIStore } from '../../store/uiStore';
 
+import { EmailVerificationBanner } from '../../components/auth/EmailVerificationBanner';
+
 const MainLayout = () => {
   const { theme } = useTheme();
   const { isSidebarOpen, toggleSidebar } = useUIStore();
@@ -15,6 +17,7 @@ const MainLayout = () => {
       <Sidebar isOpen={isSidebarOpen} toggle={toggleSidebar} />
       <div className="relative flex-1 flex flex-col min-w-0 max-h-screen">
         <Navbar />
+        <EmailVerificationBanner />
         <main className="flex-1 overflow-y-auto">
           <Outlet />
         </main>

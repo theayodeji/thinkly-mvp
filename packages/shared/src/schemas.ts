@@ -90,6 +90,7 @@ export const UserSchema = z
     _id: z.string().optional(),
     name: z.string(),
     email: z.string().email(),
+    isEmailVerified: z.boolean().optional(),
     avatar: z.string().optional(),
     streaks: z
       .object({
@@ -247,15 +248,36 @@ export const registerWithOtpSchema = z.object({
     name: z.string().min(2, "Name must be at least 2 characters"),
     email: z.string().email("Invalid email address"),
     password: z.string().min(6, "Password must be at least 6 characters"),
-    otp: z.string().length(6, "OTP must be 6 digits"),
+    otp: z.string().length(6, "OTP must be 6 digits").optional(),
   }),
 });
 
 export const resetPasswordWithOtpSchema = z.object({
   body: z.object({
-    email: z.string().email("Invalid email address"),
-    otp: z.string().length(6, "OTP must be 6 digits"),
+    email: z.string().email("Invalid email address").optional(),
+    otp: z.string().length(6, "OTP must be 6 digits").optional(),
+    token: z.string().optional(),
     newPassword: z.string().min(6, "Password must be at least 6 characters"),
   }),
 });
+
+export const resetPasswordWithTokenSchema = z.object({
+  body: z.object({
+    token: z.string().min(1, "Reset token is required"),
+    newPassword: z.string().min(6, "Password must be at least 6 characters"),
+  }),
+});
+
+export const verifyEmailTokenSchema = z.object({
+  body: z.object({
+    token: z.string().min(1, "Verification token is required"),
+  }),
+});
+
+export const forgotPasswordSchema = z.object({
+  body: z.object({
+    email: z.string().email("Invalid email address"),
+  }),
+});
+
 

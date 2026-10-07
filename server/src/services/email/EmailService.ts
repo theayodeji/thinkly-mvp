@@ -6,6 +6,7 @@ import { GmailProvider } from "./GmailProvider.js";
 import { OTPEmail } from "../../emails/OTPEmail.js";
 import { WelcomeEmail } from "../../emails/WelcomeEmail.js";
 import { ResetPasswordEmail } from "../../emails/ResetPasswordEmail.js";
+import { VerifyEmailEmail } from "../../emails/VerifyEmailEmail.js";
 import { WeeklyQuizPromoEmail } from "../../emails/WeeklyQuizPromoEmail.js";
 
 class EmailService {
@@ -32,8 +33,15 @@ class EmailService {
     return this.provider.sendEmail(to, subject, html);
   }
 
+  async sendEmailVerification(to: string, token: string, name?: string): Promise<void> {
+    const verifyLink = `${process.env.FRONTEND_URL || "http://localhost:5173"}/verify-email?token=${token}`;
+    const subject = "Verify Your Thinkly Email Address";
+    const html = await render(React.createElement(VerifyEmailEmail, { verifyLink, name }));
+    return this.provider.sendEmail(to, subject, html);
+  }
+
   async sendPasswordReset(to: string, token: string): Promise<void> {
-    const resetLink = `${process.env.FRONTEND_URL || "http://localhost:5173"}/reset-password?token=${token}`;
+    const resetLink = `${process.env.FRONTEND_URL || "http://localhost:5173"}/auth/reset-password?token=${token}`;
     const subject = "Reset Your Thinkly Password";
     const html = await render(React.createElement(ResetPasswordEmail, { resetLink }));
     return this.provider.sendEmail(to, subject, html);

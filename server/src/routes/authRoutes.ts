@@ -13,6 +13,9 @@ import {
   sendOTPHandler,
   verifyOTPHandler,
   changePasswordHandler,
+  resendVerificationHandler,
+  verifyEmailHandler,
+  verifyResetTokenHandler,
 } from "../controllers/authController.js";
 import { authenticateJWT } from "../middleware/auth.js";
 import { catchAsync } from "../utils/catchAsync.js";
@@ -23,6 +26,7 @@ import {
   verifyOtpSchema,
   registerWithOtpSchema,
   resetPasswordWithOtpSchema,
+  verifyEmailTokenSchema,
 } from "@thinkly/shared";
 import { authLimiter } from "../middleware/rateLimiter.js";
 
@@ -32,11 +36,16 @@ const router = express.Router();
 router.post("/send-otp", authLimiter, validateRequest(sendOtpSchema), sendOTPHandler);
 router.post("/verify-otp", authLimiter, validateRequest(verifyOtpSchema), verifyOTPHandler);
 
+// Link Verification operations
+router.post("/resend-verification", authLimiter, resendVerificationHandler);
+router.post("/verify-email", authLimiter, validateRequest(verifyEmailTokenSchema), verifyEmailHandler);
+router.post("/verify-reset-token", authLimiter, verifyResetTokenHandler);
+
 // Regular email/password auth
 router.post("/register", authLimiter, validateRequest(registerWithOtpSchema), register);
 router.post("/login", authLimiter, validateRequest(loginSchema), login);
 router.post("/forgot-password", authLimiter, forgotPassword);
-router.post("/reset-password", authLimiter, validateRequest(resetPasswordWithOtpSchema), resetPassword);
+router.post("/reset-password", authLimiter, resetPassword);
 router.post("/change-password", authenticateJWT, changePasswordHandler);
 
 router.post("/logout", logout);

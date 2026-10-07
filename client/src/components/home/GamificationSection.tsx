@@ -22,7 +22,7 @@ const stats = [
 const GamificationSection = () => {
   return (
     <motion.section 
-      className="px-10 py-20" 
+      className="px-4 sm:px-8 py-8 sm:py-12 md:py-20" 
       id="gamification"
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ 
@@ -51,13 +51,13 @@ const GamificationSection = () => {
           <h2 className="text-4xl md:text-5xl font-bold text-primary-400 tracking-tight mb-4">
             Make Learning Fun
           </h2>
-          <p className="text-lg text-text-secondary mt-4 max-w-3xl mx-auto mb-12">
+          <p className="text-lg text-text-secondary mt-4 max-w-3xl mx-auto mb-6 sm:mb-8 md:mb-12">
             Earn medals, collect rewards, and track your progress. Our
             gamified experience keeps you motivated and engaged.
           </p>
         </motion.div>
         <motion.div 
-          className="grid grid-cols-1 md:grid-cols-3 gap-8"
+          className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-50px 0px -100px 0px" }}
@@ -75,7 +75,7 @@ const GamificationSection = () => {
           {stats.map((stat, index) => (
             <motion.div 
               key={index}
-              className="flex flex-col items-center gap-4 rounded-2xl p-8 glass-panel text-text shadow-lg"
+              className="flex flex-col items-center gap-4 rounded-2xl p-5 sm:p-8 glass-panel text-text shadow-lg"
               initial={{ opacity: 0, y: 30, scale: 0.95 }}
               whileInView={{ 
                 opacity: 1, 

@@ -65,7 +65,7 @@ const features = [
 const FeaturesSection = () => {
   return (
     <motion.section
-      className="px-10 py-20"
+      className="px-4 sm:px-8 py-8 sm:py-12 md:py-20"
       id="features"
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
@@ -73,7 +73,7 @@ const FeaturesSection = () => {
     >
       <div className="max-w-6xl mx-auto">
         <motion.div
-          className="text-center mb-12"
+          className="text-center mb-6 sm:mb-8 md:mb-12"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-50px" }}
@@ -90,7 +90,7 @@ const FeaturesSection = () => {
           </p>
         </motion.div>
         <motion.div
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8"
           variants={container}
           initial="hidden"
           whileInView="show"
@@ -99,7 +99,7 @@ const FeaturesSection = () => {
           {features.map((feature, index) => (
             <motion.div
               key={index}
-              className="flex flex-col gap-4 rounded-2xl glass-panel p-6 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300"
+              className="flex flex-col gap-4 rounded-2xl glass-panel p-4 sm:p-6 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300"
               variants={item}
               whileHover={{ scale: 1.03, transition: { duration: 0.2 } }}
             >

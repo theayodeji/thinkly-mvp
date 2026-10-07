@@ -5,7 +5,9 @@ import { Lock, Sparkles, UserPlus, LogIn, X } from "lucide-react";
 
 export const AuthPromptModal: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [reason, setReason] = useState("Sign in or create a free account to continue learning.");
+  const [reason, setReason] = useState(
+    "Sign in or create a free account to continue learning.",
+  );
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -69,7 +71,7 @@ export const AuthPromptModal: React.FC = () => {
         </div>
 
         <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-primary-100 text-primary-700 dark:bg-primary-950/60 dark:text-primary-300 mb-2">
-          Guest Trial Limit Reached
+          You've Hit The Trial Limit!
         </span>
 
         <h2 className="text-2xl font-black tracking-tight text-text-primary mb-2">

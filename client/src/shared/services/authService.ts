@@ -12,7 +12,7 @@ export interface RegisterCredentials {
   name: string;
   email: string;
   password?: string;
-  otp: string;
+  otp?: string;
 }
 
 export const authService = {
@@ -31,6 +31,21 @@ export const authService = {
     return response.data;
   },
 
+  resendVerification: async (email?: string): Promise<{ message: string }> => {
+    const response = await api.post("/auth/resend-verification", { email });
+    return response.data;
+  },
+
+  verifyEmail: async (token: string): Promise<{ message: string; user?: User }> => {
+    const response = await api.post("/auth/verify-email", { token });
+    return response.data;
+  },
+
+  verifyResetToken: async (token: string): Promise<{ message: string; email?: string }> => {
+    const response = await api.post("/auth/verify-reset-token", { token });
+    return response.data;
+  },
+
   register: async (credentials: RegisterCredentials): Promise<{ user: User }> => {
     const response = await api.post("/auth/register", credentials);
     return { user: UserSchema.parse(response.data.user) as User };
@@ -46,12 +61,12 @@ export const authService = {
     return response.data;
   },
 
-  resetPassword: async (data: { email: string; otp: string; newPassword: string }): Promise<{ message: string }> => {
+  resetPassword: async (data: { email?: string; otp?: string; token?: string; newPassword: string }): Promise<{ message: string }> => {
     const response = await api.post("/auth/reset-password", data);
     return response.data;
   },
 
-  changePassword: async (data: { currentPassword?: string; newPassword: string; otp?: string }): Promise<{ message: string }> => {
+  changePassword: async (data: { currentPassword?: string; newPassword: string }): Promise<{ message: string }> => {
     const response = await api.post("/auth/change-password", data);
     return response.data;
   },

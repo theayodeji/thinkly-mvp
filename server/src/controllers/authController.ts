@@ -7,10 +7,13 @@ import {
   registerUser,
   loginUser,
   requestPasswordReset,
-  confirmPasswordResetWithOTP,
+  confirmPasswordResetWithToken,
   sendOTP,
   verifyOTP,
   changePassword,
+  resendEmailVerification,
+  verifyEmailWithToken,
+  verifyResetToken,
 } from "../services/identity/auth/credentials.js";
 import { verifyUserAuth, refreshUserToken } from "../services/identity/auth/session.js";
 import { handleGoogleCallback } from "../services/identity/auth/oauth.js";
@@ -25,13 +28,29 @@ export const verifyOTPHandler = catchAsync(async (req: Request, res: Response) =
   res.status(200).json(result);
 });
 
+export const resendVerificationHandler = catchAsync(async (req: Request, res: Response) => {
+  const identifier = { userId: req.userId, email: req.body?.email };
+  const result = await resendEmailVerification(identifier);
+  res.status(200).json(result);
+});
+
+export const verifyEmailHandler = catchAsync(async (req: Request, res: Response) => {
+  const result = await verifyEmailWithToken(req.body.token);
+  res.status(200).json(result);
+});
+
+export const verifyResetTokenHandler = catchAsync(async (req: Request, res: Response) => {
+  const result = await verifyResetToken(req.body.token || (req.query.token as string));
+  res.status(200).json(result);
+});
+
 export const forgotPassword = catchAsync(async (req: Request, res: Response) => {
   const result = await requestPasswordReset(req.body.email);
   res.status(200).json(result);
 });
 
 export const resetPassword = catchAsync(async (req: Request, res: Response) => {
-  const result = await confirmPasswordResetWithOTP(req.body);
+  const result = await confirmPasswordResetWithToken(req.body);
   res.status(200).json(result);
 });
 
@@ -49,6 +68,7 @@ export const register = catchAsync(async (req: Request, res: Response) => {
       id: result.user._id,
       name: result.user.name,
       email: result.user.email,
+      isEmailVerified: result.user.isEmailVerified,
       streaks: result.user.streaks,
       badges: result.user.badges,
     },
@@ -65,6 +85,7 @@ export const login = catchAsync(async (req: Request, res: Response) => {
       id: result.user._id,
       name: result.user.name,
       email: result.user.email,
+      isEmailVerified: result.user.isEmailVerified,
       streaks: result.user.streaks,
       badges: result.user.badges,
     },

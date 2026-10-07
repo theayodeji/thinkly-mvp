@@ -35,13 +35,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     fetchUser();
   }, []);
 
-  const register = useCallback(async (email: string, password: string, name: string, otp: string) => {
+  const register = useCallback(async (email: string, password: string, name: string, otp?: string) => {
     setIsLoggingIn(true);
     try {
       const { data: { user } } = await api.post("/auth/register", { email, password, name, otp });
       setUser(user);
       navigate("/dashboard");
-      toast.success("Registered successfully");
+      toast.success("Account created! A verification link has been sent to your email.");
     } catch (error: unknown) {
       const axiosError = error as AxiosErrorWithResponse;
       toast.error(axiosError.response?.data.message || axiosError.response?.data.error || "Registration failed");

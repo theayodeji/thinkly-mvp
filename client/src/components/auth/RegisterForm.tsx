@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { registerSchema, RegisterSchema } from "../../shared/schemas/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -7,51 +7,21 @@ import { TextInput } from "../ui/TextInput";
 import { Button } from "../ui/Button";
 import { Link } from "react-router-dom";
 import GoogleAuthButton from "./GoogleAuthButton";
-import { OTPVerificationModal } from "./OTPVerificationModal";
-import { authService } from "../../shared/services/authService";
-import { OTPType } from "@thinkly/shared";
-import toast from "react-hot-toast";
 
 const RegisterForm = () => {
   const {
     register,
     handleSubmit,
-    getValues,
     formState: { errors },
   } = useForm<RegisterSchema>({
     resolver: zodResolver(registerSchema),
   });
 
   const { register: registerUser, isLoggingIn } = useAuth();
-  const [showOtpModal, setShowOtpModal] = useState(false);
-  const [isSendingOtp, setIsSendingOtp] = useState(false);
-  const [pendingFormData, setPendingFormData] = useState<RegisterSchema | null>(null);
 
   const onSubmitForm = async (data: RegisterSchema) => {
     try {
-      setIsSendingOtp(true);
-      setPendingFormData(data);
-      await authService.sendOTP(data.email, OTPType.EMAIL_VERIFICATION);
-      toast.success("Verification code sent to your email!");
-      setShowOtpModal(true);
-    } catch (err: any) {
-      const msg = err.response?.data?.error || err.response?.data?.message || err.message || "Failed to send verification code";
-      toast.error(msg);
-    } finally {
-      setIsSendingOtp(false);
-    }
-  };
-
-  const handleVerifyOtp = async (otp: string) => {
-    if (!pendingFormData) return;
-    try {
-      await registerUser(
-        pendingFormData.email,
-        pendingFormData.password,
-        pendingFormData.name,
-        otp
-      );
-      setShowOtpModal(false);
+      await registerUser(data.email, data.password, data.name);
     } catch (err: any) {
       // Error handled by AuthContext toast
     }
@@ -107,8 +77,8 @@ const RegisterForm = () => {
           variant="primary"
           size="md"
           type="submit"
-          loading={isSendingOtp}
-          disabled={isSendingOtp || !!errors.email || !!errors.password || !!errors.confirmPassword}
+          loading={isLoggingIn}
+          disabled={isLoggingIn || !!errors.email || !!errors.password || !!errors.confirmPassword}
         >
           Register
         </Button>
@@ -124,19 +94,6 @@ const RegisterForm = () => {
       </form>
       <p className="text-sm mt-4">OR</p>
       <GoogleAuthButton />
-
-      {pendingFormData && (
-        <OTPVerificationModal
-          isOpen={showOtpModal}
-          email={pendingFormData.email}
-          type={OTPType.EMAIL_VERIFICATION}
-          title="Verify Your Email"
-          description="Enter the 6-digit code sent to your email to complete registration."
-          onVerify={handleVerifyOtp}
-          onClose={() => setShowOtpModal(false)}
-          isLoading={isLoggingIn}
-        />
-      )}
     </div>
   );
 };

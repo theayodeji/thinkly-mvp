@@ -53,7 +53,7 @@ const SpacesGrid = () => {
 
   return (
     <div className="space-y-8">
-      <div className="flex justify-end mb-6">
+      <div className="flex md:justify-end mb-6">
         <div className="w-full max-w-xs">
           <SearchBar onSearch={handleSearch} placeholder="Search spaces..." />
         </div>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { X, Globe, Clock, Trophy, Medal } from "lucide-react";
 import { Button } from "../ui/Button";
 import { AnimatePresence, motion } from "framer-motion";
@@ -9,68 +9,92 @@ interface GlobalQuizModalProps {
 }
 
 const GlobalQuizModal: React.FC<GlobalQuizModalProps> = ({ isOpen, onClose }) => {
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isOpen) {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
+
   return (
     <AnimatePresence>
       {isOpen && (
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-black/70 h-[100dvh] w-[100vw]"
+          onClick={onClose}
+          className="fixed inset-0 z-[999] flex items-center justify-center p-3 sm:p-4 bg-black/70 backdrop-blur-xs min-h-[100dvh] w-screen"
         >
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            initial={{ opacity: 0, scale: 0.95, y: 15 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            exit={{ opacity: 0, scale: 0.95, y: 15 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="w-full max-w-lg overflow-hidden bg-white dark:bg-slate-900 rounded-2xl shadow-2xl relative"
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-md sm:max-w-lg overflow-hidden bg-white dark:bg-slate-900 rounded-2xl shadow-2xl relative max-h-[90vh] flex flex-col border border-white/10"
           >
+            {/* Close Button */}
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 p-2 text-white hover:bg-white/20 rounded-full transition-colors z-10"
+              aria-label="Close modal"
+              className="absolute top-3 right-3 p-1.5 text-white/90 hover:text-white bg-black/20 hover:bg-black/40 rounded-full transition-colors z-20"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
-            
-            <div className="relative h-32 bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center">
-              <Globe className="w-16 h-16 text-white/20 absolute right-4 bottom-[-10px] transform rotate-12" />
-              <h2 className="text-3xl font-extrabold text-white text-center tracking-tight">
+
+            {/* Header Banner */}
+            <div className="relative h-24 sm:h-28 bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center px-6 overflow-hidden flex-shrink-0">
+              <Globe className="w-20 h-20 text-white/15 absolute right-2 -bottom-2 transform rotate-12 pointer-events-none" />
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white text-center tracking-tight z-10">
                 Global Quiz Event
               </h2>
             </div>
-            
-            <div className="p-6 space-y-6">
-              <div className="text-center space-y-2">
-                <p className="text-lg font-semibold text-text">
+
+            {/* Modal Body */}
+            <div className="p-4 sm:p-6 space-y-4 sm:space-y-5 overflow-y-auto">
+              <div className="text-center space-y-1">
+                <p className="text-base sm:text-lg font-bold text-text">
                   Coming Soon! Get ready to test your knowledge.
                 </p>
-                <p className="text-sm text-text-secondary">
+                <p className="text-xs sm:text-sm text-text-secondary leading-relaxed">
                   Join our weekly global event to compete with learners worldwide in various categories.
                 </p>
               </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="flex flex-col items-center text-center p-3 rounded-xl bg-primary-500/5 border border-primary-500/10">
-                  <Clock className="w-6 h-6 text-primary-500 mb-2" />
-                  <h4 className="font-semibold text-sm">Time Limit</h4>
-                  <p className="text-xs text-text-secondary">Race against the clock in allotted time slots.</p>
+
+              {/* 3 Compact Feature Cards (3-column side-by-side even on mobile) */}
+              <div className="grid grid-cols-3 gap-2 sm:gap-3 pt-1">
+                <div className="flex flex-col items-center text-center p-2.5 sm:p-3 rounded-xl bg-primary-500/10 dark:bg-primary-500/15 border border-primary-500/20">
+                  <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-primary-500 mb-1.5" />
+                  <h4 className="font-bold text-xs sm:text-sm text-text">Time Limit</h4>
+                  <p className="text-[10px] sm:text-xs text-text-secondary mt-0.5 leading-tight">
+                    Race against the clock
+                  </p>
                 </div>
-                <div className="flex flex-col items-center text-center p-3 rounded-xl bg-primary-500/5 border border-primary-500/10">
-                  <Trophy className="w-6 h-6 text-primary-500 mb-2" />
-                  <h4 className="font-semibold text-sm">Leaderboards</h4>
-                  <p className="text-xs text-text-secondary">Rank high globally and show off your skills.</p>
+                <div className="flex flex-col items-center text-center p-2.5 sm:p-3 rounded-xl bg-primary-500/10 dark:bg-primary-500/15 border border-primary-500/20">
+                  <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-primary-500 mb-1.5" />
+                  <h4 className="font-bold text-xs sm:text-sm text-text">Leaderboards</h4>
+                  <p className="text-[10px] sm:text-xs text-text-secondary mt-0.5 leading-tight">
+                    Rank high globally
+                  </p>
                 </div>
-                <div className="flex flex-col items-center text-center p-3 rounded-xl bg-primary-500/5 border border-primary-500/10">
-                  <Medal className="w-6 h-6 text-primary-500 mb-2" />
-                  <h4 className="font-semibold text-sm">Earn Perks</h4>
-                  <p className="text-xs text-text-secondary">Win exclusive rewards and profile badges.</p>
+                <div className="flex flex-col items-center text-center p-2.5 sm:p-3 rounded-xl bg-primary-500/10 dark:bg-primary-500/15 border border-primary-500/20">
+                  <Medal className="w-5 h-5 sm:w-6 sm:h-6 text-primary-500 mb-1.5" />
+                  <h4 className="font-bold text-xs sm:text-sm text-text">Earn Perks</h4>
+                  <p className="text-[10px] sm:text-xs text-text-secondary mt-0.5 leading-tight">
+                    Win profile badges
+                  </p>
                 </div>
               </div>
-              
-              <div className="pt-4">
+
+              {/* Primary Action Button */}
+              <div className="pt-2">
                 <Button
                   onClick={onClose}
-                  className="w-full btn-3d-primary py-3"
+                  className="w-full btn-3d-primary py-2.5 sm:py-3 text-sm sm:text-base font-bold rounded-xl"
                 >
                   Got it!
                 </Button>

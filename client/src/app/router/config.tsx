@@ -17,6 +17,7 @@ import InDevelopment from "../../pages/InDevelopment";
 import Settings from "../../pages/Settings";
 import ForgotPassword from "../../pages/Auth/ForgotPassword";
 import ResetPassword from "../../pages/Auth/ResetPassword";
+import VerifyEmail from "../../pages/Auth/VerifyEmail";
 
 export const routeConfig: RouteConfig[] = [
   {
@@ -37,6 +38,8 @@ export const routeConfig: RouteConfig[] = [
         protected: false,
       },
       { path: routes.settings, element: <Settings />, protected: true },
+      { path: "/statistics", element: <InDevelopment />, protected: true },
+      { path: "/flashcards", element: <InDevelopment />, protected: true },
     ],
   },
   {
@@ -46,6 +49,9 @@ export const routeConfig: RouteConfig[] = [
       { path: routes.auth.register, element: <Register />, protected: false },
       { path: routes.auth.forgotPassword, element: <ForgotPassword />, protected: false },
       { path: routes.auth.resetPassword, element: <ResetPassword />, protected: false },
+      { path: "/reset-password", element: <ResetPassword />, protected: false },
+      { path: routes.auth.verifyEmail, element: <VerifyEmail />, protected: false },
+      { path: "/verify-email", element: <VerifyEmail />, protected: false },
     ],
   },
 ];

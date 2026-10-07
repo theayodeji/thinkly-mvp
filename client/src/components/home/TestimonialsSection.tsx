@@ -24,7 +24,7 @@ const testimonials = [
 const TestimonialsSection = () => {
   return (
     <motion.section 
-      className="px-10 py-20" 
+      className="px-4 sm:px-8 py-8 sm:py-12 md:py-20" 
       id="testimonials"
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ 
@@ -39,7 +39,7 @@ const TestimonialsSection = () => {
     >
       <div className="max-w-6xl mx-auto">
         <motion.div 
-          className="text-center mb-16"
+          className="text-center mb-6 sm:mb-10 md:mb-16"
           initial={{ opacity: 0, y: 15 }}
           whileInView={{ 
             opacity: 1, 
@@ -56,7 +56,7 @@ const TestimonialsSection = () => {
           </h2>
         </motion.div>
         <motion.div 
-          className="grid grid-cols-1 lg:grid-cols-3 gap-8"
+          className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-50px 0px -100px 0px" }}
@@ -74,7 +74,7 @@ const TestimonialsSection = () => {
           {testimonials.map((testimonial, index) => (
             <motion.div 
               key={index} 
-              className="flex flex-col gap-6 rounded-2xl glass-panel p-8 shadow-lg hover:shadow-xl transition-shadow duration-300"
+              className="flex flex-col gap-4 sm:gap-6 rounded-2xl glass-panel p-5 sm:p-8 shadow-lg hover:shadow-xl transition-shadow duration-300"
               initial={{ opacity: 0, y: 30, scale: 0.98 }}
               whileInView={{ 
                 opacity: 1, 

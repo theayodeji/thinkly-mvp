@@ -44,6 +44,9 @@ export interface IUser {
   lastAudioActionDate?: Date;
   resetPasswordToken?: string;
   resetPasswordExpires?: Date;
+  isEmailVerified?: boolean;
+  emailVerificationToken?: string;
+  emailVerificationExpires?: Date;
   createdAt: Date;
   updatedAt: Date;
 }

@@ -57,6 +57,9 @@ const userSchema = new Schema<IUser, IUserModel>(
     lastAudioActionDate: Date,
     resetPasswordToken: String,
     resetPasswordExpires: Date,
+    isEmailVerified: { type: Boolean, default: false },
+    emailVerificationToken: String,
+    emailVerificationExpires: Date,
   },
   {
     timestamps: true,
