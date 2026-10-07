@@ -56,19 +56,10 @@ api.interceptors.response.use(
 
     // Account Limit Reached (403) - ignore token/auth 403s
     if (error.response?.status === 403 && !isTokenOrAuthError) {
-      if (isLaunchMode) {
-        // Full Launch Mode: Open Paystack Upgrade Modal
-        const customEvent = new CustomEvent("thinkly:upgrade-modal", {
-          detail: { reason: errorMsg || "Limit reached." },
-        });
-        window.dispatchEvent(customEvent);
-      } else {
-        // Beta Mode: Open Beta Limit Modal
-        const customEvent = new CustomEvent("thinkly:beta-limit-modal", {
-          detail: { reason: errorMsg || "Thinkly Beta limit reached. Higher limits are coming soon!" },
-        });
-        window.dispatchEvent(customEvent);
-      }
+      const customEvent = new CustomEvent("thinkly:upgrade-modal", {
+        detail: { reason: errorMsg || "Limit reached. Upgrade to unlock full access!" },
+      });
+      window.dispatchEvent(customEvent);
       return Promise.reject(error);
     }
 

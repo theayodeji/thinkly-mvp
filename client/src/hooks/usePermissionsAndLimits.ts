@@ -32,19 +32,9 @@ export function usePermissionsAndLimits() {
   };
 
   const triggerLimitModal = (reason?: string) => {
-    // Determine which mode we are in (Beta vs Launch)
-    // Beta modal informs them it's coming soon, Launch modal takes them to Paystack
-    const isBeta = import.meta.env.VITE_APP_MODE !== "launch";
-    
-    if (isBeta) {
-      window.dispatchEvent(
-        new CustomEvent("thinkly:beta-limit-modal", { detail: { reason } })
-      );
-    } else {
-      window.dispatchEvent(
-        new CustomEvent("thinkly:upgrade-modal", { detail: { reason } })
-      );
-    }
+    window.dispatchEvent(
+      new CustomEvent("thinkly:upgrade-modal", { detail: { reason } })
+    );
   };
 
   const getLimitStatus = (metric: MeteredMetric, spaceContext?: { spaceId: string; messagesCount: number }): LimitStatus => {

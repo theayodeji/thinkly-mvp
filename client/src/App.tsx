@@ -9,7 +9,6 @@ import { queryClient } from "./lib/react-query";
 
 import { AuthPromptModal } from "./components/auth/AuthPromptModal";
 import { UpgradeModal } from "./components/billing/UpgradeModal";
-import { BetaLimitModal } from "./components/ui/BetaLimitModal";
 
 function App() {
   return (
@@ -21,7 +20,6 @@ function App() {
               <AppRoutes />
               <AuthPromptModal />
               <UpgradeModal />
-              <BetaLimitModal />
               <Toaster position="top-right" />
             </div>
           </AuthProvider>
