@@ -3,6 +3,7 @@ import { Button } from "../../components/ui/Button";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { spaceService } from "../../shared/services/spaceService";
+import { useAuth } from "../../hooks/useAuth";
 import { Sparkles } from "lucide-react";
 
 const container = {
@@ -22,9 +23,14 @@ const item = {
 
 const HeroSection = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [isCreating, setIsCreating] = useState(false);
 
   const handleStartGuestTrial = async () => {
+    if (user) {
+      navigate("/dashboard");
+      return;
+    }
     try {
       setIsCreating(true);
       const newSpace = await spaceService.createSpace();
@@ -35,14 +41,6 @@ const HeroSection = () => {
       setIsCreating(false);
     }
   };
-
-  const sampleAvatars = [
-    "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80",
-    "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&auto=format&fit=crop&q=80",
-    "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80",
-    "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80",
-    "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
-  ];
 
   return (
     <motion.section
@@ -101,29 +99,31 @@ const HeroSection = () => {
               disabled={isCreating}
               className="btn-3d-primary font-bold px-6 py-3 rounded-full text-base shadow-lg"
             >
-              Try Now (No Sign-in)
+              {user ? "Go to Dashboard" : "Try Now (No Sign-in)"}
             </Button>
-            <Button
-              size="lg"
-              variant="neutral"
-              className="glass-panel hover:bg-white/20 dark:hover:bg-slate-800/40 font-semibold rounded-full px-6 py-3 border border-text/10"
-            >
-              <Link
-                to="/auth/register"
-                className="w-full h-full flex items-center justify-center gap-2 text-text font-medium"
+            {!user && (
+              <Button
+                size="lg"
+                variant="neutral"
+                className="glass-panel hover:bg-white/20 dark:hover:bg-slate-800/40 font-semibold rounded-full px-6 py-3 border border-text/10"
               >
-                Sign Up Free
-              </Link>
-            </Button>
+                <Link
+                  to="/auth/register"
+                  className="w-full h-full flex items-center justify-center gap-2 text-text font-medium"
+                >
+                  Sign Up Free
+                </Link>
+              </Button>
+            )}
           </div>
         </motion.div>
 
-        {/* 3 Rotated & Perspective Portrait Cards (Mobile Card Flourish / Desktop 3-Column Grid) */}
+        {/* 3 Rotated & Perspective Portrait Cards */}
         <motion.div
           className="flex flex-row justify-center items-center -space-x-10 sm:-space-x-14 md:space-x-0 md:grid md:grid-cols-3 gap-0 md:gap-6 mt-10 md:mt-12 w-full max-w-[340px] sm:max-w-[440px] md:max-w-5xl mx-auto px-4"
           variants={item}
         >
-          {/* Card 1: Deep Royal Blue (Left Flourish Card) */}
+          {/* Card 1: Deep Royal Blue (Left Flourish Card - student-2.png) */}
           <motion.div
             initial={{ opacity: 0, y: 30, rotate: -12 }}
             whileInView={{ opacity: 1, y: 0, rotate: -10 }}
@@ -134,7 +134,7 @@ const HeroSection = () => {
             {/* Phone Silhouette Frame inside */}
             <div className="absolute inset-x-3 md:inset-x-5 top-3 md:top-5 bottom-2 md:bottom-3 border-2 border-white/30 rounded-[1.2rem] md:rounded-[2.2rem] pointer-events-none" />
             <img
-              src="/student.png"
+              src="/student-2.png"
               alt="Student preparing for exam"
               className="relative z-10 w-full h-full object-contain max-h-[88%] drop-shadow-2xl translate-y-2 md:translate-y-3"
               onError={(e) => {
@@ -144,7 +144,7 @@ const HeroSection = () => {
             />
           </motion.div>
 
-          {/* Card 2: Signature Primary Blue (Center Flourish Card - Front & Elevated) */}
+          {/* Card 2: Signature Primary Blue (Center Card - student2.png) */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: -6 }}
@@ -165,7 +165,7 @@ const HeroSection = () => {
             />
           </motion.div>
 
-          {/* Card 3: Bright Sky Primary Blue (Right Flourish Card) */}
+          {/* Card 3: Bright Sky Primary Blue (Right Flourish Card - student-3.png) */}
           <motion.div
             initial={{ opacity: 0, y: 30, rotate: 12 }}
             whileInView={{ opacity: 1, y: 0, rotate: 10 }}
@@ -176,9 +176,9 @@ const HeroSection = () => {
             {/* Phone Silhouette Frame inside */}
             <div className="absolute inset-x-3 md:inset-x-5 top-3 md:top-5 bottom-2 md:bottom-3 border-2 border-white/30 rounded-[1.2rem] md:rounded-[2.2rem] pointer-events-none" />
             <img
-              src="/hero-study.jpg"
+              src="/student-3.png"
               alt="Student celebrating learning progress"
-              className="relative z-10 w-full h-full object-cover rounded-[1rem] md:rounded-[1.6rem] max-h-[85%] shadow-lg translate-y-1"
+              className="relative z-10 w-full h-full object-contain max-h-[88%] drop-shadow-2xl translate-y-2 md:translate-y-3"
               onError={(e) => {
                 (e.target as HTMLImageElement).src =
                   "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&auto=format&fit=crop&q=80";

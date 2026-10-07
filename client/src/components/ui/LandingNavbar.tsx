@@ -46,7 +46,12 @@ const LandingNavbar = () => {
         {user ? (
           <div className="flex items-center gap-4">
             <Link to="/dashboard">
-              <Button size="sm" className="bg-primary-600 hover:bg-primary-700 text-white">Go to Dashboard</Button>
+              <Button
+                size="sm"
+                className="bg-primary-600 hover:bg-primary-700 text-white"
+              >
+                Go to Dashboard
+              </Button>
             </Link>
             <ThemeToggle />
             <UserMenu onLogout={logout} />
@@ -62,13 +67,18 @@ const LandingNavbar = () => {
               disabled={isCreating}
               className="hidden sm:inline-flex border-primary-500 text-primary-600 dark:text-primary-400 font-semibold"
             >
-              Try Without Login
+              Try it
             </Button>
-            <Link to="/auth/login">
-              <Button size="sm" variant="ghost">Login</Button>
-            </Link>
+            {/* <Link to="/auth/login">
+              <Button size="sm" variant="ghost">
+                Login
+              </Button>
+            </Link> */}
             <Link to="/auth/register">
-              <Button size="sm" className="bg-primary-600 text-white hover:bg-primary-700 font-bold">
+              <Button
+                size="sm"
+                className="bg-primary-600 text-white hover:bg-primary-700 font-bold"
+              >
                 Get Started
               </Button>
             </Link>
