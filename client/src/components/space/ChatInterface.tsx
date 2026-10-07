@@ -301,22 +301,35 @@ function ChatInterface() {
         {renderedMessages()}
       </div>
 
-      <ChatInput
-        onSend={handleSend}
-        onStop={handleStop}
-        isActionLoading={isChatLoading || streamingIndex !== null}
-        chatHistory={chatHistory}
-        currentSpaceId={spaceId}
-        hasSources={sources ? sources.length > 0 : false}
-        isDisabled={chatLimitStatus.isReached || chatLimitStatus.isLocked}
-        disabledReason={
-          chatLimitStatus.isLocked 
-            ? "Chat is locked" 
-            : chatLimitStatus.isReached 
-              ? `Limit reached (${chatLimitStatus.max}/${chatLimitStatus.max})` 
-              : undefined
-        }
-      />
+      {!(chatLimitStatus.isReached || chatLimitStatus.isLocked) || (isChatLoading || streamingIndex !== null) ? (
+        <ChatInput
+          onSend={handleSend}
+          onStop={handleStop}
+          isActionLoading={isChatLoading || streamingIndex !== null}
+          chatHistory={chatHistory}
+          currentSpaceId={spaceId}
+          hasSources={sources ? sources.length > 0 : false}
+          isDisabled={chatLimitStatus.isReached || chatLimitStatus.isLocked}
+          disabledReason={
+            chatLimitStatus.isLocked 
+              ? "Chat is locked" 
+              : chatLimitStatus.isReached 
+                ? `Limit reached (${chatLimitStatus.max}/${chatLimitStatus.max})` 
+                : undefined
+          }
+        />
+      ) : (
+        <div className="p-4 mx-4 mb-4 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 flex flex-col items-center justify-center gap-1 text-center shadow-sm">
+          <p className="text-amber-800 dark:text-amber-300 text-sm font-bold">
+            {chatLimitStatus.isLocked ? "Chat is locked" : `Chat limit reached (${chatLimitStatus.max}/${chatLimitStatus.max})`}
+          </p>
+          <p className="text-amber-600 dark:text-amber-400 text-xs">
+            {chatLimitStatus.isLocked 
+              ? "Upgrade your plan to unlock AI Chat." 
+              : "Delete this space and create a new one to continue chatting!"}
+          </p>
+        </div>
+      )}
     </div>
   );
 }
