@@ -7,6 +7,7 @@ import Space from "../../../models/Space.js";
 import Source from "../../../models/Source.js";
 import { AppError } from "../../../utils/AppError.js";
 import { logger } from "../../../utils/logger.js";
+import { eventStreamManager } from "../../../utils/eventStreamManager.js";
 
 export class AudioExplainerService {
   private audioProvider: IAudioProvider;
@@ -138,15 +139,36 @@ Use the following context from the user's study space if relevant:
 
       logger.debug(`[AudioExplainer] Audio uploaded successfully. URL: ${audioUrl}`);
 
-      // 4. Update the DB with success
-      await AudioExplainer.findByIdAndUpdate(explainerId, {
-        audioUrl,
-        status: "ready",
-      });
+      // 4. Update the DB with success and emit SSE event
+      const updated = await AudioExplainer.findByIdAndUpdate(
+        explainerId,
+        { audioUrl, status: "ready" },
+        { new: true }
+      );
       logger.debug(`[AudioExplainer] Explainer ${explainerId} is ready!`);
+
+      if (updated) {
+        eventStreamManager.sendToUser(updated.userId.toString(), "explainer:updated", {
+          spaceId: updated.spaceId.toString(),
+          explainerId: updated._id.toString(),
+          status: "ready",
+          audioUrl: updated.audioUrl,
+        });
+      }
     } catch (error) {
       logger.error(`[AudioExplainer] Processing failed for ${explainerId}: ${error}`);
-      await AudioExplainer.findByIdAndUpdate(explainerId, { status: "error" });
+      const failed = await AudioExplainer.findByIdAndUpdate(
+        explainerId,
+        { status: "error" },
+        { new: true }
+      );
+      if (failed) {
+        eventStreamManager.sendToUser(failed.userId.toString(), "explainer:updated", {
+          spaceId: failed.spaceId.toString(),
+          explainerId: failed._id.toString(),
+          status: "error",
+        });
+      }
     }
   }
 }

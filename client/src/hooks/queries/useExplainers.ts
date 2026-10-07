@@ -1,19 +1,20 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { explainerService } from "../../shared/services/explainerService";
-import { IAudioExplainer } from "@thinkly/shared";
+import { useEventListener } from "../useEventStream";
 
 export const useExplainers = (spaceId: string) => {
+  const queryClient = useQueryClient();
+
+  useEventListener("explainer:updated", (data: { spaceId: string; explainerId: string; status: string }) => {
+    if (!spaceId || data.spaceId === spaceId) {
+      queryClient.invalidateQueries({ queryKey: ["explainers", spaceId] });
+    }
+  });
+
   return useQuery({
     queryKey: ["explainers", spaceId],
     queryFn: () => explainerService.getBySpaceId(spaceId),
     enabled: !!spaceId,
-    refetchInterval: (query) => {
-      const data = query.state.data as IAudioExplainer[] | undefined;
-      if (data?.some((e) => e.status === "processing")) {
-        return 4000;
-      }
-      return false;
-    },
   });
 };
 

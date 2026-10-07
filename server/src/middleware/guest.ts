@@ -21,7 +21,7 @@ export const GUEST_LIMITS = {
  * Middleware that allows either an authenticated user OR a guest user with a guest device ID.
  */
 export const allowGuestOrAuth = (req: Request, res: Response, next: NextFunction) => {
-  const token = req.cookies.accessToken || "";
+  const token = req.cookies.accessToken || (req.query.token as string) || "";
 
   if (token) {
     try {
@@ -34,8 +34,12 @@ export const allowGuestOrAuth = (req: Request, res: Response, next: NextFunction
     }
   }
 
-  // Extract guest device ID from custom header or cookie
-  const guestDeviceId = (req.headers["x-guest-device-id"] as string) || req.cookies.guestDeviceId || "";
+  // Extract guest device ID from custom header, cookie, or query string
+  const guestDeviceId =
+    (req.headers["x-guest-device-id"] as string) ||
+    req.cookies.guestDeviceId ||
+    (req.query.guestDeviceId as string) ||
+    "";
 
   if (!guestDeviceId) {
     return res.status(401).json({

@@ -10,6 +10,7 @@ import {
 import { generateChatResponse } from "../services/content/spaces/intelligence.js";
 import ChatModel from "../models/Chat.js";
 import ChatMessageModel from "../models/ChatMessage.js";
+import SpaceModel from "../models/Space.js";
 
 export const getSpaces = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const spaces = await getSpacesByUserId(req.userId as string);
