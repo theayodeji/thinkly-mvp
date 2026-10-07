@@ -343,17 +343,17 @@ function ChatInterface() {
           chatHistory={chatHistory}
           currentSpaceId={spaceId}
           hasSources={hasContent}
-          isDisabled={chatLimitStatus.isReached || chatLimitStatus.isLocked || hasNoContent}
+          isDisabled={chatLimitStatus.isReached || chatLimitStatus.isLocked || hasNoContent || isForceLocked}
           disabledReason={
             hasNoContent
               ? "Add a source to start chatting"
-              : isGuest
-                ? "Guest trial limit reached"
-                : chatLimitStatus.isLocked 
-                  ? "Chat is locked" 
-                  : chatLimitStatus.isReached 
-                    ? `Limit reached (${chatLimitStatus.max}/${chatLimitStatus.max})` 
-                    : undefined
+              : chatLimitStatus.isLocked 
+                ? "Chat is locked" 
+                : (chatLimitStatus.isReached || isForceLocked)
+                  ? isGuest
+                    ? "Guest trial limit reached"
+                    : `Limit reached (${chatLimitStatus.max}/${chatLimitStatus.max})` 
+                  : undefined
           }
         />
       ) : (

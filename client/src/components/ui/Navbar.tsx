@@ -1,10 +1,8 @@
+import { useEffect } from "react";
 import {
   Flame,
   Trophy,
   FileText,
-  Search,
-  Grip,
-  LucideShare2,
   ExternalLink,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
@@ -27,6 +25,21 @@ const Navbar = () => {
   const { isOpen, open, close } = useDisclosure(false);
   const location = useLocation();
   const { isSourceDrawerOpen, setSourceDrawerOpen } = useSpaceUIStore();
+
+  // Auto popup streak achievements modal once per day on first login or page load
+  useEffect(() => {
+    if (!loading && user && !user.isGuest) {
+      const userId = (user as any).id || (user as any)._id || "user";
+      const today = new Date().toISOString().split("T")[0];
+      const storageKey = `thinkly_streak_modal_last_shown_${userId}`;
+      const lastShown = localStorage.getItem(storageKey);
+
+      if (lastShown !== today) {
+        open();
+        localStorage.setItem(storageKey, today);
+      }
+    }
+  }, [user, loading, open]);
 
   const spaceMatch = location.pathname.match(/^\/spaces\/([a-f0-9]+)$/i);
   const spaceId = spaceMatch ? spaceMatch[1] : null;
@@ -84,32 +97,6 @@ const Navbar = () => {
 
           {/* Right Side: User Stats & Settings */}
           <div className="flex items-center gap-2 md:gap-4 shrink-0">
-            {isSpaceDetail && (
-              <>
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  className="hidden md:flex shrink-0"
-                >
-                  <Search className="h-5 w-5 text-text-secondary" />
-                </Button>
-                <Button
-                  size="icon"
-                  variant="neutral"
-                  className="hidden md:flex p-1.5 bg-neutral-200 dark:bg-neutral-800 border-none text-text shrink-0"
-                >
-                  <Grip className="h-5 w-5" />
-                </Button>
-                <Button
-                  size="icon"
-                  variant="neutral"
-                  className="hidden md:flex p-1.5 bg-neutral-200 dark:bg-neutral-800 border-none text-text shrink-0"
-                >
-                  <LucideShare2 className="h-5 w-5" />
-                </Button>
-              </>
-            )}
-
             {loading ? (
               <>
                 <ThemeToggle />
