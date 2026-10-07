@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Sparkles, Clock, X, CheckCircle2 } from "lucide-react";
+import { AlertCircle, X } from "lucide-react";
 import { Button } from "./Button";
+import { motion, AnimatePresence } from "framer-motion";
 
 export const BetaLimitModal: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [reason, setReason] = useState(
-    "Thinkly Beta limit reached. Higher limits and unlimited plans are coming soon!",
+    "Thinkly Beta limit reached. Higher limits and unlimited plans are coming soon!"
   );
 
   useEffect(() => {
@@ -31,64 +32,67 @@ export const BetaLimitModal: React.FC = () => {
     };
   }, []);
 
-  if (!isOpen) return null;
-
   const handleClose = () => {
     setIsOpen(false);
   };
 
   return (
-    <div
-      onClick={handleClose}
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 animate-fade-in transition-opacity"
-    >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-md p-6 sm:p-8 bg-white dark:bg-slate-900 border border-neutral-200 dark:border-slate-800 rounded-3xl shadow-2xl text-center relative overflow-hidden"
-      >
-        <button
-          onClick={handleClose}
-          className="absolute top-4 right-4 text-neutral-400 hover:text-neutral-700 dark:hover:text-white p-2 rounded-full hover:bg-neutral-100 dark:hover:bg-slate-800 transition-colors"
-          aria-label="Close modal"
-        >
-          <X className="w-5 h-5" />
-        </button>
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={handleClose}
+            className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-xs"
+          />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 10 }}
+            className="fixed left-[50%] top-[50%] z-[101] w-full max-w-[400px] translate-x-[-50%] translate-y-[-50%] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl overflow-hidden"
+          >
+            <div className="flex flex-col">
+              {/* Header */}
+              <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-slate-800">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-950/60 flex items-center justify-center">
+                    <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-500" />
+                  </div>
+                  <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">
+                    Limit Reached
+                  </h2>
+                </div>
+                <button
+                  onClick={handleClose}
+                  className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
 
-        <div className="mx-auto w-14 h-14 rounded-2xl bg-amber-100 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-4 shadow-inner">
-          <Sparkles className="w-7 h-7" />
-        </div>
+              {/* Body */}
+              <div className="p-5">
+                <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                  {reason}
+                </p>
+              </div>
 
-        <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 mb-2">
-          Thinkly Beta Preview
-        </span>
-
-        <h2 className="text-2xl font-black tracking-tight text-text-primary mb-2">
-          Beta Limit Reached
-        </h2>
-
-        <p className="text-sm text-text-secondary mb-5 leading-relaxed font-medium">
-          {reason}
-        </p>
-
-        <div className="p-4 mb-6 rounded-2xl bg-neutral-50 dark:bg-slate-800/60 border border-neutral-200/80 dark:border-slate-700/60 text-left space-y-2 text-xs text-text-secondary">
-          <div className="flex items-center gap-2 text-text-primary font-semibold">
-            <Clock className="w-4 h-4 text-amber-500 flex-shrink-0" />
-            <span>Limits Reset Daily</span>
-          </div>
-          <p className="pl-6 text-neutral-600 dark:text-neutral-400">
-            During our public beta preview, daily limits reset every 24 hours to ensure high quality and platform performance for all testers.
-          </p>
-        </div>
-
-        <Button
-          onClick={handleClose}
-          variant="primary"
-          className="w-full py-3 font-bold flex items-center justify-center gap-2 shadow-md"
-        >
-          <CheckCircle2 className="w-4 h-4" />
-          Got it, back to studying!
-        </Button>
-      </div>
-    </div>
+              {/* Footer */}
+              <div className="px-5 pb-5 pt-2">
+                <Button
+                  onClick={handleClose}
+                  variant="primary"
+                  className="w-full py-2.5 font-semibold text-sm justify-center rounded-xl"
+                >
+                  Got it
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
   );
 };
