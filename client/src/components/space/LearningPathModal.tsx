@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import LearningPathView from "./LearningPathView";
 
 import { usePermissionsAndLimits, MeteredMetric } from "../../hooks/usePermissionsAndLimits";
+import { useSpaceSources, useSpace } from "../../hooks/queries/useSpaces";
 
 interface LearningPathModalProps {
   spaceId: string;
@@ -18,10 +19,20 @@ export const LearningPathModal = ({ spaceId, trigger }: LearningPathModalProps) 
   const [topic, setTopic] = useState("");
   const { mutateAsync: generatePath, isPending } = useGenerateLearningPath();
 
+  const { data: sources, isLoading: isSourcesLoading } = useSpaceSources(spaceId);
+  const { data: space } = useSpace(spaceId);
+  const hasContent = Boolean(space?.content?.trim() || (sources && sources.length > 0));
+
   const { getLimitStatus, triggerLimitModal } = usePermissionsAndLimits();
   const pathLimitStatus = getLimitStatus(MeteredMetric.LEARNING_PATHS);
 
   const handleGenerate = async () => {
+    if (!isSourcesLoading && !hasContent) {
+      toast.error("Please add a source to this space before generating a Learning Path.");
+      setOpen(false);
+      return;
+    }
+
     if (pathLimitStatus.isReached || pathLimitStatus.isLocked) {
       triggerLimitModal("You've reached your daily limit for Learning Paths.");
       setOpen(false);

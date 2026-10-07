@@ -21,6 +21,11 @@ export const generateChatResponse = async (spaceId: string, userId: string, mess
     const sources = await SourceModel.find({ spaceId });
     const sourcesContext = sources.map(s => s.text).join('\n\n');
 
+    const hasContent = Boolean(space.content?.trim() || sourcesContext.trim());
+    if (!hasContent) {
+      throw new AppError("Cannot chat in this space: No content or sources found. Please add a source to begin.", 400);
+    }
+
     // Add user message to DB
     await ChatMessageModel.create({
         chatId: chat._id,

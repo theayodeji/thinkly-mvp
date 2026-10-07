@@ -5,8 +5,9 @@ import ChatInput from "./ChatInput";
 import ChatMessage from "./ChatMessage";
 import SummaryBlock from "./SummaryBlock";
 import { useSmoothStreaming } from "../../hooks/useSmoothStreaming";
-import { useSpaceSources, useChatHistory } from "../../hooks/queries/useSpaces";
+import { useSpaceSources, useSpace, useChatHistory } from "../../hooks/queries/useSpaces";
 import { spaceService } from "../../shared/services/spaceService";
+import toast from "react-hot-toast";
 
 import { usePermissionsAndLimits, MeteredMetric } from "../../hooks/usePermissionsAndLimits";
 
@@ -17,7 +18,8 @@ function ChatInterface() {
   const { getLimitStatus, triggerLimitModal } = usePermissionsAndLimits();
 
   // Remote Queries
-  const { data: sources } = useSpaceSources(spaceId || "");
+  const { data: sources, isLoading: isSourcesLoading } = useSpaceSources(spaceId || "");
+  const { data: space } = useSpace(spaceId || "");
   const {
     data: serverHistory,
     fetchNextPage,
@@ -25,6 +27,9 @@ function ChatInterface() {
     isFetchingNextPage,
     isLoading: isHistoryLoading,
   } = useChatHistory(spaceId || "");
+
+  const hasContent = Boolean(space?.content?.trim() || (sources && sources.length > 0));
+  const hasNoContent = !isSourcesLoading && !hasContent;
 
   // Local Chat & Streaming State
   const [chatHistory, setChatHistory] = useState<{ role: "user" | "assistant"; content: string }[]>([]);
@@ -200,6 +205,11 @@ function ChatInterface() {
     async (message: string) => {
       if (!message.trim() || !spaceId) return;
 
+      if (hasNoContent) {
+        toast.error("Please add a source to this space before chatting.");
+        return;
+      }
+
       if (chatLimitStatus.isReached || chatLimitStatus.isLocked || isForceLocked) {
         triggerLimitModal("You've reached your chat limit for this space. Delete it and create a new one to continue!");
         return;
@@ -275,7 +285,7 @@ function ChatInterface() {
         abortControllerRef.current = null;
       }
     },
-    [spaceId, scrollToBottom, chatLimitStatus, triggerLimitModal],
+    [spaceId, scrollToBottom, chatLimitStatus, triggerLimitModal, hasNoContent],
   );
 
   // Unmount cleanup
@@ -321,14 +331,16 @@ function ChatInterface() {
           isActionLoading={isChatLoading || streamingIndex !== null}
           chatHistory={chatHistory}
           currentSpaceId={spaceId}
-          hasSources={sources ? sources.length > 0 : false}
-          isDisabled={chatLimitStatus.isReached || chatLimitStatus.isLocked}
+          hasSources={hasContent}
+          isDisabled={chatLimitStatus.isReached || chatLimitStatus.isLocked || hasNoContent}
           disabledReason={
-            chatLimitStatus.isLocked 
-              ? "Chat is locked" 
-              : chatLimitStatus.isReached 
-                ? `Limit reached (${chatLimitStatus.max}/${chatLimitStatus.max})` 
-                : undefined
+            hasNoContent
+              ? "Add a source to start chatting"
+              : chatLimitStatus.isLocked 
+                ? "Chat is locked" 
+                : chatLimitStatus.isReached 
+                  ? `Limit reached (${chatLimitStatus.max}/${chatLimitStatus.max})` 
+                  : undefined
           }
         />
       ) : (

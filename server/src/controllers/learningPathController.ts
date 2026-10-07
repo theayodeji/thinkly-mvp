@@ -18,8 +18,16 @@ export const generateLearningPath = async (req: Request, res: Response): Promise
       return res.status(404).json({ message: 'Space not found' });
     }
 
-    const content = space.content || '';
-    const aiResult = await geminiService.generateLearningPath(topic, content);
+    const SourceModel = (await import('../models/Source.js')).default;
+    const sources = await SourceModel.find({ spaceId });
+    const sourcesContext = sources.map(s => s.text).join('\n\n');
+
+    const contentContext = [space.content || '', sourcesContext].filter(Boolean).join('\n\n');
+    if (!contentContext.trim()) {
+      return res.status(400).json({ message: 'Cannot generate learning path: No content or sources found in this space' });
+    }
+
+    const aiResult = await geminiService.generateLearningPath(topic, contentContext);
 
     if (aiResult.error) {
       return res.status(400).json({ message: aiResult.error });
