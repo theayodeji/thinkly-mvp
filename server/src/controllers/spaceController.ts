@@ -82,6 +82,11 @@ export const chat = catchAsync(async(req: Request, res: Response, next: NextFunc
 });
 
 export const getChatHistory = catchAsync(async(req: Request, res: Response, next: NextFunction) => {
+    const space = await SpaceModel.findOne({ _id: req.params.id, userId: req.userId as string });
+    if (!space) {
+        return res.status(404).json({ message: "Space not found" });
+    }
+
     const chat = await ChatModel.findOne({ spaceId: req.params.id, userId: req.userId as string });
     if (!chat) {
         return res.status(200).json({ history: [], hasMore: false });

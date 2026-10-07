@@ -3,7 +3,11 @@ import SourceModel from "../../../models/Source.js";
 import { withMongoTransaction } from "../../../utils/db.js";
 import { AppError } from "../../../utils/AppError.js";
 
-export const getSourcesBySpaceId = async (spaceId: string) => {
+export const getSourcesBySpaceId = async (spaceId: string, userId: string) => {
+  const space = await SpaceModel.findOne({ _id: spaceId, userId });
+  if (!space) {
+    throw new AppError("Space not found", 404);
+  }
   return await SourceModel.find({ spaceId });
 };
 
