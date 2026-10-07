@@ -6,6 +6,7 @@ export enum PlanTier {
 export enum FeatureFlag {
   CREATE_SPACE = "create_space",
   GENERATE_QUIZ = "generate_quiz",
+  GENERATE_FLASHCARDS = "generate_flashcards",
   GENERATE_AUDIO = "generate_audio",
   GENERATE_LEARNING_PATH = "generate_learning_path",
   AI_CHAT = "ai_chat",
@@ -13,8 +14,12 @@ export enum FeatureFlag {
 
 export interface PlanLimits {
   maxActiveSpaces: number;
-  maxDailyAIActions: number;
+  maxMessagesPerSpace?: number;
+  maxDailyChatMessages?: number;
+  maxDailyQuizGenerations: number;
+  maxDailyFlashcardGenerations: number;
   maxDailyAudioGenerations: number;
+  maxDailyLearningPathGenerations: number;
   maxUploadSizeBytes: number;
 }
 
@@ -34,6 +39,22 @@ export const getAppMode = (modeStr?: string): AppMode => {
   return modeStr === "launch" ? "launch" : "beta";
 };
 
+// Global dynamic file upload limit (Default: 5 MB for everyone for now)
+export const DEFAULT_MAX_UPLOAD_SIZE_BYTES = 5 * 1024 * 1024; // 5MB
+
+export const getMaxUploadSizeBytes = (overrideBytes?: number): number => {
+  if (overrideBytes !== undefined && overrideBytes > 0) {
+    return overrideBytes;
+  }
+  const envBytes =
+    typeof globalThis !== "undefined" && (globalThis as Record<string, any>).process?.env?.MAX_UPLOAD_SIZE_BYTES
+      ? parseInt((globalThis as Record<string, any>).process.env.MAX_UPLOAD_SIZE_BYTES, 10)
+      : undefined;
+  return !isNaN(envBytes as number) && (envBytes as number) > 0
+    ? (envBytes as number)
+    : DEFAULT_MAX_UPLOAD_SIZE_BYTES;
+};
+
 // Beta Mode Configs (Generous general limits, strict 1 voice generation per day for everybody)
 export const BETA_PLAN_CONFIGS: Record<PlanTier, PlanConfig> = {
   [PlanTier.FREE]: {
@@ -43,14 +64,18 @@ export const BETA_PLAN_CONFIGS: Record<PlanTier, PlanConfig> = {
     priceNGN: 0,
     priceUSD: 0,
     limits: {
-      maxActiveSpaces: 10,
-      maxDailyAIActions: 20,
-      maxDailyAudioGenerations: 1, // 1 voice generation per day for everybody
-      maxUploadSizeBytes: 20 * 1024 * 1024,
+      maxActiveSpaces: 1,
+      maxMessagesPerSpace: 20,
+      maxDailyQuizGenerations: 1,
+      maxDailyFlashcardGenerations: 1,
+      maxDailyAudioGenerations: 1,
+      maxDailyLearningPathGenerations: 2,
+      maxUploadSizeBytes: DEFAULT_MAX_UPLOAD_SIZE_BYTES,
     },
     allowedFeatures: [
       FeatureFlag.CREATE_SPACE,
       FeatureFlag.GENERATE_QUIZ,
+      FeatureFlag.GENERATE_FLASHCARDS,
       FeatureFlag.GENERATE_AUDIO,
       FeatureFlag.GENERATE_LEARNING_PATH,
       FeatureFlag.AI_CHAT,
@@ -63,14 +88,18 @@ export const BETA_PLAN_CONFIGS: Record<PlanTier, PlanConfig> = {
     priceNGN: 0,
     priceUSD: 0,
     limits: {
-      maxActiveSpaces: 10,
-      maxDailyAIActions: 20,
+      maxActiveSpaces: 1,
+      maxMessagesPerSpace: 20,
+      maxDailyQuizGenerations: 1,
+      maxDailyFlashcardGenerations: 1,
       maxDailyAudioGenerations: 1,
-      maxUploadSizeBytes: 20 * 1024 * 1024,
+      maxDailyLearningPathGenerations: 2,
+      maxUploadSizeBytes: DEFAULT_MAX_UPLOAD_SIZE_BYTES,
     },
     allowedFeatures: [
       FeatureFlag.CREATE_SPACE,
       FeatureFlag.GENERATE_QUIZ,
+      FeatureFlag.GENERATE_FLASHCARDS,
       FeatureFlag.GENERATE_AUDIO,
       FeatureFlag.GENERATE_LEARNING_PATH,
       FeatureFlag.AI_CHAT,
@@ -88,15 +117,17 @@ export const LAUNCH_PLAN_CONFIGS: Record<PlanTier, PlanConfig> = {
     priceUSD: 0,
     limits: {
       maxActiveSpaces: 3,
-      maxDailyAIActions: 5,
-      maxDailyAudioGenerations: 1,
-      maxUploadSizeBytes: 10 * 1024 * 1024,
+      maxDailyChatMessages: 25,
+      maxDailyQuizGenerations: 2,
+      maxDailyFlashcardGenerations: 2,
+      maxDailyAudioGenerations: 0,
+      maxDailyLearningPathGenerations: 0,
+      maxUploadSizeBytes: DEFAULT_MAX_UPLOAD_SIZE_BYTES,
     },
     allowedFeatures: [
       FeatureFlag.CREATE_SPACE,
       FeatureFlag.GENERATE_QUIZ,
-      FeatureFlag.GENERATE_AUDIO,
-      FeatureFlag.GENERATE_LEARNING_PATH,
+      FeatureFlag.GENERATE_FLASHCARDS,
       FeatureFlag.AI_CHAT,
     ],
   },
@@ -108,13 +139,17 @@ export const LAUNCH_PLAN_CONFIGS: Record<PlanTier, PlanConfig> = {
     priceUSD: 5,
     limits: {
       maxActiveSpaces: Infinity,
-      maxDailyAIActions: Infinity,
+      maxDailyChatMessages: Infinity,
+      maxDailyQuizGenerations: Infinity,
+      maxDailyFlashcardGenerations: Infinity,
       maxDailyAudioGenerations: 10,
-      maxUploadSizeBytes: 50 * 1024 * 1024,
+      maxDailyLearningPathGenerations: Infinity,
+      maxUploadSizeBytes: DEFAULT_MAX_UPLOAD_SIZE_BYTES,
     },
     allowedFeatures: [
       FeatureFlag.CREATE_SPACE,
       FeatureFlag.GENERATE_QUIZ,
+      FeatureFlag.GENERATE_FLASHCARDS,
       FeatureFlag.GENERATE_AUDIO,
       FeatureFlag.GENERATE_LEARNING_PATH,
       FeatureFlag.AI_CHAT,

@@ -1,9 +1,11 @@
 import type { Request, Response } from "express";
 import UserModel from "../models/User.js";
+import UserUsageModel from "../models/UserUsage.js";
+import UserBillingSubscriptionModel from "../models/UserBillingSubscription.js";
 import { catchAsync } from "../utils/catchAsync.js";
 import { AppError } from "../utils/AppError.js";
 import { initializePaystackTransaction, verifyPaystackSignature } from "../utils/paystack.js";
-import { PLAN_CONFIGS, PlanTier } from "@thinkly/shared";
+import { getPlanConfigs, getAppMode, PlanTier } from "@thinkly/shared";
 
 export const initializeSubscription = catchAsync(async (req: Request, res: Response) => {
   const userId = req.userId;
@@ -21,7 +23,6 @@ export const initializeSubscription = catchAsync(async (req: Request, res: Respo
 export const paystackWebhook = catchAsync(async (req: Request, res: Response) => {
   const signature = req.headers["x-paystack-signature"] as string;
 
-  // Use rawBody if present or stringified req.body
   const rawBody = (req as any).rawBody || JSON.stringify(req.body);
   const isValid = verifyPaystackSignature(rawBody, signature);
 
@@ -37,7 +38,25 @@ export const paystackWebhook = catchAsync(async (req: Request, res: Response) =>
     const plan = (metadata?.plan as PlanTier) || PlanTier.PRO;
 
     if (userId) {
-      await UserModel.findByIdAndUpdate(userId, { plan });
+      await UserModel.findByIdAndUpdate(userId, { 
+        subscription_tier: plan === PlanTier.PRO ? "premium" : "free",
+        subscription_status: "active"
+      });
+      
+      await UserBillingSubscriptionModel.findOneAndUpdate(
+        { userId },
+        {
+          userId,
+          provider: "paystack",
+          providerSubscriptionId: event.data?.reference || event.data?.id,
+          providerCustomerId: event.data?.customer?.id,
+          planId: plan,
+          status: "active",
+          currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // Approximate 30 days
+        },
+        { upsert: true }
+      );
+
       console.log(`[Paystack Webhook] User ${userId} upgraded to ${plan} tier!`);
     }
   }
@@ -50,13 +69,24 @@ export const getCurrentUserPlan = catchAsync(async (req: Request, res: Response)
   if (!userId) throw new AppError("Unauthorized", 401);
 
   const user = await UserModel.findById(userId);
-  const plan = user?.plan || PlanTier.FREE;
-  const planConfig = PLAN_CONFIGS[plan] || PLAN_CONFIGS[PlanTier.FREE];
+  const mode = getAppMode(process.env.APP_MODE);
+  const configs = getPlanConfigs(mode);
+  
+  const mappedTier = user?.subscription_tier === "premium" ? PlanTier.PRO : PlanTier.FREE;
+  const planConfig = configs[mappedTier] || configs[PlanTier.FREE];
+
+  const today = new Date();
+  today.setUTCHours(0, 0, 0, 0);
+
+  const usages = await UserUsageModel.find({ userId, windowStart: { $gte: today } });
+  
+  // Aggregate total AI actions for backward compatibility if needed
+  const dailyAIActionsCount = usages.reduce((sum, u) => sum + u.consumedAmount, 0);
 
   res.status(200).json({
-    userPlan: plan,
+    userPlan: mappedTier,
     config: planConfig,
-    dailyAIActionsCount: user?.dailyAIActionsCount || 0,
-    lastAIActionDate: user?.lastAIActionDate || null,
+    dailyAIActionsCount,
+    lastAIActionDate: today,
   });
 });

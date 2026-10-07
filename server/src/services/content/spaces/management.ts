@@ -66,7 +66,11 @@ export const deleteSpaceById = async (id: string, userId: string) => {
             throw new AppError("Space not found", 404);
         }
         await SourceModel.deleteMany({ spaceId: id }).session(session);
-        // Also we would delete Chats, Quizzes, Flashcards...
+        const ChatModel = (await import("../../../models/Chat.js")).default;
+        const ChatMessageModel = (await import("../../../models/ChatMessage.js")).default;
+        await ChatModel.deleteMany({ spaceId: id }).session(session);
+        await ChatMessageModel.deleteMany({ spaceId: id }).session(session);
+        // Quizzes and Flashcards can also be deleted similarly when needed
     });
 };
 

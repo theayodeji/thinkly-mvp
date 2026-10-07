@@ -55,6 +55,8 @@ export const registerUser = async (data: any) => {
     name,
     email,
     password: hashedPassword,
+    subscription_tier: "free",
+    subscription_status: "active",
     isEmailVerified: false,
     emailVerificationToken: verificationToken,
     emailVerificationExpires: verificationExpires,
@@ -187,13 +189,14 @@ export const verifyResetToken = async (token: string) => {
     throw new AppError("Reset token is required", 400);
   }
 
-  const user = await UserModel.findOne({
-    resetPasswordToken: token,
-    resetPasswordExpires: { $gt: new Date() },
-  });
+  const user = await UserModel.findOne({ resetPasswordToken: token });
 
   if (!user) {
-    throw new AppError("Password reset link is invalid or has expired", 400);
+    throw new AppError("Password reset link is invalid", 400);
+  }
+
+  if (!user.resetPasswordExpires || user.resetPasswordExpires < new Date()) {
+    throw new AppError("Password reset link has expired", 400);
   }
 
   return { message: "Token is valid", email: user.email };

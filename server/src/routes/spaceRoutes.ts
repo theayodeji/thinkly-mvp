@@ -10,8 +10,8 @@ import {
 } from "../controllers/spaceController.js";
 import { authenticateJWT } from "../middleware/auth.js";
 import { validateRequest } from "../middleware/validate.js";
-import { checkSpaceCreationLimit } from "../middleware/usageLimit.js";
-import { updateSpaceSchema, chatSchema, paramsIdSchema } from "@thinkly/shared";
+import { checkSpaceCreationLimit, checkFeatureAccess, checkMeteredLimit } from "../middleware/usageLimit.js";
+import { updateSpaceSchema, chatSchema, paramsIdSchema, FeatureFlag } from "@thinkly/shared";
 
 import { aiLimiter } from "../middleware/rateLimiter.js";
 
@@ -23,7 +23,7 @@ router.get("/", authenticateJWT, getSpaces);
 router.get("/:id", allowGuestOrAuth, validateRequest(paramsIdSchema), getSpace);
 router.get("/:id/chat", allowGuestOrAuth, validateRequest(paramsIdSchema), getChatHistory);
 router.post("/create", allowGuestOrAuth, checkGuestLimit("create_space"), checkSpaceCreationLimit, createSpace);
-router.post("/chat", allowGuestOrAuth, aiLimiter, checkGuestLimit("chat"), validateRequest(chatSchema), chat);
+router.post("/chat", allowGuestOrAuth, aiLimiter, checkGuestLimit("chat"), checkFeatureAccess(FeatureFlag.AI_CHAT), checkMeteredLimit(FeatureFlag.AI_CHAT), validateRequest(chatSchema), chat);
 router.delete("/delete/:id", authenticateJWT, restrictGuestAccess, validateRequest(paramsIdSchema), deleteSpace);
 router.put("/rename/:id", authenticateJWT, restrictGuestAccess, validateRequest(updateSpaceSchema), updateSpace);
 

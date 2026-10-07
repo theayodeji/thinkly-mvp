@@ -17,7 +17,7 @@ import {
   verifyEmailHandler,
   verifyResetTokenHandler,
 } from "../controllers/authController.js";
-import { authenticateJWT } from "../middleware/auth.js";
+import { authenticateJWT, optionalJWT } from "../middleware/auth.js";
 import { catchAsync } from "../utils/catchAsync.js";
 import { validateRequest } from "../middleware/validate.js";
 import {
@@ -37,7 +37,7 @@ router.post("/send-otp", authLimiter, validateRequest(sendOtpSchema), sendOTPHan
 router.post("/verify-otp", authLimiter, validateRequest(verifyOtpSchema), verifyOTPHandler);
 
 // Link Verification operations
-router.post("/resend-verification", authLimiter, resendVerificationHandler);
+router.post("/resend-verification", authLimiter, optionalJWT, resendVerificationHandler);
 router.post("/verify-email", authLimiter, validateRequest(verifyEmailTokenSchema), verifyEmailHandler);
 router.post("/verify-reset-token", authLimiter, verifyResetTokenHandler);
 

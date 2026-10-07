@@ -8,11 +8,13 @@ import { paramsSpaceIdSchema } from "@thinkly/shared";
 import { aiLimiter } from "../middleware/rateLimiter.js";
 
 import { allowGuestOrAuth, checkGuestLimit } from "../middleware/guest.js";
+import { checkFeatureAccess, checkMeteredLimit } from "../middleware/usageLimit.js";
+import { FeatureFlag } from "@thinkly/shared";
 
 const router = express.Router();
 
 // Generate flashcards for a note
-router.post("/:spaceId/generate", allowGuestOrAuth, aiLimiter, checkGuestLimit("generate_flashcards"), validateRequest(paramsSpaceIdSchema), generateFlashcards);
+router.post("/:spaceId/generate", allowGuestOrAuth, aiLimiter, checkGuestLimit("generate_flashcards"), checkFeatureAccess(FeatureFlag.GENERATE_FLASHCARDS), checkMeteredLimit(FeatureFlag.GENERATE_FLASHCARDS), validateRequest(paramsSpaceIdSchema), generateFlashcards);
 
 // Get all flashcards for a note
 router.get("/:spaceId", allowGuestOrAuth, validateRequest(paramsSpaceIdSchema), getFlashcards);
