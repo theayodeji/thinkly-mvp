@@ -33,7 +33,6 @@ function ChatInterface() {
   const { displayedText: smoothedStreamedText, isCaughtUp } = useSmoothStreaming(streamedText, 5, 4);
   const [streamingIndex, setStreamingIndex] = useState<number | null>(null);
   const [isNetworkFinished, setIsNetworkFinished] = useState(false);
-  const [isForceLocked, setIsForceLocked] = useState(false);
 
   // Layout & Scroll References
   const chatBoxRef = useRef<HTMLDivElement>(null);
@@ -220,7 +219,7 @@ function ChatInterface() {
           setStreamingIndex(prev.length);
           return [...prev, { _id: crypto.randomUUID(), role: "assistant" as const, content: "" } as any];
         });
-        setIsChatLoading(false); const isLimitError = error?.response?.status === 403; if (isLimitError) { setIsForceLocked(true); triggerLimitModal(error?.response?.data?.message || "Chat limit reached"); setChatHistory((prev) => prev.slice(0, -2)); setStreamingIndex(null); setStreamedText(""); return; }
+        setIsChatLoading(false);
 
         await spaceService.streamChat(
           spaceId,
@@ -238,7 +237,7 @@ function ChatInterface() {
           return;
         }
         console.error(error);
-        setIsChatLoading(false); const isLimitError = error?.response?.status === 403; if (isLimitError) { setIsForceLocked(true); triggerLimitModal(error?.response?.data?.message || "Chat limit reached"); setChatHistory((prev) => prev.slice(0, -2)); setStreamingIndex(null); setStreamedText(""); return; }
+        setIsChatLoading(false);
 
         const errorMessage =
           error?.response?.data?.error ||
@@ -302,7 +301,7 @@ function ChatInterface() {
         {renderedMessages()}
       </div>
 
-      {!(chatLimitStatus.isReached || chatLimitStatus.isLocked || isForceLocked) || (isChatLoading || streamingIndex !== null) ? (
+      {!(chatLimitStatus.isReached || chatLimitStatus.isLocked) || (isChatLoading || streamingIndex !== null) ? (
         <ChatInput
           onSend={handleSend}
           onStop={handleStop}
