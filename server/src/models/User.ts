@@ -50,11 +50,8 @@ const userSchema = new Schema<IUser, IUserModel>(
       quizDifficulty: { type: String, enum: ["beginner", "intermediate", "advanced"], default: "intermediate" },
       emailReminders: { type: Boolean, default: true },
     },
-    plan: { type: String, enum: ["free", "pro"], default: "free" },
-    dailyAIActionsCount: { type: Number, default: 0 },
-    lastAIActionDate: Date,
-    dailyAudioActionsCount: { type: Number, default: 0 },
-    lastAudioActionDate: Date,
+    subscription_tier: { type: String, enum: ["guest", "free", "premium"], default: "free" },
+    subscription_status: { type: String, enum: ["active", "past_due", "canceled"], default: "active" },
     resetPasswordToken: String,
     resetPasswordExpires: Date,
     isEmailVerified: { type: Boolean, default: false },
@@ -83,11 +80,21 @@ userSchema.static(
         name: profile.displayName,
         email: profile.emails[0].value,
         googleId: profile.id,
+        isEmailVerified: true,
       });
-    } else if (!user.googleId) {
-      // Link Google account to existing email
-      user.googleId = profile.id;
-      await user.save();
+    } else {
+      let needsSave = false;
+      if (!user.googleId) {
+        user.googleId = profile.id;
+        needsSave = true;
+      }
+      if (!user.isEmailVerified) {
+        user.isEmailVerified = true;
+        needsSave = true;
+      }
+      if (needsSave) {
+        await user.save();
+      }
     }
 
     return user;

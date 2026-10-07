@@ -37,11 +37,8 @@ export interface IUser {
     quizDifficulty: "beginner" | "intermediate" | "advanced";
     emailReminders: boolean;
   };
-  plan?: "free" | "pro";
-  dailyAIActionsCount?: number;
-  lastAIActionDate?: Date;
-  dailyAudioActionsCount?: number;
-  lastAudioActionDate?: Date;
+  subscription_tier?: "guest" | "free" | "premium";
+  subscription_status?: "active" | "past_due" | "canceled";
   resetPasswordToken?: string;
   resetPasswordExpires?: Date;
   isEmailVerified?: boolean;

@@ -92,6 +92,8 @@ export const UserSchema = z
     email: z.string().email(),
     isEmailVerified: z.boolean().optional(),
     avatar: z.string().optional(),
+    subscription_tier: z.enum(["guest", "free", "premium"]).optional(),
+    subscription_status: z.enum(["active", "past_due", "canceled"]).optional(),
     streaks: z
       .object({
         current: z.number().default(0),
