@@ -56,10 +56,20 @@ api.interceptors.response.use(
 
     // Account Limit Reached (403) - ignore token/auth 403s
     if (error.response?.status === 403 && !isTokenOrAuthError) {
-      const customEvent = new CustomEvent("thinkly:upgrade-modal", {
-        detail: { reason: errorMsg || "Limit reached. Upgrade to unlock full access!" },
-      });
-      window.dispatchEvent(customEvent);
+      const code = error.response?.data?.code;
+      const isGuest = code === "GUEST_LIMIT_REACHED" || code === "GUEST_AUTH_REQUIRED";
+      
+      if (isGuest) {
+        const customEvent = new CustomEvent("thinkly:auth-prompt-modal", {
+          detail: { reason: errorMsg || "Guest trial limit reached. Sign up or log in to unlock full access!" },
+        });
+        window.dispatchEvent(customEvent);
+      } else {
+        const customEvent = new CustomEvent("thinkly:upgrade-modal", {
+          detail: { reason: errorMsg || "Limit reached. Upgrade to unlock full access!" },
+        });
+        window.dispatchEvent(customEvent);
+      }
       return Promise.reject(error);
     }
 

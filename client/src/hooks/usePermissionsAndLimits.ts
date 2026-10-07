@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { billingService } from "../shared/services/billingService";
 import { FeatureFlag } from "@thinkly/shared";
+import { useAuth } from "./useAuth";
 
 export enum MeteredMetric {
   ACTIVE_SPACES = "active_spaces",
@@ -20,6 +21,7 @@ interface LimitStatus {
 }
 
 export function usePermissionsAndLimits() {
+  const { user } = useAuth();
   const { data: planStatus, isLoading } = useQuery({
     queryKey: ["userPlanStatus"],
     queryFn: billingService.getPlanStatus,
@@ -32,9 +34,18 @@ export function usePermissionsAndLimits() {
   };
 
   const triggerLimitModal = (reason?: string) => {
-    window.dispatchEvent(
-      new CustomEvent("thinkly:upgrade-modal", { detail: { reason } })
-    );
+    const isGuest = !user || user.isGuest;
+    if (isGuest) {
+      window.dispatchEvent(
+        new CustomEvent("thinkly:auth-prompt-modal", {
+          detail: { reason: reason || "Sign up or log in to create a free account and unlock full access!" },
+        })
+      );
+    } else {
+      window.dispatchEvent(
+        new CustomEvent("thinkly:upgrade-modal", { detail: { reason } })
+      );
+    }
   };
 
   const getLimitStatus = (metric: MeteredMetric, spaceContext?: { spaceId: string; messagesCount: number }): LimitStatus => {

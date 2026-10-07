@@ -10,10 +10,13 @@ import { spaceService } from "../../shared/services/spaceService";
 import toast from "react-hot-toast";
 
 import { usePermissionsAndLimits, MeteredMetric } from "../../hooks/usePermissionsAndLimits";
+import { useAuth } from "../../hooks/useAuth";
 
 function ChatInterface() {
   const { id: spaceId } = useParams<{ id: string }>();
   const queryClient = useQueryClient();
+  const { user } = useAuth();
+  const isGuest = !user || user.isGuest;
 
   const { getLimitStatus, triggerLimitModal } = usePermissionsAndLimits();
 
@@ -211,7 +214,15 @@ function ChatInterface() {
       }
 
       if (chatLimitStatus.isReached || chatLimitStatus.isLocked || isForceLocked) {
-        triggerLimitModal("You've reached your chat limit for this space. Delete it and create a new one to continue!");
+        if (isGuest) {
+          window.dispatchEvent(
+            new CustomEvent("thinkly:auth-prompt-modal", {
+              detail: { reason: "Sign up or log in to create a free account and keep chatting!" },
+            })
+          );
+        } else {
+          triggerLimitModal("You've reached your chat limit for this space. Delete it and create a new one to continue!");
+        }
         return;
       }
 
@@ -336,23 +347,45 @@ function ChatInterface() {
           disabledReason={
             hasNoContent
               ? "Add a source to start chatting"
-              : chatLimitStatus.isLocked 
-                ? "Chat is locked" 
-                : chatLimitStatus.isReached 
-                  ? `Limit reached (${chatLimitStatus.max}/${chatLimitStatus.max})` 
-                  : undefined
+              : isGuest
+                ? "Guest trial limit reached"
+                : chatLimitStatus.isLocked 
+                  ? "Chat is locked" 
+                  : chatLimitStatus.isReached 
+                    ? `Limit reached (${chatLimitStatus.max}/${chatLimitStatus.max})` 
+                    : undefined
           }
         />
       ) : (
-        <div className="p-4 mx-4 mb-4 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 flex flex-col items-center justify-center gap-1 text-center shadow-sm">
+        <div className="p-4 mx-4 mb-4 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 flex flex-col items-center justify-center gap-2 text-center shadow-sm">
           <p className="text-amber-800 dark:text-amber-300 text-sm font-bold">
-            {chatLimitStatus.isLocked ? "Chat is locked" : `Chat limit reached (${chatLimitStatus.max}/${chatLimitStatus.max})`}
+            {isGuest
+              ? "Guest Trial Limit Reached"
+              : chatLimitStatus.isLocked
+              ? "Chat is Locked"
+              : `Chat Limit Reached (${chatLimitStatus.max}/${chatLimitStatus.max})`}
           </p>
-          <p className="text-amber-600 dark:text-amber-400 text-xs">
-            {chatLimitStatus.isLocked 
-              ? "Upgrade your plan to unlock AI Chat." 
+          <p className="text-amber-600 dark:text-amber-400 text-xs leading-relaxed max-w-sm">
+            {isGuest
+              ? "Sign up or log in to create a free account and unlock full access!"
+              : chatLimitStatus.isLocked
+              ? "Upgrade your plan to unlock AI Chat."
               : "Delete this space and create a new one to continue chatting!"}
           </p>
+          {isGuest && (
+            <button
+              onClick={() => {
+                window.dispatchEvent(
+                  new CustomEvent("thinkly:auth-prompt-modal", {
+                    detail: { reason: "Sign up or log in to create a free account and keep chatting!" },
+                  })
+                );
+              }}
+              className="mt-1 px-4 py-2 bg-primary-600 hover:bg-primary-500 text-white rounded-xl text-xs font-semibold shadow-sm transition-all cursor-pointer"
+            >
+              Sign Up for Free
+            </button>
+          )}
         </div>
       )}
     </div>
