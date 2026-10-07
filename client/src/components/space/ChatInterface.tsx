@@ -33,6 +33,7 @@ function ChatInterface() {
   const { displayedText: smoothedStreamedText, isCaughtUp } = useSmoothStreaming(streamedText, 5, 4);
   const [streamingIndex, setStreamingIndex] = useState<number | null>(null);
   const [isNetworkFinished, setIsNetworkFinished] = useState(false);
+  const [isForceLocked, setIsForceLocked] = useState(false);
 
   // Layout & Scroll References
   const chatBoxRef = useRef<HTMLDivElement>(null);
@@ -199,7 +200,7 @@ function ChatInterface() {
     async (message: string) => {
       if (!message.trim() || !spaceId) return;
 
-      if (chatLimitStatus.isReached || chatLimitStatus.isLocked) {
+      if (chatLimitStatus.isReached || chatLimitStatus.isLocked || isForceLocked) {
         triggerLimitModal("You've reached your chat limit for this space. Delete it and create a new one to continue!");
         return;
       }
@@ -238,6 +239,18 @@ function ChatInterface() {
         }
         console.error(error);
         setIsChatLoading(false);
+
+        const isLimitError = error?.response?.status === 403;
+        if (isLimitError) {
+           setIsForceLocked(true);
+           triggerLimitModal(error?.response?.data?.message || "Chat limit reached");
+           
+           // Remove the empty assistant message and the user message that was rejected
+           setChatHistory((prev) => prev.slice(0, -2));
+           setStreamingIndex(null);
+           setStreamedText("");
+           return;
+        }
 
         const errorMessage =
           error?.response?.data?.error ||
@@ -301,7 +314,7 @@ function ChatInterface() {
         {renderedMessages()}
       </div>
 
-      {!(chatLimitStatus.isReached || chatLimitStatus.isLocked) || (isChatLoading || streamingIndex !== null) ? (
+      {!(chatLimitStatus.isReached || chatLimitStatus.isLocked || isForceLocked) || (isChatLoading || streamingIndex !== null) ? (
         <ChatInput
           onSend={handleSend}
           onStop={handleStop}
