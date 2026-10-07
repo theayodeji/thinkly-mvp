@@ -2,6 +2,7 @@ import { generateObject, streamText, generateText } from "ai";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { z } from "zod";
 import { config } from "../config/env.js";
+import { MAX_SUMMARY_WORDS } from "@thinkly/shared";
 import type {
   ChatSuggestionsResponse,
   PromptType,
@@ -9,13 +10,13 @@ import type {
   SummaryResponse,
   TitleResponse,
 } from "./prompts.js";
-import { PROMPT_TEMPLATES } from "./prompts.js";
+import { PROMPT_TEMPLATES, SYSTEM_SECURITY_HARDENING_HEADER } from "./prompts.js";
 
 const google = createGoogleGenerativeAI({
   apiKey: config.GEMINI_API_KEY,
 });
 
-const DEFAULT_MODEL = "gemini-2.5-flash-lite";
+const DEFAULT_MODEL = "gemini-3.5-flash-lite";
 
 // Schemas for validation
 const SummarySchema = z.object({
@@ -29,7 +30,7 @@ const TitleSchema = z.object({
 const QuizSchema = z.array(
   z.object({
     question: z.string(),
-    options: z.tuple([z.string(), z.string(), z.string(), z.string()]),
+    options: z.array(z.string()),
     correctAnswer: z.number(),
     explanation: z.string(),
   }),
@@ -81,6 +82,7 @@ class GeminiService {
       const prompt = this.constructPrompt("chat", content);
       const { textStream } = streamText({
         model: google(this.modelName),
+        system: SYSTEM_SECURITY_HARDENING_HEADER,
         prompt: prompt,
       });
 
@@ -100,9 +102,18 @@ class GeminiService {
     const prompt = this.constructPrompt("summary", content);
     const { object } = await generateObject({
       model: google(this.modelName),
+      system: SYSTEM_SECURITY_HARDENING_HEADER,
       schema: SummarySchema,
       prompt: prompt,
     });
+
+    if (object?.summary) {
+      const words = object.summary.trim().split(/\s+/);
+      if (words.length > MAX_SUMMARY_WORDS) {
+        object.summary = words.slice(0, MAX_SUMMARY_WORDS).join(" ") + "...";
+      }
+    }
+
     return object;
   }
 
@@ -110,6 +121,7 @@ class GeminiService {
     const prompt = this.constructPrompt("title", content);
     const { object } = await generateObject({
       model: google(this.modelName),
+      system: SYSTEM_SECURITY_HARDENING_HEADER,
       schema: TitleSchema,
       prompt: prompt,
     });
@@ -120,6 +132,7 @@ class GeminiService {
     const prompt = this.constructPrompt("quiz", content);
     const { object } = await generateObject({
       model: google(this.modelName),
+      system: SYSTEM_SECURITY_HARDENING_HEADER,
       schema: QuizSchema,
       prompt: prompt,
     });
@@ -132,6 +145,7 @@ class GeminiService {
     const prompt = this.constructPrompt("chatSuggestions", content);
     const { object } = await generateObject({
       model: google(this.modelName),
+      system: SYSTEM_SECURITY_HARDENING_HEADER,
       schema: ChatSuggestionsSchema,
       prompt: prompt,
     });
@@ -144,6 +158,7 @@ class GeminiService {
     const prompt = this.constructPrompt("flashcards", content);
     const { object } = await generateObject({
       model: google(this.modelName),
+      system: SYSTEM_SECURITY_HARDENING_HEADER,
       schema: FlashcardsSchema,
       prompt: prompt,
     });
@@ -158,6 +173,7 @@ class GeminiService {
     const prompt = this.constructPrompt("learningPath", combinedContent);
     const { object } = await generateObject({
       model: google(this.modelName),
+      system: SYSTEM_SECURITY_HARDENING_HEADER,
       schema: LearningPathSchema,
       prompt: prompt,
     });
@@ -167,6 +183,7 @@ class GeminiService {
   public async generateContent(prompt: string): Promise<string> {
     const { text } = await generateText({
       model: google(this.modelName),
+      system: SYSTEM_SECURITY_HARDENING_HEADER,
       prompt: prompt,
     });
     return text;

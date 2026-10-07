@@ -1,10 +1,14 @@
 import multer from "multer";
+import { getMaxUploadSizeBytes } from "@thinkly/shared";
 
 const storage = multer.memoryStorage();
 
-// File size limit: 5MB
-const limits = {
-  fileSize: 5 * 1024 * 1024,
-};
-
-export const upload = multer({ storage, limits });
+// File size limit: Dynamic (Default 5MB)
+export const upload = multer({
+  storage,
+  limits: {
+    get fileSize() {
+      return getMaxUploadSizeBytes();
+    },
+  },
+});

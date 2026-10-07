@@ -51,7 +51,24 @@ export const isAuthenticated = (req: Request, res: Response, next: NextFunction)
   return authenticateJWT(req, res, next);
 };
 
+/**
+ * Middleware to optionally attach JWT user ID if token exists
+ */
+export const optionalJWT = (req: Request, res: Response, next: NextFunction) => {
+  const token = req.cookies.accessToken || "";
+  if (token) {
+    try {
+      const decoded = jwt.verify(token, JWT_SECRET) as { id: Types.ObjectId };
+      req.userId = String(decoded.id);
+    } catch (error) {
+      // Ignore token errors for optional auth
+    }
+  }
+  next();
+};
+
 export default {
   authenticateJWT,
+  optionalJWT,
   isAuthenticated
 };

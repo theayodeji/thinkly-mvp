@@ -1,4 +1,12 @@
-import { Flame, Trophy, FileText, Search, Grip, LucideShare2 } from "lucide-react";
+import {
+  Flame,
+  Trophy,
+  FileText,
+  Search,
+  Grip,
+  LucideShare2,
+  ExternalLink,
+} from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import ThemeToggle from "./ThemeToggle";
@@ -30,14 +38,21 @@ const Navbar = () => {
 
   return (
     <>
-      <header className={`sticky top-0 z-50 flex items-center h-20 transition-all ${
-        isSpaceDetail ? 'bg-bg border-b-2 border-border/50' : 'border-b-2 border-border/50 bg-bg/80 backdrop-blur-sm'
-      }`}>
+      <header
+        className={`sticky top-0 z-50 flex items-center h-20 transition-all ${
+          isSpaceDetail
+            ? "bg-bg border-b-2 border-border/50"
+            : "border-b-2 border-border/50 bg-bg/80 backdrop-blur-sm"
+        }`}
+      >
         <div className={`w-full px-6 flex items-center justify-between`}>
           {/* Left Side: Space Header OR Spacer */}
           {isSpaceDetail ? (
             <div className="flex items-center gap-2 md:gap-4 flex-1 min-w-0 pr-2">
-              <BackNavigator label="" className="p-1 md:p-2 text-text shrink-0" />
+              <BackNavigator
+                label=""
+                className="p-1 md:p-2 text-text shrink-0"
+              />
               <div className="flex flex-col flex-1 min-w-0">
                 <h2 className="text-lg md:text-2xl font-bold text-text truncate">
                   {currentSpace?.title || "Untitled Space"}
@@ -49,7 +64,10 @@ const Navbar = () => {
                     trigger={
                       <button className="flex items-center gap-2 px-2 py-0.5 rounded-full bg-neutral-200/50 dark:bg-neutral-800/50 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors text-xs text-text-secondary font-medium">
                         <FileText className="h-3 w-3" />
-                        <span className="text-xs">{sourcesCount} sources</span>
+                        <span className="text-xs flex items-center gap-2">
+                          View {sourcesCount} sources
+                          <ExternalLink className="h-3 w-3" />
+                        </span>
                       </button>
                     }
                     title="Sources"
@@ -68,18 +86,30 @@ const Navbar = () => {
           <div className="flex items-center gap-2 md:gap-4 shrink-0">
             {isSpaceDetail && (
               <>
-                <Button size="icon" variant="ghost" className="hidden md:flex shrink-0">
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="hidden md:flex shrink-0"
+                >
                   <Search className="h-5 w-5 text-text-secondary" />
                 </Button>
-                <Button size="icon" variant="neutral" className="hidden md:flex p-1.5 bg-neutral-200 dark:bg-neutral-800 border-none text-text shrink-0">
+                <Button
+                  size="icon"
+                  variant="neutral"
+                  className="hidden md:flex p-1.5 bg-neutral-200 dark:bg-neutral-800 border-none text-text shrink-0"
+                >
                   <Grip className="h-5 w-5" />
                 </Button>
-                <Button size="icon" variant="neutral" className="hidden md:flex p-1.5 bg-neutral-200 dark:bg-neutral-800 border-none text-text shrink-0">
+                <Button
+                  size="icon"
+                  variant="neutral"
+                  className="hidden md:flex p-1.5 bg-neutral-200 dark:bg-neutral-800 border-none text-text shrink-0"
+                >
                   <LucideShare2 className="h-5 w-5" />
                 </Button>
               </>
             )}
-            
+
             {loading ? (
               <>
                 <ThemeToggle />
@@ -91,15 +121,22 @@ const Navbar = () => {
             ) : user ? (
               <>
                 {!isSpaceDetail && (
-                  <div className="hidden items-center gap-4 md:flex bg-neutral-100 dark:bg-neutral-800 px-4 py-2 rounded-full text-text-secondary cursor-pointer" onClick={open}>
+                  <div
+                    className="hidden items-center gap-4 md:flex bg-neutral-100 dark:bg-neutral-800 px-4 py-2 rounded-full text-text-secondary cursor-pointer"
+                    onClick={open}
+                  >
                     <div className="flex items-center gap-1">
                       <Trophy className="h-5 w-5 text-yellow-500" />
-                      <span className="text-sm font-bold text-text">{user.badges?.length > 0 ? user.badges?.length * 50 : 0}</span>
+                      <span className="text-sm font-bold text-text">
+                        {user.badges?.length > 0 ? user.badges?.length * 50 : 0}
+                      </span>
                     </div>
                     <div className="w-px h-4 bg-border"></div>
                     <div className="flex items-center gap-1">
                       <Flame className="h-5 w-5 text-red-500" />
-                      <span className="text-sm font-bold text-text">{user?.streaks?.current || 0} days</span>
+                      <span className="text-sm font-bold text-text">
+                        {user?.streaks?.current || 0} days
+                      </span>
                     </div>
                   </div>
                 )}
@@ -114,7 +151,10 @@ const Navbar = () => {
                   <Button size="sm">Login</Button>
                 </Link>
                 <Link to="/auth/register">
-                  <Button size="sm" className="bg-dark dark:bg-neutral-300 text-white dark:text-dark">
+                  <Button
+                    size="sm"
+                    className="bg-dark dark:bg-neutral-300 text-white dark:text-dark"
+                  >
                     Get Started
                   </Button>
                 </Link>

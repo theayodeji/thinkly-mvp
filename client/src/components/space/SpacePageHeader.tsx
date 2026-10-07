@@ -1,4 +1,4 @@
-import { Grip, LucideShare2, FileText } from "lucide-react";
+import { Grip, LucideShare2, FileText, ExternalLink } from "lucide-react";
 import { Button } from "../ui/Button";
 import { useParams } from "react-router-dom";
 import { useSpace, useSpaceSources } from "../../hooks/queries/useSpaces";
@@ -23,15 +23,18 @@ const SpacePageHeader = ({ onOpenSources }: SpacePageHeaderProps) => {
             {currentSpace?.title || "Untitled Space"}
           </h2>
         </div>
-        
+
         {/* Sources Pill under title on desktop */}
         <div className="hidden lg:flex items-center mt-2 ml-2">
-          <button 
+          <button
             onClick={onOpenSources}
             className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-neutral-200/50 dark:bg-neutral-800/50 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors text-sm text-text-secondary font-medium"
           >
             <FileText className="h-4 w-4" />
-            <span>{sourcesCount} source{sourcesCount !== 1 ? 's' : ''}</span>
+            <span className="flex items-center gap-2">
+              View {sourcesCount} source{sourcesCount !== 1 ? "s" : ""}
+              <ExternalLink className="h-3 w-3" />
+            </span>
           </button>
         </div>
       </div>

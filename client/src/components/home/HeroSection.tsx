@@ -136,7 +136,7 @@ const HeroSection = () => {
             <img
               src="/student-2.png"
               alt="Student preparing for exam"
-              className="relative z-10 w-full h-full object-contain max-h-[88%] drop-shadow-2xl translate-y-2 md:translate-y-3"
+              className="relative z-10 w-full h-full object-contain max-h-[88%] drop-shadow-2xl translate-y-2 md:translate-y-11 scale-125"
               onError={(e) => {
                 (e.target as HTMLImageElement).src =
                   "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80";
@@ -157,7 +157,7 @@ const HeroSection = () => {
             <img
               src="/student2.png"
               alt="Student with study materials"
-              className="relative z-10 w-full h-full object-contain max-h-[88%] drop-shadow-2xl translate-y-2 md:translate-y-3"
+              className="relative z-10 w-full h-full object-contain max-h-[88%] drop-shadow-2xl translate-y-2 md:translate-y-3 scale-130"
               onError={(e) => {
                 (e.target as HTMLImageElement).src =
                   "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=600&auto=format&fit=crop&q=80";
@@ -178,7 +178,7 @@ const HeroSection = () => {
             <img
               src="/student-3.png"
               alt="Student celebrating learning progress"
-              className="relative z-10 w-full h-full object-contain max-h-[88%] drop-shadow-2xl translate-y-2 md:translate-y-3"
+              className="relative z-10 w-full h-full object-contain max-h-[88%] drop-shadow-2xl translate-y-2 md:translate-y-11 scale-135"
               onError={(e) => {
                 (e.target as HTMLImageElement).src =
                   "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&auto=format&fit=crop&q=80";

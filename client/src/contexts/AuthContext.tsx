@@ -5,7 +5,9 @@ import type { User, AuthContextType } from "../shared/types/auth";
 import { useNavigate } from "react-router-dom";
 import { queryClient } from "../lib/react-query";
 
-export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(
+  undefined,
+);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -17,13 +19,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const fetchUser = async () => {
       setLoading(true);
       try {
-        const user = await api.get("/auth/me").then(response => response.data);
+        const user = await api
+          .get("/auth/me")
+          .then((response) => response.data);
         setUser(user);
         if (user.preferences?.theme) {
-          const storedTheme = localStorage.getItem('theme-preference');
-          if (!storedTheme || storedTheme.replace(/"/g, '') !== user.preferences.theme) {
-            localStorage.setItem('theme-preference', `"${user.preferences.theme}"`);
-            window.dispatchEvent(new Event('storage'));
+          const storedTheme = localStorage.getItem("theme-preference");
+          if (
+            !storedTheme ||
+            storedTheme.replace(/"/g, "") !== user.preferences.theme
+          ) {
+            localStorage.setItem(
+              "theme-preference",
+              `"${user.preferences.theme}"`,
+            );
+            window.dispatchEvent(new Event("storage"));
           }
         }
       } catch (error) {
@@ -35,37 +45,50 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     fetchUser();
   }, []);
 
-  const register = useCallback(async (email: string, password: string, name: string, otp?: string) => {
-    setIsLoggingIn(true);
-    try {
-      const { data: { user } } = await api.post("/auth/register", { email, password, name, otp });
-      setUser(user);
-      navigate("/dashboard");
-      toast.success("Account created! A verification link has been sent to your email.");
-    } catch (error: unknown) {
-      const axiosError = error as AxiosErrorWithResponse;
-      toast.error(axiosError.response?.data.message || axiosError.response?.data.error || "Registration failed");
-      throw error;
-    } finally {
-      setIsLoggingIn(false);
-    }
-  }, []);
+  const register = useCallback(
+    async (email: string, password: string, name: string, otp?: string) => {
+      setIsLoggingIn(true);
+      try {
+        const {
+          data: { user },
+        } = await api.post("/auth/register", { email, password, name, otp });
+        setUser(user);
+        navigate("/dashboard");
+        toast.success(
+          "Account created! A verification link has been sent to your email.",
+        );
+      } catch (error: unknown) {
+        const axiosError = error as AxiosErrorWithResponse;
+        toast.error(
+          axiosError.response?.data.message ||
+            axiosError.response?.data.error ||
+            "Registration failed",
+        );
+        throw error;
+      } finally {
+        setIsLoggingIn(false);
+      }
+    },
+    [],
+  );
 
   const login = useCallback(async (email: string, password: string) => {
     setIsLoggingIn(true);
     try {
-      const { data: { user} } = await api.post("/auth/login", { email, password });
+      const {
+        data: { user },
+      } = await api.post("/auth/login", { email, password });
       setUser(user);
       if (user.preferences?.theme) {
-        localStorage.setItem('theme-preference', `"${user.preferences.theme}"`);
-        window.dispatchEvent(new Event('storage'));
+        localStorage.setItem("theme-preference", `"${user.preferences.theme}"`);
+        window.dispatchEvent(new Event("storage"));
       }
       navigate("/dashboard");
       toast.success("Logged in successfully");
     } catch (error: unknown) {
       const axiosError = error as AxiosErrorWithResponse;
-      toast.error(axiosError.response?.data.message || "Login failed");
-      console.error(axiosError.response?.data.message || "Login failed");
+      toast.error(axiosError.response?.data.error || "Login failed");
+      console.error(axiosError.response?.data.error || "Login failed");
     } finally {
       setIsLoggingIn(false);
     }
@@ -80,7 +103,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading, isLoggingIn, login, logout, register }}>
+    <AuthContext.Provider
+      value={{ user, loading, isLoggingIn, login, logout, register }}
+    >
       {children}
     </AuthContext.Provider>
   );
