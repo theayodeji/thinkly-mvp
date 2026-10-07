@@ -4,7 +4,7 @@ import { Button } from "../ui/Button";
 import { useClose } from "@headlessui/react";
 import { useParams } from "react-router-dom";
 import { useAddSource } from "../../hooks/queries/useSpaces";
-import { SourceType } from "@thinkly/shared";
+import { SourceType, MAX_PASTED_TEXT_LENGTH } from "@thinkly/shared";
 
 const PasteTextArea = () => {
   const [name, setName] = useState("");
@@ -22,9 +22,11 @@ const PasteTextArea = () => {
     setText(event.target.value);
   };
 
+  const isOverLimit = text.length > MAX_PASTED_TEXT_LENGTH;
+
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    if (!id) return;
+    if (!id || isOverLimit) return;
     addSource({ id, source: { name, text, type: SourceType.TEXT } }).then(() =>
       close(),
     );
@@ -33,7 +35,7 @@ const PasteTextArea = () => {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <label>
-        <span>Name:</span>
+        <span className="text-sm font-medium text-text-secondary mb-1 block">Name:</span>
         <TextInput
           value={name}
           onChange={handleNameChange}
@@ -42,22 +44,44 @@ const PasteTextArea = () => {
         />
       </label>
       <label>
-        <span>Text:</span>
+        <div className="flex justify-between items-center mb-1">
+          <span className="text-sm font-medium text-text-secondary">Text:</span>
+          <span
+            className={`text-xs transition-colors ${
+              isOverLimit
+                ? "text-red-500 font-bold"
+                : text.length > 7000
+                ? "text-amber-500 font-semibold"
+                : "text-text-secondary"
+            }`}
+          >
+            {text.length.toLocaleString()} / {MAX_PASTED_TEXT_LENGTH.toLocaleString()} characters
+          </span>
+        </div>
         <textarea
-          className="block w-full p-4 rounded-md border-2 border-border/80 bg-bg focus:shadow-md focus:shadow-primary outline-none resize-none"
+          className={`block w-full p-4 rounded-md border-2 bg-bg focus:shadow-md outline-none resize-none transition-colors ${
+            isOverLimit
+              ? "border-red-500 focus:shadow-red-500/20"
+              : "border-border/80 focus:shadow-primary"
+          }`}
           value={text}
           onChange={handleTextChange}
-          rows={4}
-          placeholder="Paste text here..."
+          rows={6}
+          placeholder="Paste text here (up to 8,000 characters)..."
         />
       </label>
+      {isOverLimit && (
+        <p className="text-xs text-red-500 font-medium">
+          Pasted text exceeds the 8,000 character limit by {(text.length - MAX_PASTED_TEXT_LENGTH).toLocaleString()} characters.
+        </p>
+      )}
       <Button
         type="submit"
         variant="primary"
-        disabled={name.trim() === "" || text.trim() === "" || isActionLoading}
+        disabled={name.trim() === "" || text.trim() === "" || isOverLimit || isActionLoading}
         loading={isActionLoading}
       >
-        Add
+        Add Source
       </Button>
     </form>
   );

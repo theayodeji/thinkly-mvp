@@ -45,6 +45,8 @@ export const updateSpaceSchema = z.object({
   }),
 });
 
+export const MAX_PASTED_TEXT_LENGTH = 8000;
+
 export const addSourceSchema = z.object({
   body: z
     .object({
@@ -62,6 +64,18 @@ export const addSourceSchema = z.object({
       },
       {
         message: `Text is required when type is '${SourceType.TEXT}'`,
+        path: ["text"],
+      },
+    )
+    .refine(
+      (data) => {
+        if (data.type === SourceType.TEXT && data.text && data.text.length > MAX_PASTED_TEXT_LENGTH) {
+          return false;
+        }
+        return true;
+      },
+      {
+        message: `Pasted text cannot exceed ${MAX_PASTED_TEXT_LENGTH.toLocaleString()} characters`,
         path: ["text"],
       },
     ),
