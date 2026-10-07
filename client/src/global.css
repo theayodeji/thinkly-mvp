@@ -180,3 +180,27 @@ html {
     padding-left: 0.875rem !important;
   }
 }
+
+/* Custom Hot Toast Styling */
+div[data-react-hot-toast] > div {
+  font-family: "Figtree", sans-serif !important;
+  border-radius: 16px !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  font-size: 13.5px !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.01em !important;
+  box-shadow: 0 12px 32px -4px rgba(0, 0, 0, 0.12), 0 4px 12px -2px rgba(0, 0, 0, 0.04) !important;
+}
+
+.dark div[data-react-hot-toast] > div {
+  background-color: rgba(15, 23, 42, 0.92) !important;
+  color: #f8fafc !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+:root:not(.dark) div[data-react-hot-toast] > div {
+  background-color: rgba(255, 255, 255, 0.92) !important;
+  color: #0f172a !important;
+  border: 1px solid rgba(226, 232, 240, 0.8) !important;
+}

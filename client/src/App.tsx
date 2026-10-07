@@ -20,7 +20,25 @@ function App() {
               <AppRoutes />
               <AuthPromptModal />
               <UpgradeModal />
-              <Toaster position="top-right" />
+              <Toaster
+                position="top-right"
+                gutter={10}
+                toastOptions={{
+                  duration: 3500,
+                  success: {
+                    iconTheme: {
+                      primary: "#10b981",
+                      secondary: "#ffffff",
+                    },
+                  },
+                  error: {
+                    iconTheme: {
+                      primary: "#ef4444",
+                      secondary: "#ffffff",
+                    },
+                  },
+                }}
+              />
             </div>
           </AuthProvider>
         </ThemeProvider>
