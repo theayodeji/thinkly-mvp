@@ -10,6 +10,8 @@ interface ChatInputProps {
   chatHistory: { role: string; content: string }[];
   currentSpaceId?: string;
   hasSources?: boolean;
+  isDisabled?: boolean;
+  disabledReason?: string;
 }
 
 function ChatInput({
@@ -18,26 +20,31 @@ function ChatInput({
   isActionLoading,
   chatHistory,
   currentSpaceId,
+  isDisabled,
+  disabledReason,
 }: ChatInputProps) {
   const [input, setInput] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleSendMessage = useCallback(async () => {
+    if (isActionLoading) return;
     const message = input.trim();
     if (!message || !currentSpaceId) return;
     setInput("");
     if (textareaRef.current) textareaRef.current.style.height = "24px";
     await onSend(message);
-  }, [input, currentSpaceId, onSend]);
+  }, [input, currentSpaceId, onSend, isActionLoading]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
-        handleSendMessage();
+        if (!isActionLoading) {
+          handleSendMessage();
+        }
       }
     },
-    [handleSendMessage],
+    [handleSendMessage, isActionLoading],
   );
 
   const handleChange = useCallback(
@@ -59,12 +66,13 @@ function ChatInput({
         </button>
         <textarea
           ref={textareaRef}
-          className="bg-transparent flex-1 text-sm focus:outline-none resize-none min-h-[24px] max-h-[150px] leading-relaxed text-text placeholder-text-secondary custom-scrollbar"
-          placeholder="Ask Thinkly anything..."
+          className="bg-transparent flex-1 text-sm focus:outline-none resize-none min-h-[24px] max-h-[150px] leading-relaxed text-text placeholder-text-secondary custom-scrollbar disabled:opacity-50"
+          placeholder={isActionLoading ? "Thinking..." : (disabledReason || "Ask Thinkly anything...")}
           value={input}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
           rows={1}
+          disabled={isDisabled || isActionLoading}
         />
         {isActionLoading ? (
           <button
@@ -76,7 +84,7 @@ function ChatInput({
         ) : (
           <button
             onClick={handleSendMessage}
-            disabled={!input.trim() || !currentSpaceId}
+            disabled={!input.trim() || !currentSpaceId || isDisabled}
             className="btn-3d-primary rounded-full p-2.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none min-w-[36px] min-h-[36px]"
           >
             <SendIcon className="h-4 w-4 ml-0.5" />
